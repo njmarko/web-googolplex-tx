@@ -1,5 +1,5 @@
 package model.enumerations;
 
 public enum TicketType {
-	ACTIVE, INACTIVE
+	VIP, REGULAR, FAN_PIT
 }
