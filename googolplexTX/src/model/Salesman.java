@@ -1,6 +1,10 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.Collection;
+
+import model.enumerations.Gender;
+import model.enumerations.UserRole;
 
 public class Salesman extends User {
 
@@ -13,6 +17,13 @@ public class Salesman extends User {
 	public Salesman(Collection<Manifestation> manifestation) {
 		super();
 		this.manifestation = manifestation;
+	}
+
+	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
+			LocalDate birthDate, UserRole userRole, Boolean deleted) {
+
+		super(username, password, firstName, lastName, gender, birthDate, userRole, deleted);
+
 	}
 
 	public Collection<Manifestation> getManifestation() {

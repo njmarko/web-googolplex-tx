@@ -13,7 +13,10 @@ public class Manifestation {
 	private LocalDateTime dateOfOccurence;
 	private Double regularPrice;
 	private ManifestationStatus status;
-	private Base64 poster;
+	/*
+	 * It was Base64 type before, but i changed it to string that represents a path
+	 */
+	private String poster;
 	private Boolean deleted;
 
 	public Salesman salesman;
@@ -25,7 +28,7 @@ public class Manifestation {
 	}
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
-			Double regularPrice, ManifestationStatus status, Base64 poster, Boolean deleted) {
+			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -38,7 +41,7 @@ public class Manifestation {
 	}
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
-			Double regularPrice, ManifestationStatus status, Base64 poster, Boolean deleted, Salesman salesman,
+			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted, Salesman salesman,
 			Location location) {
 		super();
 		this.id = id;
@@ -54,7 +57,7 @@ public class Manifestation {
 	}
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
-			Double regularPrice, ManifestationStatus status, Base64 poster, Boolean deleted, Salesman salesman,
+			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted, Salesman salesman,
 			Location location, Collection<Comment> comments) {
 		super();
 		this.id = id;
@@ -118,11 +121,11 @@ public class Manifestation {
 		this.status = status;
 	}
 
-	public Base64 getPoster() {
+	public String getPoster() {
 		return poster;
 	}
 
-	public void setPoster(Base64 poster) {
+	public void setPoster(String poster) {
 		this.poster = poster;
 	}
 

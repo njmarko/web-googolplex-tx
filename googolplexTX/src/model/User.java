@@ -14,6 +14,9 @@ public class User {
 	private LocalDate birthDate;
 	private UserRole userRole;
 	private Boolean deleted;
+	/*
+	 * TODO add JSON Web token
+	 */
 
 	public User() {
 		super();
