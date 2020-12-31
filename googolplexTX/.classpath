@@ -6,5 +6,29 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/gson-2.8.6.jar"/>
+	<classpathentry kind="lib" path="lib/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/javaxt-core.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-http-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-io-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-security-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-server-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-servlet-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-webapp-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-xml-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/opencv-310.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.13.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.21.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.21.jar"/>
+	<classpathentry kind="lib" path="lib/spark-core-2.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-api-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-client-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-common-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-server-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-servlet-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/jjwt-api-0.11.1.jar"/>
+	<classpathentry kind="lib" path="lib/jjwt-gson-0.11.1.jar"/>
+	<classpathentry kind="lib" path="lib/jjwt-impl-0.11.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
