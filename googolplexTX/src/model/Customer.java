@@ -1,6 +1,10 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.Collection;
+
+import model.enumerations.Gender;
+import model.enumerations.UserRole;
 
 public class Customer extends User {
 	private double points;
@@ -13,20 +17,10 @@ public class Customer extends User {
 		super();
 	}
 
-	public Customer(double points) {
-		super();
-		this.points = points;
-	}
-
-	public Customer(double points, CustomerType customerType) {
-		super();
-		this.points = points;
-		this.customerType = customerType;
-	}
-
-	public Customer(double points, CustomerType customerType, Collection<Comment> comments,
-			Collection<Comment> tickets) {
-		super();
+	public Customer(String username, String password, String firstName, String lastName, Gender gender,
+			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
+			CustomerType customerType, Collection<Comment> comments, Collection<Comment> tickets) {
+		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
 		this.points = points;
 		this.customerType = customerType;
 		this.comments = comments;

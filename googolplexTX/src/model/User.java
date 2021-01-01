@@ -13,6 +13,7 @@ public class User {
 	private Gender gender;
 	private LocalDate birthDate;
 	private UserRole userRole;
+	private Boolean blocked;
 	private Boolean deleted;
 	/*
 	 * TODO add JSON Web token
@@ -23,7 +24,7 @@ public class User {
 	}
 
 	public User(String username, String password, String firstName, String lastName, Gender gender, LocalDate birthDate,
-			UserRole userRole, Boolean deleted) {
+			UserRole userRole, Boolean blocked, Boolean deleted) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -32,6 +33,7 @@ public class User {
 		this.gender = gender;
 		this.birthDate = birthDate;
 		this.userRole = userRole;
+		this.blocked = blocked;
 		this.deleted = deleted;
 	}
 
@@ -91,6 +93,14 @@ public class User {
 		this.userRole = userRole;
 	}
 
+	public Boolean getBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(Boolean blocked) {
+		this.blocked = blocked;
+	}
+
 	public Boolean getDeleted() {
 		return deleted;
 	}
@@ -102,8 +112,8 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", gender=" + gender + ", birthDate=" + birthDate + ", userRole=" + userRole + ", deleted="
-				+ deleted + "]";
+				+ lastName + ", gender=" + gender + ", birthDate=" + birthDate + ", userRole=" + userRole + ", blocked="
+				+ blocked + ", deleted=" + deleted + "]";
 	}
 
 }

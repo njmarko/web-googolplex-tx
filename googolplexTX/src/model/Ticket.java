@@ -2,39 +2,50 @@ package model;
 
 import java.time.LocalDateTime;
 
+import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 
 public class Ticket {
 	private String id;
 	private LocalDateTime dateOfManifestation;
 	private Double price;
+	private String customerName;
 	private TicketType ticketType;
+	private TicketStatus ticketStatus;
 	private Boolean deleted;
 
 	public Customer customer;
+	public Manifestation manifestation;
 
 	public Ticket() {
 		super();
 	}
 
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, TicketType ticketType, Boolean deleted) {
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
+			TicketType ticketType, TicketStatus ticketStatus, Boolean deleted) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
 		this.price = price;
+		this.customerName = customerName;
 		this.ticketType = ticketType;
+		this.ticketStatus = ticketStatus;
 		this.deleted = deleted;
 	}
 
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, TicketType ticketType, Boolean deleted,
-			Customer customer) {
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
+			TicketType ticketType, TicketStatus ticketStatus, Boolean deleted, Customer customer,
+			Manifestation manifestation) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
 		this.price = price;
+		this.customerName = customerName;
 		this.ticketType = ticketType;
+		this.ticketStatus = ticketStatus;
 		this.deleted = deleted;
 		this.customer = customer;
+		this.manifestation = manifestation;
 	}
 
 	public String getId() {
@@ -61,12 +72,28 @@ public class Ticket {
 		this.price = price;
 	}
 
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
 	public TicketType getTicketType() {
 		return ticketType;
 	}
 
 	public void setTicketType(TicketType ticketType) {
 		this.ticketType = ticketType;
+	}
+
+	public TicketStatus getTicketStatus() {
+		return ticketStatus;
+	}
+
+	public void setTicketStatus(TicketStatus ticketStatus) {
+		this.ticketStatus = ticketStatus;
 	}
 
 	public Boolean getDeleted() {
@@ -85,10 +112,19 @@ public class Ticket {
 		this.customer = customer;
 	}
 
+	public Manifestation getManifestation() {
+		return manifestation;
+	}
+
+	public void setManifestation(Manifestation manifestation) {
+		this.manifestation = manifestation;
+	}
+
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
-				+ ", ticketType=" + ticketType + ", deleted=" + deleted + "]";
+				+ ", customerName=" + customerName + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
+				+ ", deleted=" + deleted + ", customer=" + customer + ", manifestation=" + manifestation + "]";
 	}
 
 }

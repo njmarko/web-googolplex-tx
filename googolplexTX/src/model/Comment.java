@@ -1,9 +1,11 @@
 package model;
 
+import model.enumerations.CommentStatus;
+
 public class Comment {
 	private String text;
 	private Integer rating;
-	private Boolean approved;
+	private CommentStatus approved;
 	private Boolean deleted;
 
 	public Manifestation manifestation;
@@ -13,7 +15,7 @@ public class Comment {
 		super();
 	}
 
-	public Comment(String text, Integer rating, Boolean approved, Boolean deleted) {
+	public Comment(String text, Integer rating, CommentStatus approved, Boolean deleted) {
 		super();
 		this.text = text;
 		this.rating = rating;
@@ -21,7 +23,7 @@ public class Comment {
 		this.deleted = deleted;
 	}
 
-	public Comment(String text, Integer rating, Boolean approved, Boolean deleted, Manifestation manifestation,
+	public Comment(String text, Integer rating, CommentStatus approved, Boolean deleted, Manifestation manifestation,
 			Customer customer) {
 		super();
 		this.text = text;
@@ -48,11 +50,11 @@ public class Comment {
 		this.rating = rating;
 	}
 
-	public Boolean getApproved() {
+	public CommentStatus getApproved() {
 		return approved;
 	}
 
-	public void setApproved(Boolean approved) {
+	public void setApproved(CommentStatus approved) {
 		this.approved = approved;
 	}
 

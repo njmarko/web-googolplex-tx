@@ -20,9 +20,9 @@ public class Salesman extends User {
 	}
 
 	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
-			LocalDate birthDate, UserRole userRole, Boolean deleted) {
+			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted) {
 
-		super(username, password, firstName, lastName, gender, birthDate, userRole, deleted);
+		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
 
 	}
 

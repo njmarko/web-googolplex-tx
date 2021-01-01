@@ -21,23 +21,23 @@ public class GoogolplexTXMain {
 		System.out.println("Hello World!");
 
 		/*
-		 * Simple test case for saving manifestation with nested objects
-		 * Code should be adjusted so it only saves the id's of the collections within it.
-		 * Gson can later convert these id's to customer objects after loading
+		 * Simple test case for saving manifestation with nested objects Code should be
+		 * adjusted so it only saves the id's of the collections within it. Gson can
+		 * later convert these id's to customer objects after loading
 		 */
-		
+
 		Address adrs = new Address(123, "Novi Sad", 123, "Cika Perina");
 		Location loc = new Location(123.3, 444.3, adrs);
 		Salesman sal = new Salesman("Pera", "pera123", "Perafirst", "peraLast", Gender.MALE, LocalDate.now(),
-				UserRole.SALESMAN, false);
+				UserRole.SALESMAN, false, false);
 		Manifestation m1 = new Manifestation("1234", "Man1", 123, LocalDateTime.now(), 123.3,
-				ManifestationStatus.ACTIVE, "asdf", false, sal, loc);
-		
+				ManifestationStatus.ACTIVE, "poster", false, sal, loc);
+
 		/*
 		 * Ignore the illegal reflective access operation warning for now
 		 */
 		manifestationService.save(m1);
-		//manifestationService.load();
+		// manifestationService.load();
 
 		System.out.println(manifestationService.findOne(m1.getId()));
 	}

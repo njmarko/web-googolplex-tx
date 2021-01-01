@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Collection;
 
 import model.enumerations.ManifestationStatus;
@@ -22,6 +21,7 @@ public class Manifestation {
 	public Salesman salesman;
 	public Location location;
 	public Collection<Comment> comments;
+	public Collection<Ticket> tickets;
 
 	public Manifestation() {
 		super();
@@ -58,7 +58,7 @@ public class Manifestation {
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted, Salesman salesman,
-			Location location, Collection<Comment> comments) {
+			Location location, Collection<Comment> comments, Collection<Ticket> tickets) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -71,6 +71,7 @@ public class Manifestation {
 		this.salesman = salesman;
 		this.location = location;
 		this.comments = comments;
+		this.tickets = tickets;
 	}
 
 	public String getId() {
@@ -161,12 +162,20 @@ public class Manifestation {
 		this.comments = comments;
 	}
 
+	public Collection<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(Collection<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+
 	@Override
 	public String toString() {
 		return "Manifestation [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
 				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
 				+ ", poster=" + poster + ", deleted=" + deleted + ", salesman=" + salesman + ", location=" + location
-				+ "]";
+				+ ", comments=" + comments + ", tickets=" + tickets + "]";
 	}
 
 }
