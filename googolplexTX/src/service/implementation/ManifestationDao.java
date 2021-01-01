@@ -25,13 +25,13 @@ public class ManifestationDao implements ManifestationService {
 	}
 
 	@Override
-	public Manifestation delete(String id) {
-		return InMemoryRepository.deleteManifestation(id);
+	public Manifestation delete(String key) {
+		return InMemoryRepository.deleteManifestation(key);
 	}
 
 	@Override
-	public Manifestation update(Manifestation object) {
-		return InMemoryRepository.save(object);
+	public Manifestation update(Manifestation entity) {
+		return InMemoryRepository.save(entity);
 	}
 
 }

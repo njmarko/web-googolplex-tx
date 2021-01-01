@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import model.Comment;
+import model.CustomerType;
 import model.Manifestation;
 import model.Ticket;
 import model.User;
@@ -15,7 +16,7 @@ public class InMemoryRepository {
 	private static Map<String, Manifestation> manifestations = new ConcurrentHashMap<String, Manifestation>();
 	private static Map<String, Ticket> tickets = new ConcurrentHashMap<String, Ticket>();
 	private static Map<String, Comment> comments = new ConcurrentHashMap<String, Comment>();
-
+	private static Map<String, CustomerType> customerTypes = new ConcurrentHashMap<String, CustomerType>();
 	
 	
 	
@@ -219,7 +220,12 @@ public class InMemoryRepository {
 		return deleted;
 	}
 	
-
+	//CUSTOMER TYPE METHODS------------------------------------------------------------------------------------
+	
+	//TODO CREATE CUSTOMER TYPE METHODS
+	public static Collection<CustomerType> findAllCustomerTypes(){
+		return customerTypes.values();
+	}
 	
 	
 }
