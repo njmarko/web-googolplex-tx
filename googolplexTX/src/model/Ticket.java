@@ -124,7 +124,10 @@ public class Ticket {
 	public String toString() {
 		return "Ticket [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
 				+ ", customerName=" + customerName + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
-				+ ", deleted=" + deleted + ", customer=" + customer + ", manifestation=" + manifestation + "]";
+				+ ", deleted=" + deleted + ", customer=" + customer.getUsername() + ", manifestation=" + manifestation.getId() + "]";
 	}
+
+
+
 
 }

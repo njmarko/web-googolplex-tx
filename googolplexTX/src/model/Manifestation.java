@@ -174,8 +174,11 @@ public class Manifestation {
 	public String toString() {
 		return "Manifestation [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
 				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
-				+ ", poster=" + poster + ", deleted=" + deleted + ", salesman=" + salesman + ", location=" + location
-				+ ", comments=" + comments + ", tickets=" + tickets + "]";
+				+ ", poster=" + poster + ", deleted=" + deleted + ", salesman=" + salesman.getUsername() + ", location=" + location
+				+ "]";
 	}
+
+
+
 
 }
