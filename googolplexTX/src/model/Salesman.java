@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import model.enumerations.Gender;
@@ -14,16 +15,18 @@ public class Salesman extends User {
 		super();
 	}
 
-	public Salesman(Collection<Manifestation> manifestation) {
-		super();
-		this.manifestation = manifestation;
-	}
-
 	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted) {
 
 		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
+		this.manifestation = new ArrayList<Manifestation>();
+	}
 
+	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
+			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted,
+			Collection<Manifestation> manifestation) {
+		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
+		this.manifestation = manifestation;
 	}
 
 	public Collection<Manifestation> getManifestation() {

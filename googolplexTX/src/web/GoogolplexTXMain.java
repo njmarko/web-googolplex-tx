@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import model.Address;
 import model.Location;
 import model.Manifestation;
+import model.ManifestationType;
 import model.Salesman;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
@@ -30,8 +31,11 @@ public class GoogolplexTXMain {
 		Location loc = new Location(123.3, 444.3, adrs);
 		Salesman sal = new Salesman("Pera", "pera123", "Perafirst", "peraLast", Gender.MALE, LocalDate.now(),
 				UserRole.SALESMAN, false, false);
+		ManifestationType mt = new ManifestationType("Threatre");
 		Manifestation m1 = new Manifestation("1234", "Man1", 123, LocalDateTime.now(), 123.3,
-				ManifestationStatus.ACTIVE, "poster", false, sal, loc);
+				ManifestationStatus.ACTIVE, "poster", false, mt, sal, loc);
+		
+		
 
 		/*
 		 * Ignore the illegal reflective access operation warning for now
