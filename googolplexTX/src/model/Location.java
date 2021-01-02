@@ -16,9 +16,7 @@ public class Location {
 	}
 
 	public Location(Double longitude, Double latitude, Address address) {
-		super();
-		this.longitude = longitude;
-		this.latitude = latitude;
+		this(longitude, latitude);
 		this.address = address;
 	}
 

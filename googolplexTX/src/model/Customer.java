@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import model.enumerations.Gender;
@@ -19,10 +20,20 @@ public class Customer extends User {
 
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
-			CustomerType customerType, Collection<Comment> comments, Collection<Comment> tickets) {
+			CustomerType customerType) {
 		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
 		this.points = points;
 		this.customerType = customerType;
+		this.comments = new ArrayList<Comment>();
+		this.tickets = new ArrayList<Comment>();
+		;
+	}
+
+	public Customer(String username, String password, String firstName, String lastName, Gender gender,
+			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
+			CustomerType customerType, Collection<Comment> comments, Collection<Comment> tickets) {
+		this(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted, points,
+				customerType);
 		this.comments = comments;
 		this.tickets = tickets;
 	}

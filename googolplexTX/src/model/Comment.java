@@ -3,6 +3,7 @@ package model;
 import model.enumerations.CommentStatus;
 
 public class Comment {
+	private String id;
 	private String text;
 	private Integer rating;
 	private CommentStatus approved;
@@ -15,23 +16,29 @@ public class Comment {
 		super();
 	}
 
-	public Comment(String text, Integer rating, CommentStatus approved, Boolean deleted) {
+	public Comment(String id, String text, Integer rating, CommentStatus approved, Boolean deleted) {
 		super();
+		this.id = id;
 		this.text = text;
 		this.rating = rating;
 		this.approved = approved;
 		this.deleted = deleted;
 	}
 
-	public Comment(String text, Integer rating, CommentStatus approved, Boolean deleted, Manifestation manifestation,
-			Customer customer) {
-		super();
-		this.text = text;
-		this.rating = rating;
-		this.approved = approved;
-		this.deleted = deleted;
+	public Comment(String id, String text, Integer rating, CommentStatus approved, Boolean deleted,
+			Manifestation manifestation, Customer customer) {
+		this(id, text, rating, approved, deleted);
 		this.manifestation = manifestation;
 		this.customer = customer;
+	}
+
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getText() {
@@ -84,7 +91,9 @@ public class Comment {
 
 	@Override
 	public String toString() {
-		return "Comment [text=" + text + ", rating=" + rating + ", approved=" + approved + ", deleted=" + deleted + "]";
+		return "Comment [id=" + id + ", text=" + text + ", rating=" + rating + ", approved=" + approved + ", deleted="
+				+ deleted + "]";
 	}
+
 
 }

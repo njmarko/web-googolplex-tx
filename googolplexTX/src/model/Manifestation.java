@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import model.enumerations.ManifestationStatus;
@@ -18,6 +19,7 @@ public class Manifestation {
 	private String poster;
 	private Boolean deleted;
 
+	private ManifestationType manifestationType;
 	public Salesman salesman;
 	public Location location;
 	public Collection<Comment> comments;
@@ -38,38 +40,31 @@ public class Manifestation {
 		this.status = status;
 		this.poster = poster;
 		this.deleted = deleted;
+
+		this.comments = new ArrayList<Comment>();
+		this.tickets = new ArrayList<Ticket>();
 	}
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
-			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted, Salesman salesman,
-			Location location) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.availableSeats = availableSeats;
-		this.dateOfOccurence = dateOfOccurence;
-		this.regularPrice = regularPrice;
-		this.status = status;
-		this.poster = poster;
-		this.deleted = deleted;
+			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
+			ManifestationType manifestationType, Salesman salesman, Location location) {
+		this(id, name, availableSeats, dateOfOccurence, regularPrice, status, poster, deleted);
+
+		this.manifestationType = manifestationType;
 		this.salesman = salesman;
 		this.location = location;
+
+		this.comments = new ArrayList<Comment>();
+		this.tickets = new ArrayList<Ticket>();
 	}
 
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
-			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted, Salesman salesman,
-			Location location, Collection<Comment> comments, Collection<Ticket> tickets) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.availableSeats = availableSeats;
-		this.dateOfOccurence = dateOfOccurence;
-		this.regularPrice = regularPrice;
-		this.status = status;
-		this.poster = poster;
-		this.deleted = deleted;
-		this.salesman = salesman;
-		this.location = location;
+			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
+			ManifestationType manifestationType, Salesman salesman, Location location, Collection<Comment> comments,
+			Collection<Ticket> tickets) {
+
+		this(id, name, availableSeats, dateOfOccurence, regularPrice, status, poster, deleted, manifestationType,
+				salesman, location);
 		this.comments = comments;
 		this.tickets = tickets;
 	}
@@ -138,6 +133,14 @@ public class Manifestation {
 		this.deleted = deleted;
 	}
 
+	public ManifestationType getManifestationType() {
+		return manifestationType;
+	}
+
+	public void setManifestationType(ManifestationType manifestationType) {
+		this.manifestationType = manifestationType;
+	}
+
 	public Salesman getSalesman() {
 		return salesman;
 	}
@@ -174,11 +177,8 @@ public class Manifestation {
 	public String toString() {
 		return "Manifestation [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
 				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
-				+ ", poster=" + poster + ", deleted=" + deleted + ", salesman=" + salesman.getUsername() + ", location=" + location
-				+ "]";
+				+ ", poster=" + poster + ", deleted=" + deleted + ", manifestationType=" + manifestationType
+				+ ", location=" + location + "]";
 	}
-
-
-
 
 }
