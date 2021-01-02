@@ -1,5 +1,7 @@
 package service;
 
-public interface TicketService extends GenericService<TicketService, String> {
+import model.Ticket;
+
+public interface TicketService extends GenericService<Ticket, String> {
 
 }
