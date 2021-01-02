@@ -12,6 +12,7 @@ import com.google.gson.JsonIOException;
 import model.Comment;
 import model.CustomerType;
 import model.Manifestation;
+import model.ManifestationType;
 import model.Ticket;
 import model.User;
 import support.JsonAdapterUtil;
@@ -23,6 +24,7 @@ public class InMemoryRepository {
 	private static Map<String, Ticket> tickets = new ConcurrentHashMap<String, Ticket>();
 	private static Map<String, Comment> comments = new ConcurrentHashMap<String, Comment>();
 	private static Map<String, CustomerType> customerTypes = new ConcurrentHashMap<String, CustomerType>();
+	private static Map<String, ManifestationType> manifestationTypes = new ConcurrentHashMap<String, ManifestationType>();
 	
 	
 	
@@ -38,8 +40,8 @@ public class InMemoryRepository {
 	
 	
 	//USER METHODS------------------------------------------------------------------------------------
-	public static Map<String, User> findAllUsers() {
-		return users;
+	public static Collection<User> findAllUsers() {
+		return users.values();
 	}
 
 	public static Map<String, User> setUsers(Map<String, User> users) {
@@ -239,11 +241,70 @@ public class InMemoryRepository {
 	}
 	
 	//CUSTOMER TYPE METHODS------------------------------------------------------------------------------------
-	
-	//TODO CREATE CUSTOMER TYPE METHODS
-	public static Collection<CustomerType> findAllCustomerTypes(){
+		public static Collection<CustomerType> findAllCustomerTypes(){
 		return customerTypes.values();
 	}
 	
+	public static Map<String, CustomerType> setCustomerType(Map<String, CustomerType> customerTypes) {
+		InMemoryRepository.customerTypes = customerTypes;
+		return customerTypes;
+	}
 	
+	public static Map<String, CustomerType> saveCustomerTypes(){
+		//TODO logic for saving in the file
+		return customerTypes;
+	}
+	
+	public static CustomerType findOneCustomerType(String key) {
+		return customerTypes.get(key);
+	}
+	
+	
+	public static CustomerType save(CustomerType customerType) {
+		InMemoryRepository.customerTypes.put(customerType.getName(), customerType);
+		return customerType;
+	}
+	
+	public static CustomerType deleteCustomerType(String key) {
+		CustomerType deleted = InMemoryRepository.customerTypes.get(key);
+		if(deleted != null) {
+			deleted.setDeleted(true);
+			//TODO Consider deleting related objects like Location, Address, Tickets etc Cascade deletion
+		}
+		return deleted;
+	}
+	
+	//MANIFESTATION TYPE METHODS------------------------------------------------------------------------------------
+	public static Collection<ManifestationType> findAllManifestationTypes(){
+	return InMemoryRepository.manifestationTypes.values();
+}
+
+public static Map<String, ManifestationType> setManifestationType(Map<String, ManifestationType> manifestationTypes) {
+	InMemoryRepository.manifestationTypes = manifestationTypes;
+	return manifestationTypes;
+}
+
+public static Map<String, ManifestationType> saveManifestationTypes(){
+	//TODO logic for saving in the file
+	return InMemoryRepository.manifestationTypes;
+}
+
+public static ManifestationType findOneManifestationType(String key) {
+	return InMemoryRepository.manifestationTypes.get(key);
+}
+
+
+public static ManifestationType save(ManifestationType manifestationType) {
+	InMemoryRepository.manifestationTypes.put(manifestationType.getName(), manifestationType);
+	return manifestationType;
+}
+
+public static ManifestationType deleteManifestationType(String key) {
+	ManifestationType deleted = InMemoryRepository.manifestationTypes.get(key);
+	if(deleted != null) {
+		deleted.setDeleted(true);
+		//TODO Consider deleting related objects like Location, Address, Tickets etc Cascade deletion
+	}
+	return deleted;
+}
 }
