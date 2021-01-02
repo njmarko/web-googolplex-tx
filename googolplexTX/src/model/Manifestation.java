@@ -1,8 +1,9 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Collection;
+
+import com.google.gson.annotations.Expose;
 
 import model.enumerations.ManifestationStatus;
 
@@ -19,6 +20,7 @@ public class Manifestation {
 	private String poster;
 	private Boolean deleted;
 
+	@Expose
 	public Salesman salesman;
 	public Location location;
 	public Collection<Comment> comments;

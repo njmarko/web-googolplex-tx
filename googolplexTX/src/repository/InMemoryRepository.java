@@ -1,14 +1,22 @@
 package repository;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+
 import model.Comment;
 import model.CustomerType;
 import model.Manifestation;
+import model.Salesman;
 import model.Ticket;
 import model.User;
+import support.JsonAdapterUtil;
 
 public class InMemoryRepository {
 
@@ -126,20 +134,19 @@ public class InMemoryRepository {
 	
 	public static Map<String, Manifestation> saveManifestations(){
 		//TODO logic for saving in the file
-		
-//		try {
-//			Gson gson = new Gson();
-//			FileWriter writer = new FileWriter("data/manifestations.json");
-//			gson.toJson(object, writer);
-//			writer.flush();
-//			writer.close();
-//			return object;
-//		} catch (JsonIOException | IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-		
+		System.out.println("Manifestation save");
+		try {
+			Gson gson = JsonAdapterUtil.manifestationSeraialization();
+
+			FileWriter writer = new FileWriter("data/manifestations.json");
+			gson.toJson(manifestations, writer);
+			writer.flush();
+			writer.close();
+			return manifestations;
+		} catch (JsonIOException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return manifestations;
 	}
@@ -156,7 +163,20 @@ public class InMemoryRepository {
 	}
 	
 	public static Map<String, Ticket> saveTickets(){
-		//TODO logic for saving in the file
+		System.out.println("[LOG] Tickets saving...");
+		try {
+			Gson gson = JsonAdapterUtil.ticketsSeraialization();
+
+			FileWriter writer = new FileWriter("data/tickets.json");
+			gson.toJson(tickets, writer);
+			writer.flush();
+			writer.close();
+			return tickets;
+		} catch (JsonIOException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return tickets;
 	}
 	
