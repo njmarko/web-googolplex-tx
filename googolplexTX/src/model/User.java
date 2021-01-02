@@ -37,6 +37,22 @@ public class User {
 		this.deleted = deleted;
 	}
 
+	/**
+	 * Constructor that sets blocked to FALSE and deleted to FALSE
+	 * 
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 */
+	public User(String username, String password, String firstName, String lastName, Gender gender, LocalDate birthDate,
+			UserRole userRole) {
+		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false);
+	}
+
 	public String getUsername() {
 		return username;
 	}

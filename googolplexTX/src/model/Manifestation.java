@@ -45,6 +45,22 @@ public class Manifestation {
 		this.tickets = new ArrayList<Ticket>();
 	}
 
+	/**
+	 * Constructor that sets manifestationStatus to INACTIVE and deleted to FALSE
+	 * 
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 */
+	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
+			Double regularPrice, ManifestationStatus status, String poster) {
+		this(id, name, availableSeats, dateOfOccurence, regularPrice, ManifestationStatus.INACTIVE, poster, false);
+	}
+
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
 			ManifestationType manifestationType, Salesman salesman, Location location) {
@@ -58,6 +74,26 @@ public class Manifestation {
 		this.tickets = new ArrayList<Ticket>();
 	}
 
+	/**
+	 * Constructor that sets manifestationStatus to INACTIVE and deleted to FALSE
+	 * 
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param poster
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 */
+	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
+			Double regularPrice, String poster, ManifestationType manifestationType, Salesman salesman,
+			Location location) {
+		this(id, name, availableSeats, dateOfOccurence, regularPrice, ManifestationStatus.INACTIVE, poster, false,
+				manifestationType, salesman, location);
+	}
+
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
 			ManifestationType manifestationType, Salesman salesman, Location location, Collection<Comment> comments,
@@ -67,6 +103,29 @@ public class Manifestation {
 				salesman, location);
 		this.comments = comments;
 		this.tickets = tickets;
+	}
+
+	/**
+	 * Constructor that sets manifestationStatus to INACTIVE and deleted to FALSE
+	 * 
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param poster
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 * @param comments
+	 * @param tickets
+	 */
+	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
+			Double regularPrice, String poster, ManifestationType manifestationType, Salesman salesman,
+			Location location, Collection<Comment> comments, Collection<Ticket> tickets) {
+
+		this(id, name, availableSeats, dateOfOccurence, regularPrice, ManifestationStatus.INACTIVE, poster, false,
+				manifestationType, salesman, location, comments, tickets);
 	}
 
 	public String getId() {
@@ -90,7 +149,11 @@ public class Manifestation {
 	}
 
 	public void setAvailableSeats(Integer availableSeats) {
-		this.availableSeats = availableSeats;
+		if (availableSeats != null && availableSeats < 0) {
+			this.availableSeats = 0;
+		} else {
+			this.availableSeats = availableSeats;
+		}
 	}
 
 	public LocalDateTime getDateOfOccurence() {
