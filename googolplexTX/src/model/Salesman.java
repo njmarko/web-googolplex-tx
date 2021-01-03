@@ -9,7 +9,7 @@ import model.enumerations.UserRole;
 
 public class Salesman extends User {
 
-	public Collection<Manifestation> manifestation;
+	public Collection<Manifestation> manifestations;
 
 	public Salesman() {
 		super();
@@ -19,7 +19,7 @@ public class Salesman extends User {
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted) {
 
 		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
-		this.manifestation = new ArrayList<Manifestation>();
+		this.manifestations = new ArrayList<Manifestation>();
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class Salesman extends User {
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted,
 			Collection<Manifestation> manifestation) {
 		super(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted);
-		this.manifestation = manifestation;
+		this.manifestations = manifestation;
 	}
 
 	/**
@@ -63,11 +63,11 @@ public class Salesman extends User {
 	}
 
 	public Collection<Manifestation> getManifestation() {
-		return manifestation;
+		return manifestations;
 	}
 
 	public void setManifestation(Collection<Manifestation> manifestation) {
-		this.manifestation = manifestation;
+		this.manifestations = manifestation;
 	}
 
 	@Override

@@ -5,50 +5,54 @@ Vue.component("web-shop", {
 		}
 	},
 	template: ` 
-<div>
-	Manifestacije:
-	<div v-for="p in manifestations">
-		<table border = "1">
-			<tr>
-				<td>Id</td>
-				<td>{{p.id }}</td>
-			</tr>
-			<tr>
-				<td>Name</td>
-				<td>{{p.name }}</td>
-			</tr>
-			<tr>
-				<td>Available Seats</td>
-				<td>{{p.availableSeats }}</td>
-			</tr>
-			<tr>
-				<td>Date of Occurence</td>
-				<td>{{p.dateOfOccurence.date.month + "/" + p.dateOfOccurence.date.day + "/" + p.dateOfOccurence.date.year + "." }}</td>
-			</tr>
-			<tr>
-				<td>Regular Price</td>
-				<td>{{p.regularPrice}}</td>
-			</tr>
-			<tr>
-				<td>Status</td>
-				<td>{{p.status}}</td>
-			</tr>
-			<tr>
-				<td>Manifestation Type</td>
-				<td>{{p.manifestationType.name}}</td>
-			</tr>
-			<tr>
-				<td>Salesman</td>
-				<td>{{p.salesman.firstName + " " + p.salesman.lastName}}</td>
-			</tr>
-			<tr>
-				<td>Location</td>
-				<td>{{p.location.address.city}}</td>
-			</tr>
-		</table>
+<div class="row">
+	<div class="container">
 		<br>
-	</div>
-			
+		<h1 class="text-center">Manifestations</h1>
+		<div v-for="p in manifestations" >
+			<table class="table table-hover table-bordered text-center">
+				<tbody>
+					<tr>
+						<td>Id</td>
+						<td>{{p.id }}</td>
+					</tr>
+					<tr>
+						<td>Name</td>
+						<td>{{p.name }}</td>
+					</tr>
+					<tr>
+						<td>Available Seats</td>
+						<td>{{p.availableSeats }}</td>
+					</tr>
+					<tr>
+						<td>Date of Occurence</td>
+						<td>{{p.dateOfOccurence.date.month + "/" + p.dateOfOccurence.date.day + "/" + p.dateOfOccurence.date.year + "." }}</td>
+					</tr>
+					<tr>
+						<td>Regular Price</td>
+						<td>{{p.regularPrice}}</td>
+					</tr>
+					<tr>
+						<td>Status</td>
+						<td>{{p.status}}</td>
+					</tr>
+					<tr>
+						<td>Manifestation Type</td>
+						<td>{{p.manifestationType.name}}</td>
+					</tr>
+					<tr>
+						<td>Salesman</td>
+						<td>{{p.salesman.firstName + " " + p.salesman.lastName}}</td>
+					</tr>
+					<tr>
+						<td>Location</td>
+						<td>{{p.location.address.city}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+		</div>
+	</div>	
 </div>		  
 `
 	,
@@ -56,7 +60,7 @@ Vue.component("web-shop", {
 	},
 	mounted() {
 		axios
-			.get('/manifestations')
+			.get('api/manifestations')
 			.then(response => (this.manifestations = response.data))
 	},
 });
