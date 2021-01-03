@@ -50,22 +50,22 @@ public class InMemoryRepository {
 	}
 	
 	public static Map<String, User> saveUsers(){
-		//TODO logic for saving in the file
-		
-//		try {
-//			Gson gson = new Gson();
-//			FileWriter writer = new FileWriter("data/manifestations.json");
-//			gson.toJson(object, writer);
-//			writer.flush();
-//			writer.close();
-//			return object;
-//		} catch (JsonIOException | IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-		
-		
+
+
+		System.out.println("[LOG] Users saving...");
+		try {
+			Gson gson = JsonAdapterUtil.userSerializationToFile();
+
+			FileWriter writer = new FileWriter("data/users.json");
+			gson.toJson(users, writer);
+			writer.flush();
+			writer.close();
+			return users;
+		} catch (JsonIOException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return users;
 	}
 	
@@ -133,8 +133,7 @@ public class InMemoryRepository {
 	}
 	
 	public static Map<String, Manifestation> saveManifestations(){
-		//TODO logic for saving in the file
-		System.out.println("Manifestation save");
+		System.out.println("[LOG] Manifestation saving");
 		try {
 			Gson gson = JsonAdapterUtil.manifestationSeraialization();
 
@@ -213,8 +212,21 @@ public class InMemoryRepository {
 	}
 	
 	public static Map<String, Comment> saveComments(){
-		//TODO logic for saving in the file
-		return comments;
+		System.out.println("[LOG] Comments saving");
+		try {
+			Gson gson = JsonAdapterUtil.commentsSerializationToFile();
+
+			FileWriter writer = new FileWriter("data/comments.json");
+			gson.toJson(InMemoryRepository.comments, writer);
+			writer.flush();
+			writer.close();
+			return InMemoryRepository.comments;
+		} catch (JsonIOException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return InMemoryRepository.comments;
 	}
 	
 	public static Comment findOneComment(String key) {
@@ -223,11 +235,7 @@ public class InMemoryRepository {
 	
 	
 	public static Comment save(Comment comment) {
-		//TODO add this code when the model is merged because now there is no id in comment
-		//tickets.put(comment.getId(), comment);
-		
-		//TODO Do the saving in the file
-		
+		InMemoryRepository.comments.put(comment.getId(), comment);
 		return comment;
 	}
 	
@@ -251,7 +259,20 @@ public class InMemoryRepository {
 	}
 	
 	public static Map<String, CustomerType> saveCustomerTypes(){
-		//TODO logic for saving in the file
+		System.out.println("[LOG] CustomerType saving");
+		try {
+			Gson gson = JsonAdapterUtil.customerTypeSerializationToFile();
+
+			FileWriter writer = new FileWriter("data/customerTypes.json");
+			gson.toJson(InMemoryRepository.customerTypes, writer);
+			writer.flush();
+			writer.close();
+			return customerTypes;
+		} catch (JsonIOException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return customerTypes;
 	}
 	
@@ -285,7 +306,20 @@ public static Map<String, ManifestationType> setManifestationType(Map<String, Ma
 }
 
 public static Map<String, ManifestationType> saveManifestationTypes(){
-	//TODO logic for saving in the file
+	System.out.println("[LOG] ManifestationType saving");
+	try {
+		Gson gson = JsonAdapterUtil.manifestationTypeSerializationToFile();
+
+		FileWriter writer = new FileWriter("data/manifestationTypes.json");
+		gson.toJson(InMemoryRepository.manifestationTypes, writer);
+		writer.flush();
+		writer.close();
+		return InMemoryRepository.manifestationTypes;
+	} catch (JsonIOException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
 	return InMemoryRepository.manifestationTypes;
 }
 

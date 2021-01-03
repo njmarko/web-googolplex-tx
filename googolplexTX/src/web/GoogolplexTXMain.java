@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import model.Address;
+import model.Comment;
 import model.Customer;
 import model.CustomerType;
 import model.Location;
@@ -39,8 +40,9 @@ public class GoogolplexTXMain {
 		 * adjusted so it only saves the id's of the collections within it. Gson can
 		 * later convert these id's to customer objects after loading
 		 */
+		CustomerType ct1 = new CustomerType("Neki", 5.0, 232.0, false);
 		Customer c1 = new Customer("micko123", "pass123", "namemica", "lepimica", Gender.MALE, LocalDate.now(),
-				UserRole.CUSTOMER, false, false, 0, new CustomerType("Neki", 5.0, 232.0, false));
+				UserRole.CUSTOMER, false, false, 0, ct1);
 
 		Address adrs = new Address("123", "Novi Sad", 123, "Cika Perina");
 		Location loc = new Location(123.3, 444.3, adrs);
@@ -51,7 +53,12 @@ public class GoogolplexTXMain {
 				ManifestationStatus.ACTIVE, "poster", false, mt, sal, loc);
 		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, "CstName", TicketType.REGULAR, TicketStatus.RESERVED,
 				null, false, c1, m1);
-
+		m1.getTickets().add(t1);
+		
+		Comment comm1 = new Comment("1001", "Tekst", 3, m1, c1);
+		m1.getComments().add(comm1);
+		c1.getComments().add(comm1);
+		
 		/*
 		 * Ignore the illegal reflective access operation warning for now
 		 */
@@ -72,16 +79,23 @@ public class GoogolplexTXMain {
 		InMemoryRepository.saveManifestations();
 		InMemoryRepository.save(t1);
 		InMemoryRepository.saveTickets();
+		InMemoryRepository.save(sal);
+		InMemoryRepository.save(c1);
+		InMemoryRepository.saveUsers();
+		
+		InMemoryRepository.save(comm1);
+		InMemoryRepository.saveComments();
+
+		InMemoryRepository.save(ct1);
+		InMemoryRepository.save(mt);
+		InMemoryRepository.saveCustomerTypes();
+		InMemoryRepository.saveManifestationTypes();
 		// manifestationService.load();
 
-		System.out.println(manifestationService.findOne(m1.getId()));
 
 		TestData td = new TestData();
 		td.createTestData();
-		for (Manifestation man : manifestationService.findAll().stream().filter(m -> m.getDeleted())
-				.collect(Collectors.toList())) {
-			System.out.println(man);
-		}
+
 	}
 
 }
