@@ -1,7 +1,7 @@
 package model;
 
 public class Address {
-	private Integer number;
+	private String number;
 	private String city;
 	private Integer zipCode;
 	private String street;
@@ -10,7 +10,7 @@ public class Address {
 		super();
 	}
 
-	public Address(Integer number, String city, Integer zipCode, String street) {
+	public Address(String number, String city, Integer zipCode, String street) {
 		super();
 		this.number = number;
 		this.city = city;
@@ -18,11 +18,11 @@ public class Address {
 		this.street = street;
 	}
 
-	public Integer getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 

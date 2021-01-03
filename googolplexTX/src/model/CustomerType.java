@@ -18,6 +18,17 @@ public class CustomerType {
 		this.deleted = deleted;
 	}
 
+	/**
+	 * Constructor that sets deleted to FALSE
+	 * 
+	 * @param name
+	 * @param discount
+	 * @param requiredPoints
+	 */
+	public CustomerType(String name, Double discount, Double requiredPoints) {
+		this(name, discount, requiredPoints, false);
+	}
+
 	public String getName() {
 		return name;
 	}

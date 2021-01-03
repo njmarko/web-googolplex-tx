@@ -9,16 +9,19 @@ public class ManifestationType {
 		super();
 	}
 
-	public ManifestationType(String name) {
-		super();
-		this.name = name;
-		this.deleted = false;
-	}
-	
 	public ManifestationType(String name, Boolean deleted) {
 		super();
 		this.name = name;
 		this.deleted = deleted;
+	}
+
+	/**
+	 * Constructor that sets deleted to FALSE
+	 * 
+	 * @param name
+	 */
+	public ManifestationType(String name) {
+		this(name, false);
 	}
 
 	public String getName() {

@@ -12,6 +12,7 @@ public class Ticket {
 	private String customerName;
 	private TicketType ticketType;
 	private TicketStatus ticketStatus;
+	private LocalDateTime cancelationDate;
 	private Boolean deleted;
 
 	public Customer customer;
@@ -22,7 +23,7 @@ public class Ticket {
 	}
 
 	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
-			TicketType ticketType, TicketStatus ticketStatus, Boolean deleted) {
+			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
@@ -30,22 +31,32 @@ public class Ticket {
 		this.customerName = customerName;
 		this.ticketType = ticketType;
 		this.ticketStatus = ticketStatus;
+		this.cancelationDate = cancelationDate;
 		this.deleted = deleted;
 	}
 
 	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
-			TicketType ticketType, TicketStatus ticketStatus, Boolean deleted, Customer customer,
-			Manifestation manifestation) {
-		super();
-		this.id = id;
-		this.dateOfManifestation = dateOfManifestation;
-		this.price = price;
-		this.customerName = customerName;
-		this.ticketType = ticketType;
-		this.ticketStatus = ticketStatus;
-		this.deleted = deleted;
+			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted,
+			Customer customer, Manifestation manifestation) {
+		this(id, dateOfManifestation, price, customerName, ticketType, ticketStatus, cancelationDate, deleted);
 		this.customer = customer;
 		this.manifestation = manifestation;
+	}
+
+	/**
+	 * Constructor that sets deleted to FALSE, cancelationDate to NULL, ticketStatus
+	 * to RESERVED. It takes customerName from customer, and dateOfManifestation
+	 * from manifestation
+	 * 
+	 * @param id
+	 * @param price
+	 * @param ticketType
+	 * @param customer
+	 * @param manifestation
+	 */
+	public Ticket(String id, Double price, TicketType ticketType, Customer customer, Manifestation manifestation) {
+		this(id, manifestation.getDateOfOccurence(), price, customer.getFirstName() + " " + customer.getLastName(),
+				ticketType, TicketStatus.RESERVED, null, false, customer, manifestation);
 	}
 
 	public String getId() {
@@ -120,14 +131,20 @@ public class Ticket {
 		this.manifestation = manifestation;
 	}
 
+	public LocalDateTime getCancelationDate() {
+		return cancelationDate;
+	}
+
+	public void setCancelationDate(LocalDateTime cancelationDate) {
+		this.cancelationDate = cancelationDate;
+	}
+
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
 				+ ", customerName=" + customerName + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
-				+ ", deleted=" + deleted + ", customer=" + customer.getUsername() + ", manifestation=" + manifestation.getId() + "]";
+				+ ", cancelationDate=" + cancelationDate + ", deleted=" + deleted + ", customer="
+				+ customer.getUsername() + ", manifestation=" + manifestation.getId() + "]";
 	}
-
-
-
 
 }
