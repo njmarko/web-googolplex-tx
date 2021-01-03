@@ -1,10 +1,20 @@
 package web;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream.GetField;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.ReadableByteChannel;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import org.eclipse.jetty.util.resource.Resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,71 +27,40 @@ import model.Manifestation;
 import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
+import model.User;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
 import repository.InMemoryRepository;
+import service.ManifestationService;
+import service.UserService;
 import service.implementation.ManifestationDao;
 import support.JsonAdapterUtil;
+import web.controller.ManifestationControler;
+import web.controller.UserController;
+
+
+import static spark.Spark.port;
+import static spark.Spark.post;
+import static spark.Spark.staticFiles;
+import spark.Request;
+import spark.Session;
+
 
 public class GoogolplexTXMain {
 
-	public static ManifestationDao manifestationService = new ManifestationDao();
+	
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("Hello World!");
 
-		/*
-		 * Simple test case for saving manifestation with nested objects Code should be
-		 * adjusted so it only saves the id's of the collections within it. Gson can
-		 * later convert these id's to customer objects after loading
-		 */
-		Customer c1 = new Customer("micko123", "pass123", "namemica", "lepimica", Gender.MALE, LocalDate.now(),
-				UserRole.CUSTOMER, false, false, 0, new CustomerType("Neki", 5.0, 232.0, false));
+		TestData.createTestData();
+		
+		new ManifestationControler(new ManifestationDao());
+		new UserController();
+		
 
-		Address adrs = new Address("123", "Novi Sad", 123, "Cika Perina");
-		Location loc = new Location(123.3, 444.3, adrs);
-		Salesman sal = new Salesman("Pera", "pera123", "Perafirst", "peraLast", Gender.MALE, LocalDate.now(),
-				UserRole.SALESMAN, false, false);
-		ManifestationType mt = new ManifestationType("Threatre");
-		Manifestation m1 = new Manifestation("1234", "Man1", 123, LocalDateTime.now(), 123.3,
-				ManifestationStatus.ACTIVE, "poster", false, mt, sal, loc);
-		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, "CstName", TicketType.REGULAR, TicketStatus.RESERVED,
-				null, false, c1, m1);
-
-		/*
-		 * Ignore the illegal reflective access operation warning for now
-		 */
-
-		Collection<Salesman> prodavci = new ArrayList<Salesman>();
-		prodavci.add(sal);
-
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		gsonBuilder.registerTypeAdapter(new ArrayList<Customer>().getClass(),
-				JsonAdapterUtil.serializeSalesmanCollection);
-		Gson customGson = gsonBuilder.create();
-		String customJSON = customGson.toJson(prodavci);
-		System.out.println(customJSON);
-
-		manifestationService.save(m1);
-
-		InMemoryRepository.saveManifestations();
-		InMemoryRepository.save(t1);
-		InMemoryRepository.saveTickets();
-		// manifestationService.load();
-
-		System.out.println(manifestationService.findOne(m1.getId()));
-
-		TestData td = new TestData();
-		td.createTestData();
-		for (Manifestation man : manifestationService.findAll().stream().filter(m -> m.getDeleted())
-				.collect(Collectors.toList())) {
-			System.out.println(man);
-		}
 	}
 
 }
