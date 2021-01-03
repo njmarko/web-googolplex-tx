@@ -53,8 +53,10 @@ import spark.Session;
 public class GoogolplexTXMain {
 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
+		staticFiles.externalLocation(new File("./static").getCanonicalPath()); 
+		
 		TestData.createTestData();
 		
 		new ManifestationControler(new ManifestationDao());
