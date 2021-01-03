@@ -20,7 +20,7 @@ import repository.InMemoryRepository;
 
 public class TestData {
 
-	public void createTestData() {
+	public static void createTestData() {
 
 		// CUSTOMER TYPES---------------------------------------------------
 		CustomerType custType0 = new CustomerType("Peasant", 3.0, 0d, false);
