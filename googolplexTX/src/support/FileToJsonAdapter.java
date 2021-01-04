@@ -49,7 +49,11 @@ public class FileToJsonAdapter {
 	}
 
 	
-	public static final JsonDeserializer<User> adapterBasicUser = new JsonDeserializer<User>() {
+	/**
+	 * Adapter for Admin (Base User) Class
+	 * Consumes basic User json
+	 */
+	public static final JsonDeserializer<User> adapterUser = new JsonDeserializer<User>() {
 
 		@Override
 		public User deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -90,6 +94,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get User by id
+	 * Create new bare class and save or get from repository if exists with that id
+	 * Consumes jsonPrimitive containing id
+	 */
 	public static final JsonDeserializer<User> adapterUserId = new JsonDeserializer<User>() {
 
 		@Override
@@ -110,6 +120,11 @@ public class FileToJsonAdapter {
 
 	};
 	
+	
+	/**
+	 * Adapter for Salesman Class
+	 * Consumes basic Salesman json
+	 */
 	public static final JsonDeserializer<Salesman> adapterBasicSalesman = new JsonDeserializer<Salesman>() {
 
 		@Override
@@ -176,6 +191,11 @@ public class FileToJsonAdapter {
 
 	};
 	
+	
+	/**
+	 * Adapter for Customer Class
+	 * Consumes basic Customer json
+	 */
 	public static final JsonDeserializer<Customer> adapterBasicCustomer = new JsonDeserializer<Customer>() {
 
 		@Override
@@ -231,6 +251,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Customer by id
+	 * Create new bare class and save or get from repository if exists with that id
+	 * Consumes jsonPrimitive containing id
+	 */
 	public static final JsonDeserializer<Customer> adapterCustomerId = new JsonDeserializer<Customer>() {
 
 		@Override
@@ -252,6 +278,11 @@ public class FileToJsonAdapter {
 	};
 	
 	
+	/**
+	 * Adapter for all User Classes
+	 * Map into User, Salesman and Customer based on userRole attribute
+	 * Consumes Users Json Array
+	 */
 	public static final JsonDeserializer<Map<String, User>> adapterUserMap = new JsonDeserializer<Map<String, User>>() {
 
 		@Override
@@ -259,11 +290,8 @@ public class FileToJsonAdapter {
 				throws JsonParseException {
 			
 			Map<String, User> usersMap = new HashMap<String, User>();
-
-			
 	        JsonObject usersObject = json.getAsJsonObject();
 	        
-	
 	        for (Map.Entry<String, JsonElement> user : usersObject.entrySet()) {
 
 	        	JsonObject jsonUser = user.getValue().getAsJsonObject(); 
@@ -283,6 +311,10 @@ public class FileToJsonAdapter {
 	};
 	
 	// Manifestation
+	/**
+	 * Manifestation Adapter
+	 * Generate Manifestation from basic manifestation Json Object
+	 */
 	public static final JsonDeserializer<Manifestation> adapterBareManifestation = new JsonDeserializer<Manifestation>() {
 
 		@Override
@@ -297,9 +329,9 @@ public class FileToJsonAdapter {
 	        ManifestationType manifestationType = context.deserialize(jsonObject.get("manifestationType"), ManifestationType.class);
 	        Salesman salesman = context.deserialize(jsonObject.get("salesman"), Salesman.class);
 	        
+	        // Generate new Manifestation or supplement pre-created obj (used in links)
 	        String id = jsonObject.get("id").getAsString();
 	        Manifestation manifestation = InMemoryRepository.findOneManifestation(id);
-
 	        if (manifestation == null) {
 				return new Manifestation(
 						jsonObject.get("id").getAsString(), 
@@ -329,6 +361,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Manifestation by id
+	 * Create new bare class and save or get from repository if exists with that id
+	 * Consumes jsonPrimitive containing id
+	 */
 	public static final JsonDeserializer<Manifestation> adapterManifestationId = new JsonDeserializer<Manifestation>() {
 
 		@Override
@@ -348,6 +386,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Collections of Manifestation by id array
+	 * Create new bare classes and save or get from repository if exists with that id
+	 * Consumes jsonArray containing ids
+	 */
 	public static final JsonDeserializer<Collection<Manifestation>> adapterManifestationIdCollection = new JsonDeserializer<Collection<Manifestation>>() {
 
 		@Override
@@ -374,6 +418,10 @@ public class FileToJsonAdapter {
 	};
 	
 	// Ticket
+	/**
+	 * Ticket Adapter
+	 * Generate Ticket from basic tickets Json Object
+	 */
 	public static final JsonDeserializer<Ticket> adapterBareTicket = new JsonDeserializer<Ticket>() {
 
 		@Override
@@ -418,6 +466,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Ticket by id
+	 * Create new bare class and save or get from repository if exists with that id
+	 * Consumes jsonPrimitive containing id
+	 */
 	public static final JsonDeserializer<Ticket> adapterTicketId = new JsonDeserializer<Ticket>() {
 
 		@Override
@@ -436,6 +490,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Collections of Tickets by id array
+	 * Create new bare classes and save or get from repository if exists with that id
+	 * Consumes jsonArray containing ids
+	 */
 	public static final JsonDeserializer<Collection<Ticket>> adapterTicketIdCollection = new JsonDeserializer<Collection<Ticket>>() {
 
 		@Override
@@ -463,6 +523,10 @@ public class FileToJsonAdapter {
 	
 	
 	// Comment
+	/**
+	 * Comment Adapter
+	 * Generate Comment from basic comment Json Object
+	 */
 	public static final JsonDeserializer<Comment> commentBareTicket = new JsonDeserializer<Comment>() {
 
 		@Override
@@ -499,6 +563,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Comment by id
+	 * Create new bare class and save or get from repository if exists with that id
+	 * Consumes jsonPrimitive containing id
+	 */
 	public static final JsonDeserializer<Comment> adapterCommentId = new JsonDeserializer<Comment>() {
 
 		@Override
@@ -517,6 +587,12 @@ public class FileToJsonAdapter {
 		}
 
 	};
+	
+	/**
+	 * Get Collections of Comments by id array
+	 * Create new bare classes and save or get from repository if exists with that id
+	 * Consumes jsonArray containing ids
+	 */
 	public static final JsonDeserializer<Collection<Comment>> adapterCommentIdCollection = new JsonDeserializer<Collection<Comment>>() {
 
 		@Override
@@ -544,6 +620,10 @@ public class FileToJsonAdapter {
 	
 	
 	// Manifesattion Type id
+	/**
+	 * ManifestationType Adapter
+	 * Generate ManifestationType from basic Customer Type Json Object
+	 */
 	public static final JsonDeserializer<ManifestationType> adapterManifestationTypeId = new JsonDeserializer<ManifestationType>() {
 
 		@Override
@@ -564,6 +644,10 @@ public class FileToJsonAdapter {
 	};	
 	
 	// Customer Type id
+	/**
+	 * CustomerType Adapter
+	 * Generate CustomerType from basic Customer Type Json Object
+	 */
 	public static final JsonDeserializer<CustomerType> adapterCustomerTypeId = new JsonDeserializer<CustomerType>() {
 
 		@Override
@@ -584,6 +668,10 @@ public class FileToJsonAdapter {
 	};
 	
 	// Date Time
+	/**
+	 * LocalTime Adapter
+	 * Used to avoid warnings
+	 */
 	public static final JsonDeserializer<LocalDate> adapterLocalDate = new JsonDeserializer<LocalDate>() {
 
 		@Override
@@ -602,6 +690,10 @@ public class FileToJsonAdapter {
 
 	};
 	
+	/**
+	 * LocalTime Adapter
+	 * Used to avoid warnings
+	 */
 	public static final JsonDeserializer<LocalTime> adapterLocalTime = new JsonDeserializer<LocalTime>() {
 
 		@Override
@@ -620,6 +712,10 @@ public class FileToJsonAdapter {
 
 	};
 	
+	/**
+	 * LocalDateTime Adapter
+	 * Used to avoid warnings
+	 */
 	public static final JsonDeserializer<LocalDateTime> adapterLocalDateTime = new JsonDeserializer<LocalDateTime>() {
 
 		@Override
@@ -646,7 +742,7 @@ public class FileToJsonAdapter {
 		Type manifestationsType = new TypeToken<Collection<Manifestation>>() {}.getType();
 
 		gsonBuilder.registerTypeAdapter(usersType, adapterUserMap);
-		gsonBuilder.registerTypeAdapter(User.class, adapterBasicUser);
+		gsonBuilder.registerTypeAdapter(User.class, adapterUser);
 		gsonBuilder.registerTypeAdapter(Salesman.class, adapterBasicSalesman);
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterBasicCustomer);
 		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
