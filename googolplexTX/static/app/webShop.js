@@ -5,13 +5,17 @@ Vue.component("web-shop", {
 		}
 	},
 	template: ` 
-<div class="row">
-	<div class="container">
+<div  class="row" >
+		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
+	<div id="top" class="container" >
 		<br>
+		
+
+		
 		<h1 class="text-center">Manifestations</h1>
-		<div v-for="p in manifestations" >
-			<table class="table table-hover table-bordered text-center">
-				<tbody>
+		<div  v-for="p in manifestations">
+			<table class="table table-hover table-bordered table-striped text-center">
+				<tbody >
 					<tr>
 						<td>Id</td>
 						<td>{{p.id }}</td>

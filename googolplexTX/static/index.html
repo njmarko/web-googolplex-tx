@@ -2,60 +2,77 @@
 <html>
 
 <head>
-	<link href="css/toast.css" rel="stylesheet" />
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <!-- Load required Bootstrap and BootstrapVue CSS -->
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+<link type="text/css" rel="stylesheet"
+	href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet"
+	href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
 
 <!-- Load polyfills to support older browsers -->
-<script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+<script
+	src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"
+	crossorigin="anonymous"></script>
 
 <!-- Load Vue followed by BootstrapVue -->
 <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 
 <!-- Load the following for BootstrapVueIcons support -->
-<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
-</head> 
+<script
+	src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+</head>
+
+<link type="text/css" rel="stylesheet"
+	href="css/main.css" />
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
 
 <body>
-<div id="webShop">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container">
-                <a class="navbar-brand" href="/">Googolplex-Tx</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <a class="nav-item nav-link active" href="/">Home <span className="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link" href="#/manifestations">Manifestations</a>
-                        <a class="nav-item nav-link" href="api/users">Users</a>
-                    </div>
-                </div>
-                </div>
-            </nav>
-		  <router-view></router-view>
-          <br/>
-          <footer class="page-footer font-small blue">
+	<div id="webShop">
+		<nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container">
+				<a class="navbar-brand" href="/">Googolplex-Tx</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarNavAltMarkup"
+					aria-controls="navbarNavAltMarkup" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+					<div class="navbar-nav">
+						<a class="nav-item nav-link active" href="/">Home <span
+							className="sr-only">(current)</span></a> <a class="nav-item nav-link"
+							href="#/manifestations">Manifestations</a> 
+							<a class="nav-item nav-link" href="#/login">login</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+		  
+		<router-view></router-view>
+		<br />
+		            <footer className="page-footer font-small blue">
 
-            <div class="footer-copyright text-center py-3"><span>© 2021 Copyright: </span>
+            <div className="footer-copyright text-center py-3"><span>© 2020 Copyright: </span>
                  <a href="/aboutus">Our team</a>
             </div>
 
-          </footer>
-</div>
+            </footer>
 
-<script src="js/vue.js"></script>
-<script src="js/vue-router.js"></script>
-<script src="js/axios.js"></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/toast.js"></script>
-<script src="app/webShop.js"></script>
-<script src="app/app.js"></script>
+	</div>
+
+	<script src="js/vue.js"></script>
+	<script src="js/vue-router.js"></script>
+	<script src="js/axios.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="app/webShop.js"></script>
+	<script src="app/app.js"></script>
+
+	
 
 
 
