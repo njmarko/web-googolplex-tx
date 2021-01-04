@@ -2,12 +2,17 @@ package repository;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.google.gson.reflect.TypeToken;
 
 import model.Comment;
 import model.CustomerType;
@@ -15,11 +20,12 @@ import model.Manifestation;
 import model.ManifestationType;
 import model.Ticket;
 import model.User;
-import support.JsonAdapterUtil;
+import support.FileToJsonAdapter;
+import support.JsonToFileAdapter;
 
 public class InMemoryRepository {
 
-	private static Map<String, User> users = new ConcurrentHashMap<String, User>();
+	public static Map<String, User> users = new ConcurrentHashMap<String, User>();
 	private static Map<String, Manifestation> manifestations = new ConcurrentHashMap<String, Manifestation>();
 	private static Map<String, Ticket> tickets = new ConcurrentHashMap<String, Ticket>();
 	private static Map<String, Comment> comments = new ConcurrentHashMap<String, Comment>();
@@ -33,10 +39,103 @@ public class InMemoryRepository {
 	 * @return true if all files were successfully loaded
 	 */
 	public static Boolean loadData() {
-		//TODO implement loading of data
+		try {
+			loadCustomerTypes();
+			loadManifestationTypes();
+			loadBareUsers();
+			loadBareManifestations();
+			loadBareTickets();
+			loadBareComments();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 	
+	
+	private static Boolean loadCustomerTypes() throws IOException {
+		Gson gson = FileToJsonAdapter.customerTypeSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/customerTypes.json"));
+	    
+		Type mapType = new TypeToken<Map<String, CustomerType>>() {}.getType();
+	    InMemoryRepository.customerTypes = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitani customer typovi");
+	    
+		return true;
+	}
+	
+	private static Boolean loadManifestationTypes() throws IOException {
+		Gson gson = FileToJsonAdapter.manifestationTypeSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/manifestationTypes.json"));
+	    
+		Type mapType = new TypeToken<Map<String, ManifestationType>>() {}.getType();
+	    InMemoryRepository.manifestationTypes = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitani manifestation typovi");
+	    
+		return true;
+	}
+	
+	private static Boolean loadBareUsers() throws IOException {
+		Gson gson = FileToJsonAdapter.usersSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/users.json"));
+	    
+		Type mapType = new TypeToken<Map<String, User>>() {}.getType();
+	    InMemoryRepository.users = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitani useri");
+	    
+		return true;
+		
+	}
+	
+	private static Boolean loadBareManifestations() throws IOException {
+		Gson gson = FileToJsonAdapter.manifestationsSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/manifestations.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Manifestation>>() {}.getType();
+	    InMemoryRepository.manifestations = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitane manifestacije");
+	    
+		return true;
+		
+	}
+
+	
+	private static Boolean loadBareTickets() throws IOException {
+		Gson gson = FileToJsonAdapter.ticketsSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/tickets.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Ticket>>() {}.getType();
+	    InMemoryRepository.tickets = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitani tiketi");
+	    
+		return true;
+		
+	}
+	
+
+	private static Boolean loadBareComments() throws IOException {
+		Gson gson = FileToJsonAdapter.commentsSerializationFromFile();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/comments.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Comment>>() {}.getType();
+	    InMemoryRepository.comments = gson.fromJson(reader, mapType);
+		
+	    System.out.println("[DBG] Ucitani komentari");
+	    
+		return true;
+		
+	}
 	
 	
 	//USER METHODS------------------------------------------------------------------------------------
@@ -54,7 +153,7 @@ public class InMemoryRepository {
 
 		System.out.println("[LOG] Users saving...");
 		try {
-			Gson gson = JsonAdapterUtil.userSerializationToFile();
+			Gson gson = JsonToFileAdapter.userSerializationToFile();
 
 			FileWriter writer = new FileWriter("data/users.json");
 			gson.toJson(users, writer);
@@ -135,7 +234,7 @@ public class InMemoryRepository {
 	public static Map<String, Manifestation> saveManifestations(){
 		System.out.println("[LOG] Manifestation saving");
 		try {
-			Gson gson = JsonAdapterUtil.manifestationSeraialization();
+			Gson gson = JsonToFileAdapter.manifestationSeraialization();
 
 			FileWriter writer = new FileWriter("data/manifestations.json");
 			gson.toJson(manifestations, writer);
@@ -164,7 +263,7 @@ public class InMemoryRepository {
 	public static Map<String, Ticket> saveTickets(){
 		System.out.println("[LOG] Tickets saving...");
 		try {
-			Gson gson = JsonAdapterUtil.ticketsSeraialization();
+			Gson gson = JsonToFileAdapter.ticketsSeraialization();
 
 			FileWriter writer = new FileWriter("data/tickets.json");
 			gson.toJson(tickets, writer);
@@ -214,7 +313,7 @@ public class InMemoryRepository {
 	public static Map<String, Comment> saveComments(){
 		System.out.println("[LOG] Comments saving");
 		try {
-			Gson gson = JsonAdapterUtil.commentsSerializationToFile();
+			Gson gson = JsonToFileAdapter.commentsSerializationToFile();
 
 			FileWriter writer = new FileWriter("data/comments.json");
 			gson.toJson(InMemoryRepository.comments, writer);
@@ -261,7 +360,7 @@ public class InMemoryRepository {
 	public static Map<String, CustomerType> saveCustomerTypes(){
 		System.out.println("[LOG] CustomerType saving");
 		try {
-			Gson gson = JsonAdapterUtil.customerTypeSerializationToFile();
+			Gson gson = JsonToFileAdapter.customerTypeSerializationToFile();
 
 			FileWriter writer = new FileWriter("data/customerTypes.json");
 			gson.toJson(InMemoryRepository.customerTypes, writer);
@@ -308,7 +407,7 @@ public static Map<String, ManifestationType> setManifestationType(Map<String, Ma
 public static Map<String, ManifestationType> saveManifestationTypes(){
 	System.out.println("[LOG] ManifestationType saving");
 	try {
-		Gson gson = JsonAdapterUtil.manifestationTypeSerializationToFile();
+		Gson gson = JsonToFileAdapter.manifestationTypeSerializationToFile();
 
 		FileWriter writer = new FileWriter("data/manifestationTypes.json");
 		gson.toJson(InMemoryRepository.manifestationTypes, writer);

@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,17 +25,18 @@ import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
 import model.User;
-import model.enumerations.UserRole;
 
-public class JsonAdapterUtil {
+public class JsonToFileAdapter {
 
-	private static Map<UserRole, Class<?>> userCastMap = new TreeMap<UserRole, Class<?>>();
+//	private static Map<UserRole, Class<?>> userCastMap = new TreeMap<UserRole, Class<?>>();
 
-	private JsonAdapterUtil() {
-		userCastMap.put(UserRole.ADMIN, User.class);
-		userCastMap.put(UserRole.SALESMAN, Salesman.class);
-		userCastMap.put(UserRole.CUSTOMER, Customer.class);
-	}
+	
+//	private JsonToFileAdapter() {
+//		userCastMap.put(UserRole.ADMIN, User.class);
+//		userCastMap.put(UserRole.SALESMAN, Salesman.class);
+//		userCastMap.put(UserRole.CUSTOMER, Customer.class);
+//		System.out.println("Desava se JsonToFile");
+//	}
 
 
 
@@ -176,29 +175,29 @@ public class JsonAdapterUtil {
 
 	
 	
-	public static final JsonSerializer<Map<String, User>> adapterFullUserCast= new JsonSerializer<Map<String, User>>() {
-		
-
-		
-		@Override
-		public JsonElement serialize(Map<String, User> src, Type typeOfSrc, JsonSerializationContext context) {
-
-			if (src == null)
-	            return null;
-	        else {
-	            JsonArray jsonUsers = new JsonArray();
-	            for (User baseUser : src.values()) {
-	                Class<?> c = userCastMap.get(baseUser.getUserRole());
-	                if (c == null)
-	                    throw new RuntimeException("Unknow class: " + baseUser.getUserRole());
-	                jsonUsers.add(context.serialize(baseUser, c));
-
-	            }
-				return jsonUsers;
-	        }
-
-		}
-	};
+//	public static final JsonSerializer<Map<String, User>> adapterFullUserCast= new JsonSerializer<Map<String, User>>() {
+//		
+//
+//		
+//		@Override
+//		public JsonElement serialize(Map<String, User> src, Type typeOfSrc, JsonSerializationContext context) {
+//
+//			if (src == null)
+//	            return null;
+//	        else {
+//	            JsonArray jsonUsers = new JsonArray();
+//	            for (User baseUser : src.values()) {
+//	                Class<?> c = userCastMap.get(baseUser.getUserRole());
+//	                if (c == null)
+//	                    throw new RuntimeException("Unknow class: " + baseUser.getUserRole());
+//	                jsonUsers.add(context.serialize(baseUser, c));
+//
+//	            }
+//				return jsonUsers;
+//	        }
+//
+//		}
+//	};
 	
 	
 	public static final JsonSerializer<LocalDate> adapterLocalDate = new JsonSerializer<LocalDate>() {
@@ -206,7 +205,7 @@ public class JsonAdapterUtil {
 		public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject jsonObject = new JsonObject();
 
-			jsonObject.addProperty("#year", src.getYear());
+			jsonObject.addProperty("year", src.getYear());
 			jsonObject.addProperty("month", src.getMonthValue());
 			jsonObject.addProperty("day", src.getDayOfMonth());
 			
@@ -220,7 +219,7 @@ public class JsonAdapterUtil {
 		public JsonElement serialize(LocalTime src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject jsonObject = new JsonObject();
 
-			jsonObject.addProperty("#hour", src.getHour());
+			jsonObject.addProperty("hour", src.getHour());
 			jsonObject.addProperty("minute", src.getMinute());
 			jsonObject.addProperty("second", src.getSecond());
 			
@@ -251,12 +250,14 @@ public class JsonAdapterUtil {
 		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
 		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
 
+		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketsTypeToIds);
 		gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);	
 		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);	
 		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
 		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
+		gsonBuilder.registerTypeAdapter(ManifestationType.class, adapterManifestationTypeToName);
 
 		Gson customGson = gsonBuilder.create();
 		return customGson;
@@ -265,6 +266,7 @@ public class JsonAdapterUtil {
 	public static Gson ticketsSeraialization() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
+		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterUserToUsername);
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationToId);
 		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
@@ -284,6 +286,7 @@ public class JsonAdapterUtil {
 		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
 
 
+		gsonBuilder.serializeNulls();
 	//	gsonBuilder.registerTypeAdapter(usersType, adapterFullUserCast);
 		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketsTypeToIds);
 		gsonBuilder.registerTypeAdapter(manifestationsType, adapterManifestationToIds);
@@ -298,6 +301,7 @@ public class JsonAdapterUtil {
 	public static Gson commentsSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
+		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterUserToUsername);
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationToId);
 
@@ -309,6 +313,7 @@ public class JsonAdapterUtil {
 	public static Gson customerTypeSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
+		gsonBuilder.serializeNulls();
 		Gson customGson = gsonBuilder.create();
 		return customGson;
 	}
@@ -316,6 +321,7 @@ public class JsonAdapterUtil {
 	public static Gson manifestationTypeSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
+		gsonBuilder.serializeNulls();
 		Gson customGson = gsonBuilder.create();
 		return customGson;
 	}

@@ -12,7 +12,7 @@ public class Customer extends User {
 	private CustomerType customerType;
 
 	private Collection<Comment> comments;
-	private Collection<Comment> tickets;
+	private Collection<Ticket> tickets;
 
 	public Customer() {
 		super();
@@ -25,7 +25,7 @@ public class Customer extends User {
 		this.points = points;
 		this.customerType = customerType;
 		this.comments = new ArrayList<Comment>();
-		this.tickets = new ArrayList<Comment>();
+		this.tickets = new ArrayList<Ticket>();
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class Customer extends User {
 
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
-			CustomerType customerType, Collection<Comment> comments, Collection<Comment> tickets) {
+			CustomerType customerType, Collection<Comment> comments, Collection<Ticket> tickets) {
 		this(username, password, firstName, lastName, gender, birthDate, userRole, blocked, deleted, points,
 				customerType);
 		this.comments = comments;
@@ -72,7 +72,7 @@ public class Customer extends User {
 	 */
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, double points, CustomerType customerType,
-			Collection<Comment> comments, Collection<Comment> tickets) {
+			Collection<Comment> comments, Collection<Ticket> tickets) {
 		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false, points, customerType,
 				comments, tickets);
 	}
@@ -105,11 +105,11 @@ public class Customer extends User {
 		this.comments = comments;
 	}
 
-	public Collection<Comment> getTickets() {
+	public Collection<Ticket> getTickets() {
 		return tickets;
 	}
 
-	public void setTickets(Collection<Comment> tickets) {
+	public void setTickets(Collection<Ticket> tickets) {
 		this.tickets = tickets;
 	}
 

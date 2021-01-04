@@ -29,6 +29,6 @@
 	<classpathentry kind="lib" path="lib/jjwt-api-0.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/jjwt-gson-0.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/jjwt-impl-0.11.1.jar"/>
-	<classpathentry kind="lib" path="D:/Milosevo/FAKS/VP/Project/web-googolplex-tx/googolplexTX/lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

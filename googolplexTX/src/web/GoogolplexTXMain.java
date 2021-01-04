@@ -1,5 +1,7 @@
 package web;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 
 import model.Address;
 import model.Comment;
@@ -25,7 +28,7 @@ import model.enumerations.TicketType;
 import model.enumerations.UserRole;
 import repository.InMemoryRepository;
 import service.implementation.ManifestationDao;
-import support.JsonAdapterUtil;
+import support.JsonToFileAdapter;
 
 public class GoogolplexTXMain {
 
@@ -54,6 +57,8 @@ public class GoogolplexTXMain {
 		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, "CstName", TicketType.REGULAR, TicketStatus.RESERVED,
 				null, false, c1, m1);
 		m1.getTickets().add(t1);
+		c1.getTickets().add(t1);
+		sal.getManifestation().add(m1);
 		
 		Comment comm1 = new Comment("1001", "Tekst", 3, m1, c1);
 		m1.getComments().add(comm1);
@@ -69,32 +74,41 @@ public class GoogolplexTXMain {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
 		gsonBuilder.registerTypeAdapter(new ArrayList<Customer>().getClass(),
-				JsonAdapterUtil.serializeSalesmanCollection);
+				JsonToFileAdapter.serializeSalesmanCollection);
 		Gson customGson = gsonBuilder.create();
 		String customJSON = customGson.toJson(prodavci);
 		System.out.println(customJSON);
 
 		manifestationService.save(m1);
 
-		InMemoryRepository.saveManifestations();
-		InMemoryRepository.save(t1);
-		InMemoryRepository.saveTickets();
-		InMemoryRepository.save(sal);
-		InMemoryRepository.save(c1);
-		InMemoryRepository.saveUsers();
+		InMemoryRepository.loadData();
+			
+//		InMemoryRepository.save(t1);
+//		InMemoryRepository.save(sal);
+//		InMemoryRepository.save(c1);
+//		InMemoryRepository.save(ct1);
+//		InMemoryRepository.save(mt);
+//		InMemoryRepository.save(comm1);
+		InMemoryRepository.findOneCustomerType("Neki").setName("Svaki");
 		
-		InMemoryRepository.save(comm1);
+		InMemoryRepository.saveManifestations();
+		InMemoryRepository.saveTickets();
+		InMemoryRepository.saveUsers();
 		InMemoryRepository.saveComments();
-
-		InMemoryRepository.save(ct1);
-		InMemoryRepository.save(mt);
 		InMemoryRepository.saveCustomerTypes();
 		InMemoryRepository.saveManifestationTypes();
 		// manifestationService.load();
 
+		
+		
+		
+		
 
 		TestData td = new TestData();
 		td.createTestData();
+		
+		
+		
 
 	}
 
