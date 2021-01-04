@@ -1,2 +1,7 @@
 # web-googolplex-tx
-Web application for ticket reservation for every situation in every nation for every occupation.
+Web application for ticket reservation.
+
+![progress_visualization](/resources/progress-vis.webp)
+
+
+![class_diagram](/projectDesign/GoogolplexTxClassDiagram.png)
