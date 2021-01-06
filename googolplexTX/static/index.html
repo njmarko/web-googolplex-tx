@@ -6,30 +6,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Load required Bootstrap and BootstrapVue CSS -->
-<link type="text/css" rel="stylesheet"
-	href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-<link type="text/css" rel="stylesheet"
-	href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css" />
 
-<!-- Load polyfills to support older browsers -->
+<!-- Load polyfills to support older browsers ONLY TAG THAT WAS NOT REPLACED WITH LOCAL LIBRARY-->
 <script
 	src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"
 	crossorigin="anonymous"></script>
+	
 
-<!-- Load Vue followed by BootstrapVue -->
-<script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
-<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
-
-<!-- Load the following for BootstrapVueIcons support -->
-<script
-	src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+<link type="text/css" rel="stylesheet" href="css/main.css" />
 </head>
-
-<link type="text/css" rel="stylesheet"
-	href="css/main.css" />
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-
 
 <body>
 	<div id="webShop">
@@ -46,33 +33,42 @@
 					<div class="navbar-nav">
 						<a class="nav-item nav-link active" href="/">Home <span
 							className="sr-only">(current)</span></a> <a class="nav-item nav-link"
-							href="#/manifestations">Manifestations</a> 
-							<a class="nav-item nav-link" href="#/login">login</a>
+							href="#/manifestations">Manifestations</a> <a
+							class="nav-item nav-link" href="#/login">login</a>
 					</div>
 				</div>
 			</div>
 		</nav>
-		  
+
 		<router-view></router-view>
 		<br />
-		            <footer className="page-footer font-small blue">
+		<footer className="page-footer font-small blue">
 
-            <div className="footer-copyright text-center py-3"><span>© 2020 Copyright: </span>
-                 <a href="/aboutus">Our team</a>
-            </div>
+			<div className="footer-copyright text-center py-3">
+				<span>© 2021 Copyright: </span> <a href="/aboutus">Our team</a>
+			</div>
 
-            </footer>
+		</footer>
 
 	</div>
-
+	<!-- Load Vue followed by BootstrapVue -->
 	<script src="js/vue.js"></script>
 	<script src="js/vue-router.js"></script>
 	<script src="js/axios.js"></script>
 	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap-vue.min.js"></script>
+	<!-- Load the following for BootstrapVueIcons support -->
+	<script src="js/bootstrap-vue-icons.min.js"></script>
+
+	<!-- particles.js lib - https://github.com/VincentGarreau/particles.js -->
+	<script src="js/particles.min.js"></script>
+	<!-- stats.js lib -->
+	<script src="js/stats.min.js"></script>
+
 	<script src="app/webShop.js"></script>
 	<script src="app/app.js"></script>
 
-	
+
 
 
 
