@@ -9,7 +9,6 @@ public class Ticket {
 	private String id;
 	private LocalDateTime dateOfManifestation;
 	private Double price;
-	private String customerName;
 	private TicketType ticketType;
 	private TicketStatus ticketStatus;
 	private LocalDateTime cancelationDate;
@@ -22,23 +21,22 @@ public class Ticket {
 		super();
 	}
 
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
 			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
 		this.price = price;
-		this.customerName = customerName;
 		this.ticketType = ticketType;
 		this.ticketStatus = ticketStatus;
 		this.cancelationDate = cancelationDate;
 		this.deleted = deleted;
 	}
 
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, String customerName,
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
 			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted,
 			Customer customer, Manifestation manifestation) {
-		this(id, dateOfManifestation, price, customerName, ticketType, ticketStatus, cancelationDate, deleted);
+		this(id, dateOfManifestation, price, ticketType, ticketStatus, cancelationDate, deleted);
 		this.customer = customer;
 		this.manifestation = manifestation;
 	}
@@ -55,7 +53,7 @@ public class Ticket {
 	 * @param manifestation
 	 */
 	public Ticket(String id, Double price, TicketType ticketType, Customer customer, Manifestation manifestation) {
-		this(id, manifestation.getDateOfOccurence(), price, customer.getFirstName() + " " + customer.getLastName(),
+		this(id, manifestation.getDateOfOccurence(), price,
 				ticketType, TicketStatus.RESERVED, null, false, customer, manifestation);
 	}
 
@@ -83,13 +81,6 @@ public class Ticket {
 		this.price = price;
 	}
 
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
 
 	public TicketType getTicketType() {
 		return ticketType;
@@ -142,7 +133,7 @@ public class Ticket {
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
-				+ ", customerName=" + customerName + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
+				+ ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
 				+ ", cancelationDate=" + cancelationDate + ", deleted=" + deleted + ", customer="
 				+ customer.getUsername() + ", manifestation=" + manifestation.getId() + "]";
 	}

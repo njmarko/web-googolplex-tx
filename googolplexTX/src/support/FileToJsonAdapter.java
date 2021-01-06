@@ -444,7 +444,6 @@ public class FileToJsonAdapter {
 						jsonObject.get("id").getAsString(), 
 						dateOfOccurence, 
 						jsonObject.get("price").getAsDouble(), 
-						jsonObject.get("customerName").getAsString(), 
 						ticketType, 
 						ticketStatus, 
 						cancelationDate, 
@@ -454,7 +453,6 @@ public class FileToJsonAdapter {
 	        } else {
 	        	ticket.setDateOfManifestation(dateOfOccurence);
 	        	ticket.setPrice(jsonObject.get("price").getAsDouble());
-	        	ticket.setCustomerName(id);
 	        	ticket.setTicketType(ticketType);
 	        	ticket.setTicketStatus(ticketStatus);
 	        	ticket.setCancelationDate(cancelationDate);

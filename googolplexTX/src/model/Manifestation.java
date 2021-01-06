@@ -14,7 +14,7 @@ public class Manifestation {
 	private Double regularPrice;
 	private ManifestationStatus status;
 	/*
-	 * It was Base64 type before, but i changed it to string that represents a path
+	 * It was Base64 encoded type before, but i changed it to string that represents a path
 	 */
 	private String poster;
 	private Boolean deleted;

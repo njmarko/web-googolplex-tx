@@ -50,7 +50,7 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td>Location</td>
-						<td>{{p.location.address.city}}</td>
+						<td>{{p.location.city}}</td>
 					</tr>
 				</tbody>
 			</table>
