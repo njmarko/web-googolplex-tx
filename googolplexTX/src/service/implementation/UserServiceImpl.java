@@ -3,29 +3,35 @@ package service.implementation;
 import java.util.Collection;
 
 import model.User;
-import repository.InMemoryRepository;
+import repository.UserDAO;
 import service.UserService;
 
-public class UserDao implements UserService {
+public class UserServiceImpl implements UserService {
+	private UserDAO userDAO;
+	
+	public UserServiceImpl(UserDAO userDAO) {
+		super();
+		this.userDAO = userDAO;
+	}
 
 	@Override
 	public Collection<User> findAll() {
-		return InMemoryRepository.findAllUsers();
+		return this.userDAO.findAll();
 	}
 
 	@Override
 	public User findOne(String key) {
-		return InMemoryRepository.findOneUser(key);
+		return this.userDAO.findOne(key);
 	}
 
 	@Override
 	public User save(User entity) {
-		return InMemoryRepository.save(entity);
+		return this.userDAO.save(entity);
 	}
 
 	@Override
 	public User delete(String key) {
-		return InMemoryRepository.deleteUser(key);
+		return this.userDAO.delete(key);
 	}
 
 	/**
@@ -35,7 +41,7 @@ public class UserDao implements UserService {
 	public User update(User entity) {
 		User user = findOne(entity.getUsername());
 		entity.setPassword(user.getPassword());
-		return InMemoryRepository.save(entity);
+		return this.userDAO.save(entity);
 	}
 
 }

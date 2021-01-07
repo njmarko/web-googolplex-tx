@@ -15,12 +15,18 @@ import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
-import repository.InMemoryRepository;
+import repository.CommentDAO;
+import repository.CustomerTypeDAO;
+import repository.ManifestationDAO;
+import repository.ManifestationTypeDAO;
+import repository.TicketDAO;
+import repository.UserDAO;
 
 public class TestData {
 
-	public static void createTestData() {
-
+	public static void createTestData(UserDAO userDAO, ManifestationDAO manifestationDAO, TicketDAO ticketDAO, CommentDAO commentDAO, ManifestationTypeDAO manifestationTypeDAO, CustomerTypeDAO customerTypeDAO) {
+	
+		
 		// CUSTOMER TYPES---------------------------------------------------
 		CustomerType custType0 = new CustomerType("Peasant", 3.0, 0d, false);
 		CustomerType custType1 = new CustomerType("Bronze", 3.0, 1000.0, false);
@@ -66,16 +72,16 @@ public class TestData {
 				Gender.FEMALE, LocalDate.now(), UserRole.CUSTOMER, true, false, 3400.3, custType3); // blocked
 
 		// saving
-		InMemoryRepository.save(cust1);
-		InMemoryRepository.save(cust2);
-		InMemoryRepository.save(cust3);
-		InMemoryRepository.save(cust4);
-		InMemoryRepository.save(cust5);
-		InMemoryRepository.save(cust6);
-		InMemoryRepository.save(cust7);
-		InMemoryRepository.save(cust8);
-		InMemoryRepository.save(cust9);
-		InMemoryRepository.save(cust10);
+		userDAO.save(cust1);
+		userDAO.save(cust2);
+		userDAO.save(cust3);
+		userDAO.save(cust4);
+		userDAO.save(cust5);
+		userDAO.save(cust6);
+		userDAO.save(cust7);
+		userDAO.save(cust8);
+		userDAO.save(cust9);
+		userDAO.save(cust10);
 
 		// SALESPEOPLE---------------------------------------------------
 		Salesman sal1 = new Salesman("prodavac1", "prodavac1", "Prodavac1First", "Prodavac1Last", Gender.MALE,
@@ -97,12 +103,12 @@ public class TestData {
 				Gender.FEMALE, LocalDate.now(), UserRole.SALESMAN, true, false); // Blocked
 
 		// saving
-		InMemoryRepository.save(sal1);
-		InMemoryRepository.save(sal2);
-		InMemoryRepository.save(sal3);
-		InMemoryRepository.save(sal4);
-		InMemoryRepository.save(sal5);
-		InMemoryRepository.save(sal6);
+		userDAO.save(sal1);
+		userDAO.save(sal2);
+		userDAO.save(sal3);
+		userDAO.save(sal4);
+		userDAO.save(sal5);
+		userDAO.save(sal6);
 
 		// MANIFESTATION TYPES---------------------------------------------------
 		ManifestationType mt1 = new ManifestationType("Threatre"); // I have created combination of active and inactive
@@ -169,16 +175,16 @@ public class TestData {
 				LocalDateTime.now(), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
 																											// deleted
 		// Saving
-		InMemoryRepository.save(man1);
-		InMemoryRepository.save(man2);
-		InMemoryRepository.save(man3);
-		InMemoryRepository.save(man4);
-		InMemoryRepository.save(man5);
-		InMemoryRepository.save(man6);
-		InMemoryRepository.save(man7);
-		InMemoryRepository.save(man8);
-		InMemoryRepository.save(man9);
-		InMemoryRepository.save(man10);
+		manifestationDAO.save(man1);
+		manifestationDAO.save(man2);
+		manifestationDAO.save(man3);
+		manifestationDAO.save(man4);
+		manifestationDAO.save(man5);
+		manifestationDAO.save(man6);
+		manifestationDAO.save(man7);
+		manifestationDAO.save(man8);
+		manifestationDAO.save(man9);
+		manifestationDAO.save(man10);
 
 		// TICKETS---------------------------------------------------
 
@@ -245,25 +251,26 @@ public class TestData {
 				TicketStatus.CANCELED, null, false, cust4, man5);
 
 		// Saving
-		InMemoryRepository.save(t1);
-		InMemoryRepository.save(t2);
-		InMemoryRepository.save(t3);
-		InMemoryRepository.save(t4);
-		InMemoryRepository.save(t5);
-		InMemoryRepository.save(t6);
-		InMemoryRepository.save(t7);
-		InMemoryRepository.save(t8);
-		InMemoryRepository.save(t9);
-		InMemoryRepository.save(t10);
-		InMemoryRepository.save(t11);
-		InMemoryRepository.save(t12);
-		InMemoryRepository.save(t13);
-		InMemoryRepository.save(t14);
-		InMemoryRepository.save(t15);
-		InMemoryRepository.save(t16);
-		InMemoryRepository.save(t17);
-		InMemoryRepository.save(t18);
-		InMemoryRepository.save(t19);
+		
+		ticketDAO.save(t1);
+		ticketDAO.save(t2);
+		ticketDAO.save(t3);
+		ticketDAO.save(t4);
+		ticketDAO.save(t5);
+		ticketDAO.save(t6);
+		ticketDAO.save(t7);
+		ticketDAO.save(t8);
+		ticketDAO.save(t9);
+		ticketDAO.save(t10);
+		ticketDAO.save(t11);
+		ticketDAO.save(t12);
+		ticketDAO.save(t13);
+		ticketDAO.save(t14);
+		ticketDAO.save(t15);
+		ticketDAO.save(t16);
+		ticketDAO.save(t17);
+		ticketDAO.save(t18);
+		ticketDAO.save(t19);
 
 	}
 

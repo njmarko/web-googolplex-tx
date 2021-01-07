@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 
 import model.Manifestation;
 import service.ManifestationService;
-import service.implementation.ManifestationDao;
+import service.implementation.ManifestationServiceImpl;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -17,9 +17,14 @@ import static spark.Spark.path;
 
 public class ManifestationControler {
 
-	public static final ManifestationService manifService = new ManifestationDao();
+	private ManifestationService manifService;
 
 	
+	public ManifestationControler(ManifestationService manifService) {
+		this();
+		this.manifService = manifService;
+	}
+
 	public ManifestationControler() {
 		
 		/**
@@ -41,7 +46,7 @@ public class ManifestationControler {
 	/**
 	 * Define a static attribute in this way so it can be used with paths in main
 	 */
-	public static final Route findAllManifestations = new Route() {
+	public final Route findAllManifestations = new Route() {
 		
 		@Override
 		public Object handle(Request req, Response res) {
@@ -53,7 +58,7 @@ public class ManifestationControler {
 	};
 	
 	
-	public static final Route findOneManifestation = new Route() {
+	public final Route findOneManifestation = new Route() {
 		
 		@Override
 		public Object handle(Request req, Response res) {

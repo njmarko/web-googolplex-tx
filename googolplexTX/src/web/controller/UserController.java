@@ -1,7 +1,7 @@
 package web.controller;
 
 import service.UserService;
-import service.implementation.UserDao;
+import service.implementation.UserServiceImpl;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -16,8 +16,13 @@ import model.User;
 
 public class UserController {
 
-	public static final UserService userService = new UserDao();
+	private UserService userService;
 	
+	public UserController(UserService userService) {
+		this();
+		this.userService = userService;
+	}
+
 	public UserController() {
 		
 		
@@ -38,7 +43,7 @@ public class UserController {
 	/**
 	 * Define a static attribute in this way so it can be used with paths in main
 	 */
-	public static final Route findAllUsers = new Route() {
+	public final Route findAllUsers = new Route() {
 		
 		@Override
 		public Object handle(Request req, Response res) {

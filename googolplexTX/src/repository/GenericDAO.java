@@ -20,4 +20,5 @@ public interface GenericDAO<T, KEY> {
 	
 	T delete(KEY key);
 
+	Boolean saveFile();
 }

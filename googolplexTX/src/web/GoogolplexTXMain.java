@@ -7,6 +7,16 @@ import static spark.Spark.staticFiles;
 import java.io.File;
 import java.io.IOException;
 
+import repository.CommentDAO;
+import repository.CustomerTypeDAO;
+import repository.DAOFileParser;
+import repository.ManifestationDAO;
+import repository.ManifestationTypeDAO;
+import repository.TicketDAO;
+import repository.UserDAO;
+import service.implementation.ManifestationServiceImpl;
+import service.implementation.TicketServiceImpl;
+import service.implementation.UserServiceImpl;
 import web.controller.ManifestationControler;
 import web.controller.UserController;
 
@@ -18,7 +28,32 @@ public class GoogolplexTXMain {
 
 		staticFiles.externalLocation(new File("./static").getCanonicalPath()); 
 
-		TestData.createTestData();
+		
+		// aUtOwIrEd
+		UserDAO userDAO = new UserDAO();
+		ManifestationDAO manifestationDAO = new ManifestationDAO();
+		TicketDAO ticketDAO = new TicketDAO();
+		CommentDAO commentDAO = new CommentDAO();
+		ManifestationTypeDAO manifestationTypeDAO = new ManifestationTypeDAO();
+		CustomerTypeDAO customerTypeDAO = new CustomerTypeDAO();
+		
+		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO);
+		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
+		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO); 
+		
+		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl);
+		UserController userController = new UserController(userServiceImpl);
+			
+		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
+		daoFileParser.loadData();
+		//TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
+		
+		userDAO.saveFile();
+		manifestationDAO.saveFile();
+		ticketDAO.saveFile();
+		commentDAO.saveFile();
+		manifestationTypeDAO.saveFile();
+		customerTypeDAO.saveFile();
 		
 		
 		/**
@@ -67,12 +102,12 @@ public class GoogolplexTXMain {
 		 */
 		path("/api",()->{
 			path("/manifestations",()->{
-				get("",ManifestationControler.findAllManifestations);
-				get("/:idm", ManifestationControler.findOneManifestation);
+				get("",manifestationControler.findAllManifestations);
+				get("/:idm", manifestationControler.findOneManifestation);
 				
 			});
 			path("/users",()->{
-				get("", UserController.findAllUsers);
+				get("", userController.findAllUsers);
 				
 			});
 			

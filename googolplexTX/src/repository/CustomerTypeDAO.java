@@ -1,14 +1,28 @@
 package repository;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+
 import model.CustomerType;
+import support.JsonToFileAdapter;
 
 public class CustomerTypeDAO implements GenericDAO<CustomerType, String> {
 
 	private Map<String, CustomerType> customerTypes = new ConcurrentHashMap<String, CustomerType>();
+
+	public Map<String, CustomerType> getCustomerTypes() {
+		return customerTypes;
+	}
+
+	public void setCustomerTypes(Map<String, CustomerType> customerTypes) {
+		this.customerTypes = customerTypes;
+	}
 
 	@Override
 	public Collection<CustomerType> findAll() {
@@ -32,6 +46,24 @@ public class CustomerTypeDAO implements GenericDAO<CustomerType, String> {
 			customerType.setDeleted(true);
 		}
 		return customerType;
+	}
+
+	@Override
+	public Boolean saveFile() {
+		System.out.println("[LOG] CustomerType saving");
+		try {
+			Gson gson = JsonToFileAdapter.customerTypeSerializationToFile();
+
+			FileWriter writer = new FileWriter("data/customerTypes.json");
+			gson.toJson(customerTypes, writer);
+			writer.flush();
+			writer.close();
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
 	}
 
 }

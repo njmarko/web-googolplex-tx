@@ -10,8 +10,11 @@ import java.util.Collection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -199,8 +202,29 @@ public class JsonToFileAdapter {
 //		}
 //	};
 	
+	/**
+	 * LocalTime Adapter
+	 * Used to avoid warnings
+	 */
+	public static final JsonDeserializer<LocalDate> adapterLocalDateFromJson = new JsonDeserializer<LocalDate>() {
+
+		@Override
+		public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+	        JsonObject jsonObject = json.getAsJsonObject();
+				
+	        
+	        return LocalDate.of(
+	                jsonObject.get("year").getAsInt(),
+	                jsonObject.get("month").getAsInt(),
+	                jsonObject.get("day").getAsInt()
+	                );   
+	        
+		}
+
+	};
 	
-	public static final JsonSerializer<LocalDate> adapterLocalDate = new JsonSerializer<LocalDate>() {
+	public static final JsonSerializer<LocalDate> adapterLocalDateToJson = new JsonSerializer<LocalDate>() {
 		@Override
 		public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject jsonObject = new JsonObject();
@@ -214,7 +238,28 @@ public class JsonToFileAdapter {
 
 	};
 	
-	public static final JsonSerializer<LocalTime> adapterLocalTime = new JsonSerializer<LocalTime>() {
+	/**
+	 * LocalTime Adapter
+	 * Used to avoid warnings
+	 */
+	public static final JsonDeserializer<LocalTime> adapterLocalTimeFromJson = new JsonDeserializer<LocalTime>() {
+
+		@Override
+		public LocalTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+	        JsonObject jsonObject = json.getAsJsonObject();
+				
+	        
+	        return LocalTime.of(
+	                jsonObject.get("hour").getAsInt(),
+	                jsonObject.get("minute").getAsInt(),
+	                jsonObject.get("second").getAsInt()
+	                );   
+	        
+		}
+
+	};
+	public static final JsonSerializer<LocalTime> adapterLocalTimeToJson = new JsonSerializer<LocalTime>() {
 		@Override
 		public JsonElement serialize(LocalTime src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject jsonObject = new JsonObject();
@@ -228,7 +273,28 @@ public class JsonToFileAdapter {
 
 	};
 	
-	public static final JsonSerializer<LocalDateTime> adapterLocalDateTime = new JsonSerializer<LocalDateTime>() {
+	/**
+	 * LocalDateTime Adapter
+	 * Used to avoid warnings
+	 */
+	public static final JsonDeserializer<LocalDateTime> adapterLocalDateTimeFromJson = new JsonDeserializer<LocalDateTime>() {
+
+		@Override
+		public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+	        JsonObject jsonObject = json.getAsJsonObject();
+				
+	        LocalDate date = context.deserialize(jsonObject.get("date"), LocalDate.class);
+	        LocalTime time = context.deserialize(jsonObject.get("time"), LocalTime.class);
+
+	        
+	        return LocalDateTime.of(date,time);   
+	        
+		}
+
+	};
+	
+	public static final JsonSerializer<LocalDateTime> adapterLocalDateTimeToJson = new JsonSerializer<LocalDateTime>() {
 		@Override
 		public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject jsonObject = new JsonObject();
@@ -250,13 +316,15 @@ public class JsonToFileAdapter {
 		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
 		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
 
+		
+		// TODO: FromJson datetime...
 		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketsTypeToIds);
 		gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);	
 		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);	
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTimeToJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTimeToJson);
 		gsonBuilder.registerTypeAdapter(ManifestationType.class, adapterManifestationTypeToName);
 
 		Gson customGson = gsonBuilder.create();
@@ -269,9 +337,9 @@ public class JsonToFileAdapter {
 		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterUserToUsername);
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationToId);
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTimeToJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTimeToJson);
 		
 		Gson customGson = gsonBuilder.create();
 		return customGson;
@@ -292,7 +360,7 @@ public class JsonToFileAdapter {
 		gsonBuilder.registerTypeAdapter(manifestationsType, adapterManifestationToIds);
 		gsonBuilder.registerTypeAdapter(CustomerType.class, adapterCustomerTypeToName);
 		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate );
+		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson );
 
 		Gson customGson = gsonBuilder.create();
 		return customGson;
