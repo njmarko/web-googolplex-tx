@@ -24,6 +24,7 @@ public class GoogolplexTXMain {
 		/**
 		 * Possible API mappings
 		 * 
+		 * [THIS ONE WAS CHOSEN. IMPLEMENT IT THIS WAY]
 		 * First method of mapping has duplicate methods for comments and tickets
 		 * It lacks clean mappings for different types of users {admin,salesman,customer}
 		 * 
@@ -31,7 +32,7 @@ public class GoogolplexTXMain {
 		 * api/manifestations/{idm}/
 		 * api/manifestations/{idm}/tickets
 		 * api/manifestations/{idm}/tickets/{idt}/
-		 * api/manifestations/{idm}/comments/{idc}/
+		 * api/manifestations/{idm}/comments/{idc}/  {this will target the same function as the api in users that gets comment by id
 		 * api/users
 		 * api/users/{idu}/
 		 * api/users/{idu}/tickets
@@ -67,7 +68,7 @@ public class GoogolplexTXMain {
 		path("/api",()->{
 			path("/manifestations",()->{
 				get("",ManifestationControler.findAllManifestations);
-				
+				get("/:idm", ManifestationControler.findOneManifestation);
 				
 			});
 			path("/users",()->{

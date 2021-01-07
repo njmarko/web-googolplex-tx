@@ -18,6 +18,7 @@ import static spark.Spark.path;
 public class ManifestationControler {
 
 	public static final ManifestationService manifService = new ManifestationDao();
+
 	
 	public ManifestationControler() {
 		
@@ -51,6 +52,18 @@ public class ManifestationControler {
 		}
 	};
 	
-
+	
+	public static final Route findOneManifestation = new Route() {
+		
+		@Override
+		public Object handle(Request req, Response res) {
+			res.type("application/json");
+			String id = req.params("idm");
+			Manifestation manif = manifService.findOne(id);
+			System.out.println(manif);
+			return new Gson().toJson(manif);
+		}
+	};
+	
 	
 }
