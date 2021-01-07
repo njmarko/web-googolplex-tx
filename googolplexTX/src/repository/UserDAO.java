@@ -12,26 +12,26 @@ public class UserDAO implements GenericDAO<User, String> {
 
 	@Override
 	public Collection<User> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return users.values();
 	}
 
 	@Override
 	public User findOne(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return users.get(key);
 	}
 
 	@Override
-	public User save(User saved) {
-		// TODO Auto-generated method stub
-		return null;
+	public User save(User user) {
+		return users.put(user.getUsername(), user);
 	}
 
 	@Override
-	public User delete(User key) {
-		// TODO Auto-generated method stub
-		return null;
+	public User delete(String key) {
+		User user = users.get(key);
+		if (user != null) {
+			user.setDeleted(true);
+		}
+		return user;
 	}
 
 }

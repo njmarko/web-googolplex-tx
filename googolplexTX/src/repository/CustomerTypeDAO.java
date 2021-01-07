@@ -12,26 +12,26 @@ public class CustomerTypeDAO implements GenericDAO<CustomerType, String> {
 
 	@Override
 	public Collection<CustomerType> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return customerTypes.values();
 	}
 
 	@Override
 	public CustomerType findOne(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return customerTypes.get(key);
 	}
 
 	@Override
-	public CustomerType save(CustomerType saved) {
-		// TODO Auto-generated method stub
-		return null;
+	public CustomerType save(CustomerType customerType) {
+		return customerTypes.put(customerType.getName(), customerType);
 	}
 
 	@Override
-	public CustomerType delete(CustomerType key) {
-		// TODO Auto-generated method stub
-		return null;
+	public CustomerType delete(String key) {
+		CustomerType customerType = customerTypes.get(key);
+		if (customerType != null) {
+			customerType.setDeleted(true);
+		}
+		return customerType;
 	}
 
 }
