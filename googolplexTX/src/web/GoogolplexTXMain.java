@@ -1,8 +1,13 @@
 package web;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.put;
+import static spark.Spark.patch;
+import static spark.Spark.delete;
 import static spark.Spark.path;
 import static spark.Spark.staticFiles;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,12 +107,25 @@ public class GoogolplexTXMain {
 		 */
 		path("/api",()->{
 			path("/manifestations",()->{
-				get("",manifestationControler.findAllManifestations);
-				get("/:idm", manifestationControler.findOneManifestation);
-				
+
+				get("",manifestationControler.findAllManifestations);		
+				post("", manifestationControler.saveOneManifestation);
+				path("/:idm",()->{
+					get("", manifestationControler.findOneManifestation);
+					delete("", manifestationControler.deleteOneManifestation);
+					put("", manifestationControler.editOneManifestation);
+					path("/tickets",()->{
+//						get("", ManifestationControler.findAllTickets);
+						
+					});
+				});
 			});
 			path("/users",()->{
 				get("", userController.findAllUsers);
+				post("", userController.saveOneUser);
+				path("/:idu",()->{
+					get("", userController.findOneUser);
+				});
 				
 			});
 			
