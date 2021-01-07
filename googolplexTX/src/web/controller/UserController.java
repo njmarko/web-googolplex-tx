@@ -7,6 +7,7 @@ import spark.Response;
 import spark.Route;
 import static spark.Spark.*;
 
+import java.net.HttpURLConnection;
 import java.util.Collection;
 
 import com.google.gson.Gson;
@@ -42,12 +43,48 @@ public class UserController {
 		
 		@Override
 		public Object handle(Request req, Response res) {
+			// TODO Check if logged in
 			res.type("application/json");
 			Collection<User> users = userService.findAll();
 			System.out.println(users);
 			return new Gson().toJson(users);	
 		}
 	};
+	
+	public static final Route saveOneUser = new Route() {
+		
+		@Override
+		public Object handle(Request req, Response res) {
+			//TODO check for user priveledge (Admin can add Salesman, anyone can register as customer)
+			res.type("application/json");
+			String body = req.body();
+			User user = new Gson().fromJson(body, User.class);
+			User savedEntity = userService.save(user);
+			if (savedEntity == null) {
+				return HttpURLConnection.HTTP_BAD_REQUEST;
+			}
+			return new Gson().toJson(savedEntity);	
+		}
+	};
+	
+	public static final Route findOneUser = new Route() {
+		
+		@Override
+		public Object handle(Request req, Response res) {
+			//TODO check if logged in
+			res.type("application/json");
+			String idu = req.params("idu");
+			User foundEntity = userService.findOne(idu);
+			String body = req.body();
+			User user = new Gson().fromJson(body, User.class);
+			User savedEntity = userService.save(user);
+			if (savedEntity == null) {
+				return HttpURLConnection.HTTP_BAD_REQUEST;
+			}
+			return new Gson().toJson(savedEntity);	
+		}
+	};
+	
 	
 	
 }
