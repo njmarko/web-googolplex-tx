@@ -12,26 +12,26 @@ public class TicketDAO implements GenericDAO<Ticket, String> {
 
 	@Override
 	public Collection<Ticket> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return tickets.values();
 	}
 
 	@Override
 	public Ticket findOne(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return tickets.get(key);
 	}
 
 	@Override
-	public Ticket save(Ticket saved) {
-		// TODO Auto-generated method stub
-		return null;
+	public Ticket save(Ticket ticket) {
+		return tickets.put(ticket.getId(), ticket);
 	}
 
 	@Override
-	public Ticket delete(Ticket key) {
-		// TODO Auto-generated method stub
-		return null;
+	public Ticket delete(String key) {
+		Ticket ticket = tickets.get(key);
+		if (ticket != null) {
+			ticket.setDeleted(true);
+		}
+		return ticket;
 	}
 
 }

@@ -12,26 +12,27 @@ public class CommentDAO implements GenericDAO<Comment, String> {
 
 	@Override
 	public Collection<Comment> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return comments.values();
 	}
 
 	@Override
 	public Comment findOne(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return comments.get(key);
 	}
 
 	@Override
-	public Comment save(Comment saved) {
-		// TODO Auto-generated method stub
-		return null;
+	public Comment save(Comment comment) {
+		return comments.put(comment.getId(), comment);
+
 	}
 
 	@Override
-	public Comment delete(Comment key) {
-		// TODO Auto-generated method stub
-		return null;
+	public Comment delete(String key) {
+		Comment comment = comments.get(key);
+		if (comment != null) {
+			comment.setDeleted(true);
+		}
+		return comment;
 	}
 
 }

@@ -12,26 +12,25 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 
 	@Override
 	public Collection<Manifestation> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return manifestations.values();
 	}
 
 	@Override
 	public Manifestation findOne(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return manifestations.get(key);
 	}
 
 	@Override
 	public Manifestation save(Manifestation saved) {
-		// TODO Auto-generated method stub
-		return null;
+		return manifestations.put(saved.getId(), saved);
 	}
 
 	@Override
-	public Manifestation delete(Manifestation key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Manifestation delete(String key) {
+		Manifestation manifestation = manifestations.get(key);
+		if (manifestation != null) {
+			manifestation.setDeleted(true);
+		}
+		return manifestation;	}
 
 }
