@@ -15,7 +15,7 @@ public class ManifestationSearchDTO {
 	private Double minPrice;
 	private Double maxPrice;
 
-	// search
+	// Sort
 	private Boolean ascending;
 	private String sortCriteria;
 

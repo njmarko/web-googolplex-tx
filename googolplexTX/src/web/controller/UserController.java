@@ -5,10 +5,15 @@ import service.implementation.UserServiceImpl;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import web.dto.ManifestationSearchDTO;
+import web.dto.UserSearchDTO;
+
 import static spark.Spark.*;
 
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -20,10 +25,12 @@ import model.User;
 public class UserController {
 
 	private UserService userService;
+	private Gson g;
 	
 	public UserController(UserService userService) {
 		super();
 		this.userService = userService;
+		this.g = new Gson();
 	}
 
 //	public UserController() {
@@ -48,14 +55,27 @@ public class UserController {
 		
 		@Override
 		public Object handle(Request req, Response res) {
-			// TODO Check if admin is logged in
+			// TODO Check if admin is logged in. 
 			// TODO add DTO class for search parameters
 			res.type("application/json");
-			Collection<User> users = userService.findAll();
+			
+			final Map<String, String> queryParams = new HashMap<>();
+		    req.queryMap().toMap().forEach((k, v) -> {
+		      queryParams.put(k, v[0]);
+		    });		    
+		    UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
+			
+		    // TODO remove debug print message
+		    System.out.println("[DBG] searchParamsDTO" + searchParams);
+		    
+			Collection<User> users = userService.search(searchParams);
 			if (users == null) {
 				halt(HttpStatus.NOT_FOUND_404,"No users found");
 			}
-			return new Gson().toJson(users);	
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return g.toJson(users);	
 		}
 	};
 	
