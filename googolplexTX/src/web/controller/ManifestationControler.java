@@ -31,12 +31,15 @@ import web.dto.ManifestationSearchDTO;
 public class ManifestationControler {
 
 	private ManifestationService manifService;
+	
+	private Gson g;
 
 	// TODO consider if empty constructor is needed
 	
 	public ManifestationControler(ManifestationService manifService) {
 		super();
 		this.manifService = manifService;
+		this.g = new Gson();
 	}
 
 //	public ManifestationControler() {
@@ -51,7 +54,7 @@ public class ManifestationControler {
 //				res.type("application/json");
 //				Collection<Manifestation> mans = manifService.findAll();
 //				System.out.println(mans);
-//				return new Gson().toJson(mans);	
+//				return g.toJson(mans);	
 //				
 //			});	
 //		});
@@ -71,22 +74,19 @@ public class ManifestationControler {
 		      queryParams.put(k, v[0]);
 		    });
 		    
-		    Gson gson = new Gson();
-	
-			ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), ManifestationSearchDTO.class);
-			
+			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+		    
+			// TODO remove debug print message
 			System.out.println("[DBG] searchParamsDTO" + searchParams);
 		
-			
-//			Collection<Manifestation> foundEntities = manifService.findAll();
 			Collection<Manifestation> foundEntities = manifService.search(searchParams);
-			if (foundEntities==null) {
+			if (foundEntities==null || foundEntities.isEmpty()) {
 				halt(HttpStatus.NOT_FOUND_404,"No manifestations found");
 			}
 			
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			return new Gson().toJson(foundEntities);
+			return g.toJson(foundEntities);
 		}
 	};
 
@@ -104,7 +104,7 @@ public class ManifestationControler {
 			}
 			// TODO Since it contains date consider using adapters. Replace with DTO if
 			// needed
-			return new Gson().toJson(foundEntity);
+			return g.toJson(foundEntity);
 		}
 	};
 
@@ -118,12 +118,12 @@ public class ManifestationControler {
 			// TODO check if admin or salesman
 			String body = req.body();
 			// TODO replace with DTO if needed and use adapters to awoid warnings
-			Manifestation manif = new Gson().fromJson(body, Manifestation.class);
+			Manifestation manif = g.fromJson(body, Manifestation.class);
 			Manifestation savedEntity = manifService.save(manif);
 			if (savedEntity == null) {
 				halt(HttpStatus.BAD_REQUEST_400);
 			}
-			return new Gson().toJson(savedEntity);
+			return g.toJson(savedEntity);
 			
 ////			Example with adapter
 //			String body = req.body();
@@ -150,7 +150,7 @@ public class ManifestationControler {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
 			System.out.println(deletedEntity);
-//			return new Gson().toJson(deletedEntity); //for debuging with postman
+//			return g.toJson(deletedEntity); //for debuging with postman
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
@@ -166,7 +166,7 @@ public class ManifestationControler {
 			System.out.println(idm);
 
 			// TODO consider using adapters to awoid warnings
-			Manifestation newEntity = new Gson().fromJson(body, Manifestation.class);
+			Manifestation newEntity = g.fromJson(body, Manifestation.class);
 			System.out.println(newEntity.getId());
 			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
 				halt(HttpStatus.BAD_REQUEST_400);
@@ -174,7 +174,7 @@ public class ManifestationControler {
 
 			Manifestation savedEntity = manifService.save(newEntity);
 
-			return new Gson().toJson(savedEntity);
+			return g.toJson(savedEntity);
 		}
 	};
 

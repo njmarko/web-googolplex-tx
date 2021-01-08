@@ -67,7 +67,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}).collect(Collectors.toList());
 		}
 
-		// Location he searchParams is just a string for City name OR Country name
+		// Location in searchParams is just a string for City name OR Country name
 		// TODO Add check for Country name if it is implemented in the model
 		if (searchParams.getLocation() != null) {
 			entities = entities.stream().filter((ent) -> {
@@ -87,15 +87,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}).collect(Collectors.toList());
 		}
 
-		if (searchParams.getMaxPrice() != null) {
-			entities = entities.stream().filter((ent) -> {
-				return ent.getRegularPrice() <= searchParams.getMaxPrice();
-			}).collect(Collectors.toList());
-		}
 
 		if (searchParams.getManifestationType() != null) {
 			entities = entities.stream().filter((ent) -> {
-				return ent.getManifestationType().equals(searchParams.getManifestationType());
+				return ent.getManifestationType().getName().equalsIgnoreCase(searchParams.getManifestationType());
 			}).collect(Collectors.toList());
 		}
 
@@ -111,9 +106,18 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 			final Map<String, Comparator<Manifestation>> critMap = new HashMap<String, Comparator<Manifestation>>();
 			critMap.put("name", Comparator.comparing(Manifestation::getName));
-			critMap.put("date", Comparator.comparing(Manifestation::getName));
-			critMap.put("price", Comparator.comparing(Manifestation::getName));
-			critMap.put("location", Comparator.comparing(Manifestation::getName)); // everything except lattitude and
+			critMap.put("date", Comparator.comparing(Manifestation::getDateOfOccurence));
+			critMap.put("price", Comparator.comparing(Manifestation::getRegularPrice));
+			critMap.put("location", (o1, o2)->{ 
+				// first check city, then street then number
+				int cmp = o1.getLocation().getCity().compareTo(o2.getLocation().getCity());
+				if (cmp == 0) {
+					cmp = o1.getLocation().getStreet().compareTo(o2.getLocation().getStreet());
+					if (cmp == 0) {
+						cmp = o1.getLocation().getNumber().compareTo(o2.getLocation().getNumber());
+					}
+				}
+				return cmp;}); // everything except lattitude and
 																					// lognitude for now
 			// TODO add radius search for location
 
