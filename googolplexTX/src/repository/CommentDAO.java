@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
 import model.Comment;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 
 public class CommentDAO implements GenericDAO<Comment, String> {
 
@@ -53,7 +53,7 @@ public class CommentDAO implements GenericDAO<Comment, String> {
 	public Boolean saveFile() {
 		System.out.println("[LOG] Comments saving");
 		try {
-			Gson gson = JsonToFileAdapter.commentsSerializationToFile();
+			Gson gson = JsonAdapter.commentsSerializationToFile();
 
 			FileWriter writer = new FileWriter("data/comments.json");
 			gson.toJson(comments, writer);

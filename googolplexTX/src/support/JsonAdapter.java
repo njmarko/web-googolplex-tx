@@ -29,7 +29,7 @@ import model.Salesman;
 import model.Ticket;
 import model.User;
 
-public class JsonToFileAdapter {
+public class JsonAdapter {
 
 //	private static Map<UserRole, Class<?>> userCastMap = new TreeMap<UserRole, Class<?>>();
 

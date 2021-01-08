@@ -5,7 +5,9 @@ import static spark.Spark.*;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,8 +22,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 import spark.RouteImpl;
-import support.FileToJsonAdapter;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -66,15 +67,20 @@ public class ManifestationControler {
 			res.type("application/json");
 			
 
-			System.out.println(req.queryParams("beginDate"));
-			System.out.println(new Gson().toJson(req.queryMap().get("beginDate").value()));
-			System.out.println(req.queryParams());
-			
-			ManifestationSearchDTO searchParams = new Gson().fromJson(new Gson().toJson(req.queryMap().get("beginDate","endDate").value()), ManifestationSearchDTO.class);
-			
-			System.out.println(searchParams);
+
 			
 			
+			final Map<String, String> queryParams = new HashMap<>();
+		    req.queryMap().toMap().forEach((k, v) -> {
+		      queryParams.put(k, v[0]);
+		    });
+		    
+		    Gson gson = new Gson();
+	
+			ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), ManifestationSearchDTO.class);
+			
+			System.out.println("[DBG] searchParamsDTO" + searchParams);
+		
 			
 //			Collection<Manifestation> foundEntities = manifService.findAll();
 			Collection<Manifestation> foundEntities = manifService.search(searchParams);

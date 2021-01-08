@@ -39,7 +39,7 @@ import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 
 public class DAOFileParser {
 
@@ -205,9 +205,9 @@ public class DAOFileParser {
 		gsonBuilder.registerTypeAdapter(User.class, adapterUserFromJson);
 		gsonBuilder.registerTypeAdapter(Salesman.class, adapterSalesmanFromJson);
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerFromJson);
-		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonToFileAdapter.adapterLocalDateFromJson);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonToFileAdapter.adapterLocalTimeFromJson);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonToFileAdapter.adapterLocalDateTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
 		
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationIdFromJson);
 		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketIdFromJson);
@@ -227,9 +227,9 @@ public class DAOFileParser {
 		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
 
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationFromJson);	
-		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonToFileAdapter.adapterLocalDateFromJson);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonToFileAdapter.adapterLocalTimeFromJson);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonToFileAdapter.adapterLocalDateTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
 		
 		gsonBuilder.registerTypeAdapter(ManifestationType.class, adapterManifestationTypeIdFromJson);
 		gsonBuilder.registerTypeAdapter(Salesman.class, adapterSalesmanIdFromJson);
@@ -250,9 +250,9 @@ public class DAOFileParser {
 
 
 		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketFromJson);	
-		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonToFileAdapter.adapterLocalDateFromJson);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonToFileAdapter.adapterLocalTimeFromJson);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonToFileAdapter.adapterLocalDateTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
 		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationIdFromJson);	
 		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerIdFromJson);	
 

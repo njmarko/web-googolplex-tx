@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
 import model.Ticket;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 
 public class TicketDAO implements GenericDAO<Ticket, String> {
 
@@ -52,7 +52,7 @@ public class TicketDAO implements GenericDAO<Ticket, String> {
 	public Boolean saveFile() {
 		System.out.println("[LOG] Tickets saving...");
 		try {
-			Gson gson = JsonToFileAdapter.ticketsSeraialization();
+			Gson gson = JsonAdapter.ticketsSeraialization();
 
 			FileWriter writer = new FileWriter("data/tickets.json");
 			gson.toJson(tickets, writer);

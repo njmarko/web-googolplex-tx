@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
 import model.User;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 
 public class UserDAO implements GenericDAO<User, String> {
 
@@ -52,7 +52,7 @@ public class UserDAO implements GenericDAO<User, String> {
 	public Boolean saveFile() {
 		System.out.println("[LOG] Users saving...");
 		try {
-			Gson gson = JsonToFileAdapter.userSerializationToFile();
+			Gson gson = JsonAdapter.userSerializationToFile();
 
 			FileWriter writer = new FileWriter("data/users.json");
 			gson.toJson(users, writer);

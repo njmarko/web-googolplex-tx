@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
 import model.Manifestation;
-import support.JsonToFileAdapter;
+import support.JsonAdapter;
 
 public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 
@@ -51,7 +51,7 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 	public Boolean saveFile() {
 		System.out.println("[LOG] Manifestation saving");
 		try {
-			Gson gson = JsonToFileAdapter.manifestationSeraialization();
+			Gson gson = JsonAdapter.manifestationSeraialization();
 
 			FileWriter writer = new FileWriter("data/manifestations.json");
 			gson.toJson(manifestations, writer);
