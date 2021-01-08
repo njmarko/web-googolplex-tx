@@ -83,13 +83,18 @@ public class UserController {
 			res.type("application/json");
 			String idu = req.params("idu");
 			User foundEntity = userService.findOne(idu);
-			String body = req.body();
-			User user = new Gson().fromJson(body, User.class);
-			User savedEntity = userService.save(user);
-			if (savedEntity == null) {
-				halt(HttpURLConnection.HTTP_BAD_REQUEST);
+			if (foundEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404,"No users found");
 			}
-			return new Gson().toJson(savedEntity);	
+//			String body = req.body();
+//			System.out.println(body);
+//			User user = new Gson().fromJson(body, User.class);
+//			User savedEntity = userService.save(user);
+//			if (savedEntity == null) {
+//				halt(HttpURLConnection.HTTP_BAD_REQUEST);
+//			}
+//			return new Gson().toJson(savedEntity);	
+			return new Gson().toJson(foundEntity);	
 		}
 	};
 	

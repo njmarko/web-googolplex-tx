@@ -45,15 +45,15 @@ public class GoogolplexTXMain {
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO);
 		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
-		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO); 
+		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
 		
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl);
 		UserController userController = new UserController(userServiceImpl);
 		TicketController ticketController = new TicketController(ticketServiceImpl);
 			
-		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
-		daoFileParser.loadData();
-		//TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
+		//DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
+		//daoFileParser.loadData();
+		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
 
 		userDAO.saveFile();
 		manifestationDAO.saveFile();
@@ -131,7 +131,15 @@ public class GoogolplexTXMain {
 				get("", userController.findAllUsers);
 				post("", userController.saveOneUser);
 				path("/:idu",()->{
+					System.out.println("Ide ovo");
 					get("", userController.findOneUser);
+					path("/tickets",()->{
+						get("", ticketController.findAllTicketsForUser);
+						
+						path("/:idt", ()->{
+							
+						});
+					});
 				});
 				
 			});

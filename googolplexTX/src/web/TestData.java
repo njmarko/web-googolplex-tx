@@ -3,6 +3,7 @@ package web;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import model.Comment;
 import model.Customer;
 import model.CustomerType;
 import model.Location;
@@ -10,6 +11,7 @@ import model.Manifestation;
 import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
+import model.User;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
@@ -71,17 +73,7 @@ public class TestData {
 		Customer cust10 = new Customer("blocked_cust", "deleted_cust", "Blocked_cust_First", "Blocked_cust_Last",
 				Gender.FEMALE, LocalDate.now(), UserRole.CUSTOMER, true, false, 3400.3, custType3); // blocked
 
-		// saving
-		userDAO.save(cust1);
-		userDAO.save(cust2);
-		userDAO.save(cust3);
-		userDAO.save(cust4);
-		userDAO.save(cust5);
-		userDAO.save(cust6);
-		userDAO.save(cust7);
-		userDAO.save(cust8);
-		userDAO.save(cust9);
-		userDAO.save(cust10);
+
 
 		// SALESPEOPLE---------------------------------------------------
 		Salesman sal1 = new Salesman("prodavac1", "prodavac1", "Prodavac1First", "Prodavac1Last", Gender.MALE,
@@ -102,13 +94,7 @@ public class TestData {
 		Salesman sal6 = new Salesman("blocked_sal", "blocked_sal", "blocked_sal_First", "blocked_sal_Last",
 				Gender.FEMALE, LocalDate.now(), UserRole.SALESMAN, true, false); // Blocked
 
-		// saving
-		userDAO.save(sal1);
-		userDAO.save(sal2);
-		userDAO.save(sal3);
-		userDAO.save(sal4);
-		userDAO.save(sal5);
-		userDAO.save(sal6);
+
 
 		// MANIFESTATION TYPES---------------------------------------------------
 		ManifestationType mt1 = new ManifestationType("Threatre"); // I have created combination of active and inactive
@@ -174,17 +160,7 @@ public class TestData {
 		Manifestation man10 = new Manifestation("10101010", "Man10InAddressOnlyCityDifferentDELETED", 332,
 				LocalDateTime.now(), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
 																											// deleted
-		// Saving
-		manifestationDAO.save(man1);
-		manifestationDAO.save(man2);
-		manifestationDAO.save(man3);
-		manifestationDAO.save(man4);
-		manifestationDAO.save(man5);
-		manifestationDAO.save(man6);
-		manifestationDAO.save(man7);
-		manifestationDAO.save(man8);
-		manifestationDAO.save(man9);
-		manifestationDAO.save(man10);
+
 
 		// TICKETS---------------------------------------------------
 
@@ -250,6 +226,41 @@ public class TestData {
 		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d,  TicketType.VIP,
 				TicketStatus.CANCELED, null, false, cust4, man5);
 
+		
+		// saving
+		userDAO.save(cust1);
+		userDAO.save(cust2);
+		userDAO.save(cust3);
+		userDAO.save(cust4);
+		userDAO.save(cust5);
+		userDAO.save(cust6);
+		userDAO.save(cust7);
+		userDAO.save(cust8);
+		userDAO.save(cust9);
+		userDAO.save(cust10);
+		
+		
+		// saving
+		userDAO.save(sal1);
+		userDAO.save(sal2);
+		userDAO.save(sal3);
+		userDAO.save(sal4);
+		userDAO.save(sal5);
+		userDAO.save(sal6);
+		
+		
+		// Saving
+		manifestationDAO.save(man1);
+		manifestationDAO.save(man2);
+		manifestationDAO.save(man3);
+		manifestationDAO.save(man4);
+		manifestationDAO.save(man5);
+		manifestationDAO.save(man6);
+		manifestationDAO.save(man7);
+		manifestationDAO.save(man8);
+		manifestationDAO.save(man9);
+		manifestationDAO.save(man10);
+		
 		// Saving
 		
 		ticketDAO.save(t1);
@@ -271,6 +282,28 @@ public class TestData {
 		ticketDAO.save(t17);
 		ticketDAO.save(t18);
 		ticketDAO.save(t19);
+		
+		
+		for (Manifestation m : manifestationDAO.getManifestations().values()) {
+			Salesman u = m.getSalesman();
+			u.getManifestation().add(m);
+		}
+		
+		for (Ticket ticket : ticketDAO.getTickets().values()) {
+			Customer customer = ticket.customer;
+			customer.getTickets().add(ticket);
+		}
+		
+		for (Comment comment : commentDAO.getComments().values()) {
+			Customer customer = comment.getCustomer();
+			Manifestation manifestation = comment.getManifestation();
+			customer.getComments().add(comment);
+			manifestation.getComments().add(comment);
+		}
+		
+		
+		
+		
 
 	}
 
