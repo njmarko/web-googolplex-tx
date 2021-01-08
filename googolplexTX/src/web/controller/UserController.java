@@ -10,6 +10,8 @@ import static spark.Spark.*;
 import java.net.HttpURLConnection;
 import java.util.Collection;
 
+import org.eclipse.jetty.http.HttpStatus;
+
 import com.google.gson.Gson;
 
 import model.Manifestation;
@@ -20,38 +22,39 @@ public class UserController {
 	private UserService userService;
 	
 	public UserController(UserService userService) {
-		this();
+		super();
 		this.userService = userService;
 	}
 
-	public UserController() {
-		
-		
-		/**
-		 * Another way to write a function that will be called.
-		 * This way requires you to write a full path, and has
-		 * more code than lambda function.
-		 */
-		get("/users", new Route() {			
-			@Override
-			public Object handle(Request arg0, Response arg1) throws Exception {
-				
-				return "Ovo vraca usere";
-			}		
-		});
-	}
+//	public UserController() {
+//		
+//		
+//		/**
+//		 * Another way to write a function that will be called.
+//		 * This way requires you to write a full path, and has
+//		 * more code than lambda function.
+//		 */
+//		get("/users", new Route() {			
+//			@Override
+//			public Object handle(Request arg0, Response arg1) throws Exception {
+//				
+//				return "Ovo vraca usere";
+//			}		
+//		});
+//	}
 	
-	/**
-	 * Define a static attribute in this way so it can be used with paths in main
-	 */
+
 	public final Route findAllUsers = new Route() {
 		
 		@Override
 		public Object handle(Request req, Response res) {
-			// TODO Check if logged in
+			// TODO Check if admin is logged in
+			// TODO add DTO class for search parameters
 			res.type("application/json");
 			Collection<User> users = userService.findAll();
-			System.out.println(users);
+			if (users == null) {
+				halt(HttpStatus.NOT_FOUND_404,"No users found");
+			}
 			return new Gson().toJson(users);	
 		}
 	};
@@ -66,7 +69,7 @@ public class UserController {
 			User user = new Gson().fromJson(body, User.class);
 			User savedEntity = userService.save(user);
 			if (savedEntity == null) {
-				return HttpURLConnection.HTTP_BAD_REQUEST;
+				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}
 			return new Gson().toJson(savedEntity);	
 		}
@@ -84,7 +87,7 @@ public class UserController {
 			User user = new Gson().fromJson(body, User.class);
 			User savedEntity = userService.save(user);
 			if (savedEntity == null) {
-				return HttpURLConnection.HTTP_BAD_REQUEST;
+				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}
 			return new Gson().toJson(savedEntity);	
 		}

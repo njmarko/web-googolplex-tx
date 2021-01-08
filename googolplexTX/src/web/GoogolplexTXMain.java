@@ -1,17 +1,14 @@
 package web;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.put;
-import static spark.Spark.patch;
-import static spark.Spark.delete;
-import static spark.Spark.path;
+import static spark.Spark.*;
 import static spark.Spark.staticFiles;
-import javax.servlet.http.HttpServletResponse;
+
+
 
 import java.io.File;
 import java.io.IOException;
 
+import javaxt.http.Response;
 import repository.CommentDAO;
 import repository.CustomerTypeDAO;
 import repository.DAOFileParser;
@@ -22,7 +19,9 @@ import repository.UserDAO;
 import service.implementation.ManifestationServiceImpl;
 import service.implementation.TicketServiceImpl;
 import service.implementation.UserServiceImpl;
+import spark.Request;
 import web.controller.ManifestationControler;
+import web.controller.TicketController;
 import web.controller.UserController;
 
 
@@ -30,9 +29,11 @@ public class GoogolplexTXMain {
 
 	
 	public static void main(String[] args) throws IOException {
-
+		// This is how port can be changed. Default is 4567
+//		port(8080);
+		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath()); 
-
+		
 		
 		// aUtOwIrEd
 		UserDAO userDAO = new UserDAO();
@@ -48,11 +49,12 @@ public class GoogolplexTXMain {
 		
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl);
 		UserController userController = new UserController(userServiceImpl);
+		TicketController ticketController = new TicketController(ticketServiceImpl);
 			
 		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
 		daoFileParser.loadData();
 		//TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
-		
+
 		userDAO.saveFile();
 		manifestationDAO.saveFile();
 		ticketDAO.saveFile();
@@ -99,7 +101,7 @@ public class GoogolplexTXMain {
 		 * api/manifestation-type/{key}/
 		 */
 		
-		
+		// TODO add before methods to do some checks when requests arrive (such as if user is logged in etc)
 		/**
 		 * Method to separate all the routes into groups for better readability
 		 * You can write the whole API here, and just reference appropriate attributes from 
@@ -107,16 +109,21 @@ public class GoogolplexTXMain {
 		 */
 		path("/api",()->{
 			path("/manifestations",()->{
-
+				
 				get("",manifestationControler.findAllManifestations);		
 				post("", manifestationControler.saveOneManifestation);
+				
 				path("/:idm",()->{
 					get("", manifestationControler.findOneManifestation);
 					delete("", manifestationControler.deleteOneManifestation);
 					put("", manifestationControler.editOneManifestation);
+					
 					path("/tickets",()->{
-//						get("", ManifestationControler.findAllTickets);
+						get("", ticketController.findAllTicketsForManifestation);
 						
+						path("/:idt", ()->{
+							
+						});
 					});
 				});
 			});
@@ -141,5 +148,6 @@ public class GoogolplexTXMain {
 //		new UserController();
 		
 	}
+
 
 }

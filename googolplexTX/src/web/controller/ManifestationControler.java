@@ -1,5 +1,7 @@
 package web.controller;
-import static spark.Spark.get;
+
+import static spark.Spark.*;
+
 
 import java.net.HttpURLConnection;
 import java.util.Collection;
@@ -20,79 +22,93 @@ import spark.RouteImpl;
 import support.FileToJsonAdapter;
 import support.JsonToFileAdapter;
 
-import static spark.Spark.path;
 
 
 public class ManifestationControler {
 
 	private ManifestationService manifService;
 
+	// TODO consider if empty constructor is needed
 	
 	public ManifestationControler(ManifestationService manifService) {
-		this();
+		super();
 		this.manifService = manifService;
 	}
 
-	public ManifestationControler() {
-		
-		/**
-		 * Regular way to write paths in controllers by using lambda functions
-		 * Tradeoff is that you have to write the full path
-		 */
-		path("/manifestations",()->{
-			get("",(req,res)->{
-				
-				res.type("application/json");
-				Collection<Manifestation> mans = manifService.findAll();
-				System.out.println(mans);
-				return new Gson().toJson(mans);	
-				
-			});	
-		});
-	}
-	
-	/**
-	 * Define a static attribute in this way so it can be used with paths in main
-	 */
+//	public ManifestationControler() {
+//		
+//		/**
+//		 * Regular way to write paths in controllers by using lambda functions
+//		 * Tradeoff is that you have to write the full path
+//		 */
+//		path("/manifestations",()->{
+//			get("",(req,res)->{
+//				
+//				res.type("application/json");
+//				Collection<Manifestation> mans = manifService.findAll();
+//				System.out.println(mans);
+//				return new Gson().toJson(mans);	
+//				
+//			});	
+//		});
+//	}
+
 	public final Route findAllManifestations = new Route() {
-		
+
 		@Override
 		public Object handle(Request req, Response res) {
 			// No login needed for this request.
+			// TODO add DTO for search and filter parameters
+			// TODO add pagination
 			res.type("application/json");
 			Collection<Manifestation> foundEntities = manifService.findAll();
-			System.out.println(foundEntities);
-			return new Gson().toJson(foundEntities);	
+
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No manifestations found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return new Gson().toJson(foundEntities);
 		}
 	};
-	
-	
+
 	public final Route findOneManifestation = new Route() {
-		
+
 		@Override
 		public Object handle(Request req, Response res) {
+			// TODO Consider if user has to be logged in
+
 			res.type("application/json");
 			String id = req.params("idm");
-			Manifestation manif = manifService.findOne(id);
-			System.out.println(manif);
-			return new Gson().toJson(manif);
+			Manifestation foundEntity = manifService.findOne(id);
+			if (foundEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "No manifestation found");
+			}
+			// TODO Since it contains date consider using adapters. Replace with DTO if
+			// needed
+			return new Gson().toJson(foundEntity);
 		}
 	};
-	
+
 	public final Route saveOneManifestation = new Route() {
-		
+
 		@Override
 		public Object handle(Request req, Response res) {
 			res.type("application/json");
 			// TODO Add adapters so there are no warnings
 
-			
+			// TODO check if admin or salesman
 			String body = req.body();
+			// TODO replace with DTO if needed and use adapters to awoid warnings
 			Manifestation manif = new Gson().fromJson(body, Manifestation.class);
-			Manifestation saved = manifService.save(manif);
-			return  new Gson().toJson(saved);
+			Manifestation savedEntity = manifService.save(manif);
+			if (savedEntity == null) {
+				halt(HttpStatus.BAD_REQUEST_400);
+			}
+			return new Gson().toJson(savedEntity);
 			
-			
+////			Example with adapter
 //			String body = req.body();
 //			Gson g= FileToJsonAdapter.manifestationsSerializationFromFile();
 //			System.out.println("Jel se pre buni");
@@ -103,49 +119,46 @@ public class ManifestationControler {
 //			return  JsonToFileAdapter.manifestationSeraialization().toJson(saved);
 		}
 	};
-	
-	
+
 	public final Route deleteOneManifestation = new Route() {
-		
+
 		@Override
 		public Object handle(Request req, Response res) {
-			//TODO check if admin
-			res.type("application/json");
+			// TODO check if admin
+
+			// res.type("application/json");
 			String id = req.params("idm");
 			Manifestation deletedEntity = manifService.delete(id);
 			if (deletedEntity == null) {
-				return HttpStatus.NOT_FOUND_404;
+				halt(HttpStatus.NOT_FOUND_404);
 			}
 			System.out.println(deletedEntity);
 //			return new Gson().toJson(deletedEntity); //for debuging with postman
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
-	
+
 	public final Route editOneManifestation = new Route() {
-		
+
 		@Override
 		public Object handle(Request req, Response res) {
+			// TODO check if admin or salesman
 			res.type("application/json");
 			String idm = req.params("idm");
 			String body = req.body();
 			System.out.println(idm);
 
-			//TODO use one of these classes to return status codes
-			int status = HttpServletResponse.SC_NOT_FOUND;
-			int status2 = HttpURLConnection.HTTP_BAD_REQUEST;
+			// TODO consider using adapters to awoid warnings
 			Manifestation newEntity = new Gson().fromJson(body, Manifestation.class);
 			System.out.println(newEntity.getId());
-			if (idm ==null || newEntity == null || !idm.equals(newEntity.getId())) {
-				return HttpURLConnection.HTTP_BAD_REQUEST;
+			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
+				halt(HttpStatus.BAD_REQUEST_400);
 			}
-						
-			Manifestation saved = manifService.save(newEntity);
-			
-			System.out.println(newEntity);
-			return new Gson().toJson(saved);
+
+			Manifestation savedEntity = manifService.save(newEntity);
+
+			return new Gson().toJson(savedEntity);
 		}
 	};
-	
-	
+
 }
