@@ -2,9 +2,10 @@ package web.controller;
 
 import static spark.Spark.*;
 
-
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +22,8 @@ import spark.Route;
 import spark.RouteImpl;
 import support.FileToJsonAdapter;
 import support.JsonToFileAdapter;
+import web.dto.ManifestationDTO;
+import web.dto.ManifestationSearchDTO;
 
 
 
@@ -61,8 +64,20 @@ public class ManifestationControler {
 			// TODO add DTO for search and filter parameters
 			// TODO add pagination
 			res.type("application/json");
-			Collection<Manifestation> foundEntities = manifService.findAll();
+			
 
+			System.out.println(req.queryParams("beginDate"));
+			System.out.println(new Gson().toJson(req.queryMap().get("beginDate").value()));
+			System.out.println(req.queryParams());
+			
+			ManifestationSearchDTO searchParams = new Gson().fromJson(new Gson().toJson(req.queryMap().get("beginDate","endDate").value()), ManifestationSearchDTO.class);
+			
+			System.out.println(searchParams);
+			
+			
+			
+//			Collection<Manifestation> foundEntities = manifService.findAll();
+			Collection<Manifestation> foundEntities = manifService.search(searchParams);
 			if (foundEntities==null) {
 				halt(HttpStatus.NOT_FOUND_404,"No manifestations found");
 			}
