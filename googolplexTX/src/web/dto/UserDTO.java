@@ -1,10 +1,6 @@
 package web.dto;
 
-import java.time.LocalDate;
 import java.util.Collection;
-
-import model.enumerations.Gender;
-import model.enumerations.UserRole;
 
 public class UserDTO {
 	// User
@@ -12,9 +8,9 @@ public class UserDTO {
 	private String password;
 	private String firstName;
 	private String lastName;
-	private Gender gender;
-	private LocalDate birthDate;
-	private UserRole userRole;
+	private String gender;
+	private String birthDate;
+	private String userRole;
 	private Boolean blocked;
 	private Boolean deleted;
 	
@@ -31,9 +27,9 @@ public class UserDTO {
 	public UserDTO() {
 		super();
 	}
-	public UserDTO(String username, String password, String firstName, String lastName, Gender gender,
-			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, Collection<String> manifestations,
-			Double points, String customerType, Collection<String> comments, Collection<String> tickets) {
+	public UserDTO(String username, String password, String firstName, String lastName, String gender, String birthDate,
+			String userRole, Boolean blocked, Boolean deleted, Collection<String> manifestations, Double points,
+			String customerType, Collection<String> comments, Collection<String> tickets) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -74,22 +70,22 @@ public class UserDTO {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public Gender getGender() {
+	public String getGender() {
 		return gender;
 	}
-	public void setGender(Gender gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public LocalDate getBirthDate() {
+	public String getBirthDate() {
 		return birthDate;
 	}
-	public void setBirthDate(LocalDate birthDate) {
+	public void setBirthDate(String birthDate) {
 		this.birthDate = birthDate;
 	}
-	public UserRole getUserRole() {
+	public String getUserRole() {
 		return userRole;
 	}
-	public void setUserRole(UserRole userRole) {
+	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
 	public Boolean getBlocked() {
@@ -134,7 +130,6 @@ public class UserDTO {
 	public void setTickets(Collection<String> tickets) {
 		this.tickets = tickets;
 	}
-
 	
 }
 
