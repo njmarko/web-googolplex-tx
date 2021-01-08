@@ -39,7 +39,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 		// Search
 		if (searchParams.getName() != null) {
 			entities = entities.stream().filter((ent) -> {
-				return ent.getName().equalsIgnoreCase(searchParams.getName());
+				return ent.getName().toLowerCase().contains(searchParams.getName().toLowerCase());
 			}).collect(Collectors.toList());
 		}
 
@@ -107,7 +107,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 		// It sorts by ascending by default
 		if (searchParams.getSortCriteria() != null) {
-			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : false;
+			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<Manifestation>> critMap = new HashMap<String, Comparator<Manifestation>>();
 			critMap.put("name", Comparator.comparing(Manifestation::getName));

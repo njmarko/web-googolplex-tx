@@ -65,11 +65,7 @@ public class ManifestationControler {
 			// TODO add DTO for search and filter parameters
 			// TODO add pagination
 			res.type("application/json");
-			
-
-
-			
-			
+				
 			final Map<String, String> queryParams = new HashMap<>();
 		    req.queryMap().toMap().forEach((k, v) -> {
 		      queryParams.put(k, v[0]);
