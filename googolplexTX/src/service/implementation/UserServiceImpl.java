@@ -204,9 +204,11 @@ public class UserServiceImpl implements UserService {
 
 			user = new Customer(registerData.getUsername(), registerData.getPassword1(), registerData.getFirstName(),
 					registerData.getLastName(), gender, birthDate, role, 0d, custType);
-		} else if (role == UserRole.SALESMAN) {
-
-		}
+		} 
+		
+		userDAO.save(user);
+		// We want to manually call save file function
+		userDAO.saveFile();
 
 		return user;
 	}
