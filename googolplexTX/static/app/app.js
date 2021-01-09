@@ -1,16 +1,20 @@
-const WebShop = { template: '<web-shop></web-shop>' }
+const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp></div>' }
+const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp></div>' }
+const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp></div>' }
 
 
 const router = new VueRouter({
 	  mode: 'hash',
 	  routes: [
 	    { path: '/', component: WebShop},
+	    { path: '/login', component: Login},
+	    { path: '/register', component: Register},
 	    { path: '/manifestations', component: WebShop}
 	  ]
 });
 
 var app = new Vue({
-	router,
+  router,
 	el: '#webShop',
 	  mounted () {
   	this.$nextTick(() => {
