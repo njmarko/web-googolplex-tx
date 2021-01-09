@@ -7,6 +7,7 @@ import spark.Response;
 import spark.Route;
 import spark.utils.StringUtils;
 import spark.Filter;
+import web.dto.LoginDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.RegisterDTO;
 import web.dto.UserSearchDTO;
@@ -102,6 +103,41 @@ public class UserController {
 		}
 	};
 	
+	
+	public final Route login = new Route() {
+		
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			
+			String body = req.body();
+			LoginDTO loginData = g.fromJson(body, LoginDTO.class);
+			
+			// if registerData userRole is null, service will create a customer by default
+			// admin can create only customer and salesman, but not other admins
+			
+			String err = null;
+			User loggedInUser = req.session().attribute("user");
+			if (loggedInUser == null) {
+				err = loginData.validate();
+			}else {
+				halt(HttpStatus.OK_200, "Already logged in");
+			}
+			if (!StringUtils.isEmpty(err)) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			User user = userService.login(loginData);
+			if (user == null) {
+				halt(HttpStatus.BAD_REQUEST_400,"The username or password is wrong");
+			}
+			
+			req.session(true).attribute("user",user);
+			
+			// TODO Consider if you want to return UserDTO after logging in right away
+			
+			return  "User was sucessfully registered";
+		}
+	};
 	
 	
 	public final Route findAllUsers = new Route() {

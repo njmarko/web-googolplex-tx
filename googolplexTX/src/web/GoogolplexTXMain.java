@@ -109,6 +109,12 @@ public class GoogolplexTXMain {
 		 */
 		
 		path("/api",()->{
+			path("/login",()->{
+				post("",userController.login);
+			});
+			path("/register",()->{
+				post("",userController.registerUser);
+			});
 			
 			path("/manifestations",()->{				
 				get("",manifestationControler.findAllManifestations);	

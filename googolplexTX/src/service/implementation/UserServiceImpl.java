@@ -16,6 +16,7 @@ import model.enumerations.UserRole;
 import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
+import web.dto.LoginDTO;
 import web.dto.RegisterDTO;
 import web.dto.UserSearchDTO;
 
@@ -235,6 +236,15 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return adequateType;
+	}
+
+	@Override
+	public User login(LoginDTO loginData) {
+		User found = userDAO.findOne(loginData.getUsername());
+		if (found == null || !found.getPassword().equals(loginData.getPassword())) {
+			return null;
+		}
+		return found;
 	}
 
 }
