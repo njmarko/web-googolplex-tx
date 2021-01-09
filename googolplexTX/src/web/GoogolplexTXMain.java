@@ -115,6 +115,9 @@ public class GoogolplexTXMain {
 			path("/register",()->{
 				post("",userController.registerUser);
 			});
+			path("/logout",()->{
+				get("",userController.logout);
+			});
 			
 			path("/manifestations",()->{				
 				get("",manifestationControler.findAllManifestations);	
