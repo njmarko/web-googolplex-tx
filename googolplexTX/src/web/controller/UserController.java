@@ -5,7 +5,10 @@ import service.implementation.UserServiceImpl;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.utils.StringUtils;
+import spark.Filter;
 import web.dto.ManifestationSearchDTO;
+import web.dto.RegisterDTO;
 import web.dto.UserSearchDTO;
 
 import static spark.Spark.*;
@@ -50,7 +53,57 @@ public class UserController {
 //		});
 //	}
 	
+	/**
+	 * Checks if user is logged in.
+	 * It is called in the before method for all the paths that require the user to be logged in 
+	 */
+	public static final Filter authenticate = new Filter() {
 
+		@Override
+		public void handle(Request req, Response res) throws Exception {
+			User user = req.session().attribute("user");
+			if (user == null) {
+				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+			}	
+		}
+		
+	};
+	
+	
+	public final Route registerUser = new Route() {
+		
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			
+			String body = req.body();
+			RegisterDTO registerData = g.fromJson(body, RegisterDTO.class);
+			
+			// if registerData userRole is null, service will create a customer by default
+			// admin can create only customer and salesman, but not other admins
+			
+			String err = null;
+			User loggedInUser = req.session().attribute("user");
+			if (loggedInUser == null) {
+				err = registerData.validate(null);
+			}else {
+				err = registerData.validate(loggedInUser.getUserRole());
+			}
+			if (!StringUtils.isEmpty(err)) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			User registered = userService.registerUser(registerData);
+			if (registered == null) {
+				halt(HttpStatus.BAD_REQUEST_400,"The username is already taken");
+			}
+			// TODO Consider if you want to return UserDTO after registering right away
+			
+			return  "User was sucessfully registered";
+		}
+	};
+	
+	
+	
 	public final Route findAllUsers = new Route() {
 		
 		@Override
@@ -100,6 +153,7 @@ public class UserController {
 		@Override
 		public Object handle(Request req, Response res) {
 			//TODO check if logged in
+			
 			res.type("application/json");
 			String idu = req.params("idu");
 			User foundEntity = userService.findOne(idu);
@@ -117,6 +171,9 @@ public class UserController {
 			return new Gson().toJson(foundEntity);	
 		}
 	};
+	
+	
+
 	
 	
 	
