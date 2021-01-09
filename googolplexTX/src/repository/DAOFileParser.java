@@ -580,6 +580,11 @@ public class DAOFileParser {
 	        ManifestationType manifestationType = context.deserialize(jsonObject.get("manifestationType"), ManifestationType.class);
 	        Salesman salesman = context.deserialize(jsonObject.get("salesman"), Salesman.class);
 	        
+	        Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
+			Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
+	        ArrayList<Comment> comments = context.deserialize(jsonObject.get("comments"), commentsType);
+	        ArrayList<Ticket> tickets = context.deserialize(jsonObject.get("tickets"), ticketsType);
+	        
 	        // Generate new Manifestation or supplement pre-created obj (used in links)
 	        String id = jsonObject.get("id").getAsString();
 	        Manifestation manifestation = manifestationDAO.findOne(id);
@@ -601,11 +606,14 @@ public class DAOFileParser {
 	        	manifestation.setAvailableSeats(jsonObject.get("availableSeats").getAsInt());
 	        	manifestation.setDateOfOccurence(dateOfOccurence);
 	        	manifestation.setRegularPrice(jsonObject.get("regularPrice").getAsDouble());
+	        	manifestation.setStatus(manifestationStatus);
 	        	manifestation.setPoster(jsonObject.get("poster").getAsString());
 	        	manifestation.setDeleted(jsonObject.get("deleted").getAsBoolean());
 	        	manifestation.setManifestationType(manifestationType);
 	        	manifestation.setSalesman(salesman);
 	        	manifestation.setLocation(location);
+	        	manifestation.setComments(comments);
+	        	manifestation.setTickets(tickets);
 	        	return manifestation;
 	        }
 			

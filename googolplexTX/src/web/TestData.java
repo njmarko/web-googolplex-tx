@@ -12,6 +12,7 @@ import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
 import model.User;
+import model.enumerations.CommentStatus;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
@@ -227,6 +228,26 @@ public class TestData {
 				TicketStatus.CANCELED, null, false, cust4, man5);
 
 		
+		Comment c1 = new Comment("1", "Predobarr film", 5, CommentStatus.ACCEPTED, false, man1, cust1);
+		Comment c2 = new Comment("2", "Jadnooo", 2, CommentStatus.ACCEPTED, false, man5, cust4);
+		Comment c3 = new Comment("3", "Okej", 3, CommentStatus.ACCEPTED, false, man1, cust3);
+		
+		
+		// CustomerTypes
+		customerTypeDAO.save(custType0);
+		customerTypeDAO.save(custType1);
+		customerTypeDAO.save(custType2);
+		customerTypeDAO.save(custType3);
+		customerTypeDAO.save(custType4);
+		customerTypeDAO.save(custType5);
+
+		// Manifestatoin Types
+		manifestationTypeDAO.save(mt1);
+		manifestationTypeDAO.save(mt2);
+		manifestationTypeDAO.save(mt3);
+		manifestationTypeDAO.save(mt4);
+		manifestationTypeDAO.save(mt5);
+		
 		// saving
 		userDAO.save(cust1);
 		userDAO.save(cust2);
@@ -282,6 +303,10 @@ public class TestData {
 		ticketDAO.save(t17);
 		ticketDAO.save(t18);
 		ticketDAO.save(t19);
+
+		commentDAO.save(c1);
+		commentDAO.save(c2);
+		commentDAO.save(c3);
 		
 		
 		for (Manifestation m : manifestationDAO.getManifestations().values()) {
