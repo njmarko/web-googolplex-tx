@@ -113,7 +113,7 @@ public class GoogolplexTXMain {
 				post("",userController.login);
 			});
 			path("/register",()->{
-				post("",userController.registerUser);
+				post("",userController.registerUser); // everyone can register customer, only admin can register salesman
 			});
 			path("/logout",()->{
 				get("",userController.logout);
@@ -121,41 +121,44 @@ public class GoogolplexTXMain {
 			
 			path("/manifestations",()->{				
 				get("",manifestationControler.findAllManifestations);	
-				post("", manifestationControler.saveOneManifestation);				
+				post("", manifestationControler.saveOneManifestation);	// req salesman		
 				
 				path("/:idm",()->{					
 					get("", manifestationControler.findOneManifestation);
 									
-					delete("", manifestationControler.deleteOneManifestation);
-					put("", manifestationControler.editOneManifestation);
+					delete("", manifestationControler.deleteOneManifestation); // req admin
+					put("", manifestationControler.editOneManifestation); // req salesman
 					
 					path("/tickets",()->{
-						before("*","PUT",UserController.authenticate); // all paths
+//						before("*",UserController.authenticateUser); // all ticket paths require login
 
-						get("", ticketController.findAllTicketsForManifestation);
-						
+						get("", ticketController.findAllTicketsForManifestation); // req salesman					
 						path("/:idt", ()->{
-							
+							get("", ticketController.findOneTicket); // TODO req admin or salesman
+//							delete("", ticketController.deleteOneTicket); // TODO req admin
+//							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});
 				});
 			});
-			before("/users",UserController.authenticate); // all paths in manifestations are not allowed without login
+//			before("/users",UserController.authenticateUser); // all paths in manifestations are not allowed without login
 			path("/users",()->{
-				get("", userController.findAllUsers);
-				post("", userController.saveOneUser);
+				get("", userController.findAllUsers); // req admin
+				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
 				path("/:idu",()->{
-					get("", userController.findOneUser);
+					get("", userController.findOneUser); // req admin
+					delete("", userController.deleteOneUser); // req admin
+//					put("", userController.editOneUser); // TODO req different things for different roles possibly
 					path("/tickets",()->{
-						get("", ticketController.findAllTicketsForUser);						
+						get("", ticketController.findAllTicketsForUser); // TODO req admin					
 						path("/:idt", ()->{
-							
+							get("", ticketController.findOneTicket); // TODO req admin or salesman
+//							delete("", ticketController.deleteOneTicket); // TODO req admin
+//							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});
-				});
-				
+				});				
 			});
-			
 		});
 
 

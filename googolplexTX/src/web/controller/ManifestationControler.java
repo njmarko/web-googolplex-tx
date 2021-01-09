@@ -16,6 +16,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import com.google.gson.Gson;
 
 import model.Manifestation;
+import model.User;
+import model.enumerations.UserRole;
 import service.ManifestationService;
 import service.implementation.ManifestationServiceImpl;
 import spark.Request;
@@ -39,7 +41,7 @@ public class ManifestationControler {
 	public ManifestationControler(ManifestationService manifService) {
 		super();
 		this.manifService = manifService;
-		this.gManifAdapter = new JsonAdapter().manifestationSeraialization();
+		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
 	}
 
 //	public ManifestationControler() {
@@ -65,7 +67,6 @@ public class ManifestationControler {
 		@Override
 		public Object handle(Request req, Response res) {
 			// No login needed for this request.
-			// TODO add DTO for search and filter parameters
 			// TODO add pagination
 			res.type("application/json");
 				
@@ -92,7 +93,6 @@ public class ManifestationControler {
 
 	public final Route findOneManifestation = new Route() {
 		
-
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
 			// TODO Consider if user has to be logged in
@@ -141,9 +141,9 @@ public class ManifestationControler {
 	public final Route deleteOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
-			// TODO check if admin
-
+		public Object handle(Request req, Response res) throws Exception {
+			UserController.authenticateAdmin.handle(req, res);
+			
 			// res.type("application/json");
 			String id = req.params("idm");
 			Manifestation deletedEntity = manifService.delete(id);
@@ -151,7 +151,6 @@ public class ManifestationControler {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
 			System.out.println(deletedEntity);
-//			return g.toJson(deletedEntity); //for debuging with postman
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};

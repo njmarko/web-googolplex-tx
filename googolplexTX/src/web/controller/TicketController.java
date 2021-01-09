@@ -24,45 +24,44 @@ import static spark.Spark.*;
 public class TicketController {
 
 	private TicketService ticketService;
-    private Gson gson;
+	private Gson gson;
 
 	public TicketController(TicketService ticketService) {
 		super();
 		this.ticketService = ticketService;
 		this.gson = new Gson();
 	}
-	
+
 	public final Route findAllTicketsForManifestation = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) {
 			// TODO login needed for this request.
-			// TODO add DTO for search and filter parameters. Call search or find all function depending on parameters
+			// TODO add DTO for search and filter parameters. Call search or find all
+			// function depending on parameters
 			// TODO add pagination
 			res.type("application/json");
-			
-			
-			//ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), ManifestationSearchDTO.class);
-			
-			//System.out.println("[DBG] searchParamsDTO" + searchParams);
-			
-			//Collection<Ticket> foundEntities = ticketService.search(searchParams);
+
+			// ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams),
+			// ManifestationSearchDTO.class);
+
+			// System.out.println("[DBG] searchParamsDTO" + searchParams);
+
+			// Collection<Ticket> foundEntities = ticketService.search(searchParams);
 			Collection<Ticket> foundEntities = ticketService.findAll();
-			
-			if (foundEntities==null) {
+
+			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
-			
+
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			
+
 			return new Gson().toJson(foundEntities);
 		}
 	};
-	
-	
-	public final Route findOneManifestation = new Route() {
 
+	public final Route findOneTicket = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) {
@@ -75,47 +74,62 @@ public class TicketController {
 				// TODO replace with HALT function to handle error codes
 				halt(HttpStatus.NOT_FOUND_404, "not found");
 			}
-			// TODO Since it contains date consider using adapters. 
+			// TODO Since it contains date consider using adapters.
 			// TODO Replace with DTO if needed
 			return new Gson().toJson(foundEntity);
 		}
 	};
-	
+
 	public final Route findAllTicketsForUser = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) {
 			// TODO login needed for this request.
-			// TODO add DTO for search and filter parameters. Call search or find all function depending on parameters
+			// TODO add DTO for search and filter parameters. Call search or find all
+			// function depending on parameters
 			// TODO add pagination
 			res.type("application/json");
-			
+
 			final Map<String, String> queryParams = new HashMap<>();
-		    req.queryMap().toMap().forEach((k, v) -> {
-		      queryParams.put(k, v[0]);
-		    });
-		    String user = req.params("idu");
-		    System.out.println("User: " + user);
-		    
+			req.queryMap().toMap().forEach((k, v) -> {
+				queryParams.put(k, v[0]);
+			});
+			String user = req.params("idu");
+			System.out.println("User: " + user);
+
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
 
-			
-			//System.out.println("[DBG] searchParamsDTO" + searchParams);
-			
+			// System.out.println("[DBG] searchParamsDTO" + searchParams);
+
 			Collection<Ticket> foundEntities = ticketService.searchByUser(user, searchParams);
-			//Collection<Ticket> foundEntities = ticketService.findAll();
-			
-			if (foundEntities==null) {
+			// Collection<Ticket> foundEntities = ticketService.findAll();
+
+			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
-			
+
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			
+
 			return JsonAdapter.ticketsSeraialization().toJson(foundEntities);
 		}
-	};	
+	};
 
-	
-	
+	public final Route deleteOneTicket = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			UserController.authenticateAdmin.handle(req, res);
+
+			res.type("application/json");
+			String id = req.params("idt");
+			Ticket deletedEntity = ticketService.findOne(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "not found");
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+
 }
