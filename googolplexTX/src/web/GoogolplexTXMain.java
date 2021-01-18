@@ -43,7 +43,7 @@ public class GoogolplexTXMain {
 		ManifestationTypeDAO manifestationTypeDAO = new ManifestationTypeDAO();
 		CustomerTypeDAO customerTypeDAO = new CustomerTypeDAO();
 		
-		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO);
+		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
 		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
 		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
 		
@@ -54,7 +54,7 @@ public class GoogolplexTXMain {
 		//DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
 		//daoFileParser.loadData();
 		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
-
+		
 		userDAO.saveFile();
 		manifestationDAO.saveFile();
 		ticketDAO.saveFile();
@@ -107,43 +107,58 @@ public class GoogolplexTXMain {
 		 * You can write the whole API here, and just reference appropriate attributes from 
 		 * controllers. If you name your attributes appropriately, it increases readability further.
 		 */
+		
 		path("/api",()->{
-			path("/manifestations",()->{
-				
-				get("",manifestationControler.findAllManifestations);		
-				post("", manifestationControler.saveOneManifestation);
-				
-				path("/:idm",()->{
-					get("", manifestationControler.findOneManifestation);
-					delete("", manifestationControler.deleteOneManifestation);
-					put("", manifestationControler.editOneManifestation);
-					
-					path("/tickets",()->{
-						get("", ticketController.findAllTicketsForManifestation);
-						
-						path("/:idt", ()->{
-							
-						});
-					});
-				});
+			path("/login",()->{
+				post("",userController.login);
 			});
-			path("/users",()->{
-				get("", userController.findAllUsers);
-				post("", userController.saveOneUser);
-				path("/:idu",()->{
-					System.out.println("Ide ovo");
-					get("", userController.findOneUser);
-					path("/tickets",()->{
-						get("", ticketController.findAllTicketsForUser);
-						
-						path("/:idt", ()->{
-							
-						});
-					});
-				});
-				
+			path("/register",()->{
+				post("",userController.registerUser); // everyone can register customer, only admin can register salesman
+			});
+			path("/logout",()->{
+				get("",userController.logout);
 			});
 			
+			path("/manifestations",()->{				
+				get("",manifestationControler.findAllManifestations);	
+				post("", manifestationControler.saveOneManifestation);	// req salesman		
+				
+				path("/:idm",()->{					
+					get("", manifestationControler.findOneManifestation);
+									
+					delete("", manifestationControler.deleteOneManifestation); // req admin
+					put("", manifestationControler.editOneManifestation); // req salesman
+					
+					path("/tickets",()->{
+//						before("*",UserController.authenticateUser); // all ticket paths require login
+
+						get("", ticketController.findAllTicketsForManifestation); // req salesman					
+						path("/:idt", ()->{
+							get("", ticketController.findOneTicket); // TODO req admin or salesman
+//							delete("", ticketController.deleteOneTicket); // TODO req admin
+//							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
+						});
+					});
+				});
+			});
+//			before("/users",UserController.authenticateUser); // all paths in manifestations are not allowed without login
+			path("/users",()->{
+				get("", userController.findAllUsers); // req admin
+				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
+				path("/:idu",()->{
+					get("", userController.findOneUser); // req admin
+					delete("", userController.deleteOneUser); // req admin
+//					put("", userController.editOneUser); // TODO req different things for different roles possibly
+					path("/tickets",()->{
+						get("", ticketController.findAllTicketsForUser); // TODO req admin					
+						path("/:idt", ()->{
+							get("", ticketController.findOneTicket); // TODO req admin or salesman
+//							delete("", ticketController.deleteOneTicket); // TODO req admin
+//							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
+						});
+					});
+				});				
+			});
 		});
 
 

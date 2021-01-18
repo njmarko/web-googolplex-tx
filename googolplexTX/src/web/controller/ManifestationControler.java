@@ -16,6 +16,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import com.google.gson.Gson;
 
 import model.Manifestation;
+import model.User;
+import model.enumerations.UserRole;
 import service.ManifestationService;
 import service.implementation.ManifestationServiceImpl;
 import spark.Request;
@@ -32,14 +34,15 @@ public class ManifestationControler {
 
 	private ManifestationService manifService;
 	
-	private Gson g;
+	private Gson gManifAdapter;
 
 	// TODO consider if empty constructor is needed
 	
 	public ManifestationControler(ManifestationService manifService) {
 		super();
 		this.manifService = manifService;
-		this.g = JsonAdapter.manifestationSeraialization();
+		//this.g = JsonAdapter.manifestationSeraialization();
+		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
 	}
 
 //	public ManifestationControler() {
@@ -65,7 +68,6 @@ public class ManifestationControler {
 		@Override
 		public Object handle(Request req, Response res) {
 			// No login needed for this request.
-			// TODO add DTO for search and filter parameters
 			// TODO add pagination
 			res.type("application/json");
 				
@@ -74,7 +76,7 @@ public class ManifestationControler {
 		      queryParams.put(k, v[0]);
 		    });
 		    
-			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+			ManifestationSearchDTO searchParams = gManifAdapter.fromJson(gManifAdapter.toJson(queryParams), ManifestationSearchDTO.class);
 		    
 			// TODO remove debug print message
 			System.out.println("[DBG] searchParamsDTO" + searchParams);
@@ -86,14 +88,14 @@ public class ManifestationControler {
 			
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			return g.toJson(foundEntities);
+			return gManifAdapter.toJson(foundEntities);
 		}
 	};
 
 	public final Route findOneManifestation = new Route() {
-
+		
 		@Override
-		public Object handle(Request req, Response res) {
+		public Object handle(Request req, Response res) throws Exception {
 			// TODO Consider if user has to be logged in
 
 			res.type("application/json");
@@ -104,7 +106,7 @@ public class ManifestationControler {
 			}
 			// TODO Since it contains date consider using adapters. Replace with DTO if
 			// needed
-			return g.toJson(foundEntity);
+			return gManifAdapter.toJson(foundEntity);
 		}
 	};
 
@@ -118,12 +120,12 @@ public class ManifestationControler {
 			// TODO check if admin or salesman
 			String body = req.body();
 			// TODO replace with DTO if needed and use adapters to awoid warnings
-			Manifestation manif = g.fromJson(body, Manifestation.class);
+			Manifestation manif = gManifAdapter.fromJson(body, Manifestation.class);
 			Manifestation savedEntity = manifService.save(manif);
 			if (savedEntity == null) {
 				halt(HttpStatus.BAD_REQUEST_400);
 			}
-			return g.toJson(savedEntity);
+			return gManifAdapter.toJson(savedEntity);
 			
 ////			Example with adapter
 //			String body = req.body();
@@ -140,9 +142,9 @@ public class ManifestationControler {
 	public final Route deleteOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
-			// TODO check if admin
-
+		public Object handle(Request req, Response res) throws Exception {
+			UserController.authenticateAdmin.handle(req, res);
+			
 			// res.type("application/json");
 			String id = req.params("idm");
 			Manifestation deletedEntity = manifService.delete(id);
@@ -150,7 +152,6 @@ public class ManifestationControler {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
 			System.out.println(deletedEntity);
-//			return g.toJson(deletedEntity); //for debuging with postman
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
@@ -166,7 +167,7 @@ public class ManifestationControler {
 			System.out.println(idm);
 
 			// TODO consider using adapters to awoid warnings
-			Manifestation newEntity = g.fromJson(body, Manifestation.class);
+			Manifestation newEntity = gManifAdapter.fromJson(body, Manifestation.class);
 			System.out.println(newEntity.getId());
 			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
 				halt(HttpStatus.BAD_REQUEST_400);
@@ -174,7 +175,7 @@ public class ManifestationControler {
 
 			Manifestation savedEntity = manifService.save(newEntity);
 
-			return g.toJson(savedEntity);
+			return gManifAdapter.toJson(savedEntity);
 		}
 	};
 

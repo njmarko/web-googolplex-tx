@@ -2,6 +2,8 @@ package web.dto;
 
 import java.util.Collection;
 
+import model.Location;
+
 public class ManifestationDTO {
 	private String id;
 	private String name;
@@ -10,11 +12,10 @@ public class ManifestationDTO {
 	private Double regularPrice;
 	private String status;
 	private String poster;
-	private Boolean deleted;
 
 	private String manifestationType;
 	public String salesman;
-	public String location;
+	public Location location;
 	public Collection<String> comments;
 	public Collection<String> tickets;
 
@@ -23,7 +24,7 @@ public class ManifestationDTO {
 	}
 
 	public ManifestationDTO(String id, String name, Integer availableSeats, String dateOfOccurence, Double regularPrice,
-			String status, String poster, Boolean deleted, String manifestationType, String salesman, String location,
+			String status, String poster, String manifestationType, String salesman, Location location,
 			Collection<String> comments, Collection<String> tickets) {
 		super();
 		this.id = id;
@@ -33,7 +34,6 @@ public class ManifestationDTO {
 		this.regularPrice = regularPrice;
 		this.status = status;
 		this.poster = poster;
-		this.deleted = deleted;
 		this.manifestationType = manifestationType;
 		this.salesman = salesman;
 		this.location = location;
@@ -97,14 +97,6 @@ public class ManifestationDTO {
 		this.poster = poster;
 	}
 
-	public Boolean getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-
 	public String getManifestationType() {
 		return manifestationType;
 	}
@@ -119,14 +111,6 @@ public class ManifestationDTO {
 
 	public void setSalesman(String salesman) {
 		this.salesman = salesman;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public Collection<String> getComments() {
@@ -145,13 +129,20 @@ public class ManifestationDTO {
 		this.tickets = tickets;
 	}
 
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 	@Override
 	public String toString() {
 		return "ManifestationDTO [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
 				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
-				+ ", poster=" + poster + ", deleted=" + deleted + ", manifestationType=" + manifestationType
-				+ ", salesman=" + salesman + ", location=" + location + ", comments=" + comments + ", tickets="
-				+ tickets + "]";
+				+ ", poster=" + poster + ", manifestationType=" + manifestationType + ", salesman=" + salesman
+				+ ", location=" + location + ", comments=" + comments + ", tickets=" + tickets + "]";
 	}
 
 }
