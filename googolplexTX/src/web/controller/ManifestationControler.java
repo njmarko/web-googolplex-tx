@@ -39,7 +39,7 @@ public class ManifestationControler {
 	public ManifestationControler(ManifestationService manifService) {
 		super();
 		this.manifService = manifService;
-		this.g = new Gson();
+		this.g = JsonAdapter.manifestationSeraialization();
 	}
 
 //	public ManifestationControler() {

@@ -6,7 +6,7 @@ Vue.component("login-form", {
 	},
 	template: ` 
 	<div class="container">
-				<!-- <div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div> -->
+				<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 		<div class="row">
 			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 			<div class="card card-signin my-5">
