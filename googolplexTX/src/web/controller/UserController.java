@@ -8,16 +8,20 @@ import spark.Route;
 import spark.Session;
 import spark.utils.StringUtils;
 import support.JsonAdapter;
+import support.UserToUserDTO;
 import spark.Filter;
 import web.dto.LoginDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.RegisterDTO;
+import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
 
 import static spark.Spark.*;
 
 import java.net.HttpURLConnection;
+import java.security.Key;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +29,11 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.google.gson.Gson;
 
-import model.Manifestation;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import model.User;
 import model.enumerations.UserRole;
 
@@ -33,11 +41,13 @@ public class UserController {
 
 	private UserService userService;
 	private Gson g;
-
+	private Key key;
+	
 	public UserController(UserService userService) {
 		super();
 		this.userService = userService;
 		this.g = new Gson();
+		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	}
 
 //	public UserController() {
@@ -93,21 +103,25 @@ public class UserController {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-
+			res.type("application/json");
 			String body = req.body();
 			System.out.println(body);
 			LoginDTO loginData = g.fromJson(body, LoginDTO.class);
 
-			// if registerData userRole is null, service will create a customer by default
-			// admin can create only customer and salesman, but not other admins
-
-			String err = null;
-			User loggedInUser = req.session().attribute("user");
-			if (loggedInUser == null) {
-				err = loginData.validate();
-			} else {
-				halt(HttpStatus.OK_200, "Already logged in");
-			}
+			// check if user is logged in
+			
+			String auth = req.headers("Authorization");
+			if ((auth != null) && (auth.contains("Bearer "))) {
+				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+				try {
+					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
+				} catch (Exception e) {
+					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
+				}
+			}	
+							
+			String err = loginData.validate();;
 			if (!StringUtils.isEmpty(err)) {
 				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
@@ -116,12 +130,19 @@ public class UserController {
 			if (user == null) {
 				halt(HttpStatus.BAD_REQUEST_400, "The username or password is wrong");
 			}
+			
+			String jwt = Jwts.builder()
+					.setSubject(user.getUsername())
+					.setExpiration(new Date(new Date().getTime() + 1000*60*60*24*356L))
+					.setIssuedAt(new Date())
+					.signWith(key).compact();
+			
+			UserDTO retVal = UserToUserDTO.convert(user);
+			retVal.setJwt(jwt);
+			
+			res.status(HttpStatus.OK_200); 
 
-			req.session(true).attribute("user", user);
-
-			// TODO Consider if you want to return UserDTO after logging in right away
-
-			return "User sucessfully logged in";
+			return g.toJson(retVal);
 		}
 	};
 

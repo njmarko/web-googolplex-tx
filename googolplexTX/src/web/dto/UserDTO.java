@@ -5,14 +5,13 @@ import java.util.Collection;
 public class UserDTO {
 	// User
 	private String username;
-	private String password;
 	private String firstName;
 	private String lastName;
 	private String gender;
-	private String birthDate;
+	private Long birthDate;
 	private String userRole;
 	private Boolean blocked;
-	private Boolean deleted;
+	private String jwt;
 
 	// Salesman
 	public Collection<String> manifestations;
@@ -28,19 +27,18 @@ public class UserDTO {
 		super();
 	}
 
-	public UserDTO(String username, String password, String firstName, String lastName, String gender, String birthDate,
-			String userRole, Boolean blocked, Boolean deleted, Collection<String> manifestations, Double points,
-			String customerType, Collection<String> comments, Collection<String> tickets) {
+	public UserDTO(String username, String firstName, String lastName, String gender, Long birthDate, String userRole,
+			Boolean blocked, String jwt, Collection<String> manifestations, Double points, String customerType,
+			Collection<String> comments, Collection<String> tickets) {
 		super();
 		this.username = username;
-		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
 		this.birthDate = birthDate;
 		this.userRole = userRole;
 		this.blocked = blocked;
-		this.deleted = deleted;
+		this.jwt = jwt;
 		this.manifestations = manifestations;
 		this.points = points;
 		this.customerType = customerType;
@@ -54,14 +52,6 @@ public class UserDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getFirstName() {
@@ -88,14 +78,6 @@ public class UserDTO {
 		this.gender = gender;
 	}
 
-	public String getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(String birthDate) {
-		this.birthDate = birthDate;
-	}
-
 	public String getUserRole() {
 		return userRole;
 	}
@@ -110,14 +92,6 @@ public class UserDTO {
 
 	public void setBlocked(Boolean blocked) {
 		this.blocked = blocked;
-	}
-
-	public Boolean getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
 	}
 
 	public Collection<String> getManifestations() {
@@ -158,6 +132,30 @@ public class UserDTO {
 
 	public void setTickets(Collection<String> tickets) {
 		this.tickets = tickets;
+	}
+
+	public String getJwt() {
+		return jwt;
+	}
+
+	public void setJwt(String jwt) {
+		this.jwt = jwt;
+	}
+
+	public Long getBirthDate() {
+		return birthDate;
+	}
+
+	public void setBirthDate(Long birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	@Override
+	public String toString() {
+		return "UserDTO [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName + ", gender="
+				+ gender + ", birthDate=" + birthDate + ", userRole=" + userRole + ", blocked=" + blocked + ", jwt="
+				+ jwt + ", manifestations=" + manifestations + ", points=" + points + ", customerType=" + customerType
+				+ ", comments=" + comments + ", tickets=" + tickets + "]";
 	}
 
 }
