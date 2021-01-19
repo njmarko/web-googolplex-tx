@@ -37,7 +37,7 @@ public class RegisterDTO {
 			err = "You have to enter a confirmation password";
 		} else if (StringUtils.isEmpty(password2)) {
 			err = "You have to enter a password";
-		} else if (password1.equals(password2)) {
+		} else if (!password1.equals(password2)) {
 			err = "Password and confirmation password mush match";
 		} else if (StringUtils.isEmpty(firstName)) {
 			err = "You have to enter the first name";

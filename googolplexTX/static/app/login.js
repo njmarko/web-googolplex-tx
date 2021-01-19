@@ -1,7 +1,7 @@
 Vue.component("login-form", {
 	data: function() {
 		return {
-			manifestations: null
+			loginUser: {}
 		}
 	},
 	template: ` 
@@ -15,12 +15,12 @@ Vue.component("login-form", {
 				<form class="form-signin">
 
 					<div class="form-label-group">
-					<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-					<label for="inputEmail">Email address</label>
+					<input type="text" id="inputUsername" class="form-control" placeholder="Username" v-model="loginUser.username" required autofocus>
+					<label for="inputUsername">Username</label>
 					</div>
 	
 					<div class="form-label-group">
-					<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="loginUser.password" required>
 					<label for="inputPassword">Password</label>
 					</div>
 	
@@ -29,7 +29,7 @@ Vue.component("login-form", {
 					<label class="custom-control-label" for="customCheck1">Remember password</label>
 					</div>
 
-					<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+					<button class="btn btn-lg btn-primary btn-block text-uppercase" v-on:click="userLogin(loginUser)">Sign in</button>
 
 					<hr class="my-4">
 					<h5 class="card-title text-center">Don't have an account?</h5>
@@ -43,11 +43,18 @@ Vue.component("login-form", {
 		</div>
 `
 	,
-	methods: {
-	},
+
 	mounted() {
-		axios
-			.get('api/manifestations')
-			.then(response => (this.manifestations = response.data))
+		
+	},
+	methods: {
+		userLogin : function(loginUser){
+			alert(loginUser);
+			console.log(loginUser);
+			var user = {username: loginUser.username, password: loginUser.password}
+			axios
+				.post('api/login', user)
+				.then(response => (alert(response.data)))
+		}
 	},
 });

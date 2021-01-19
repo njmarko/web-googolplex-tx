@@ -1,7 +1,7 @@
 Vue.component("register-form", {
 	data: function() {
 		return {
-			manifestations: null
+			registerData: {}
 		}
 	},
 	template: ` 
@@ -15,27 +15,27 @@ Vue.component("register-form", {
 				<form class="form-signin">
 
 					<div class="form-label-group">
-					<input type="name" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+					<input type="name" id="inputUsername" class="form-control" placeholder="Username" v-model="registerData.username" required autofocus>
 					<label for="inputUsername">Username</label>
 					</div>
 
 					<div class="form-label-group">
-					<input type="name" id="inputFirstName" class="form-control" placeholder="FirstName" required autofocus>
+					<input type="name" id="inputFirstName" class="form-control" placeholder="FirstName" v-model="registerData.firstName" required autofocus>
 					<label for="inputFirstName">FirstName</label>
 					</div>
 	
 					<div class="form-label-group">
-					<input type="name" id="inputLastName" class="form-control" placeholder="Last Name" required autofocus>
+					<input type="name" id="inputLastName" class="form-control" placeholder="Last Name" v-model="registerData.lastName" required autofocus>
 					<label for="inputLastName">Last Name</label>
 					</div>
 
 					<div class="form-label-group">
-					<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="registerData.password1" required>
 					<label for="inputPassword">Password</label>
 					</div>
 					
 					<div class="form-label-group">
-					<input type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" required>
+					<input type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" v-model="registerData.password2" required>
 					<label for="inputConfirmPassword">Confirm Password</label>
 					</div>
 	
@@ -44,7 +44,7 @@ Vue.component("register-form", {
 					<label class="custom-control-label" for="customCheck1">Remember password</label>
 					</div>
 
-					<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+					<button class="btn btn-lg btn-primary btn-block text-uppercase" v-on:click="registerUser(registerData)" >Sign in</button>
 
 					<hr class="my-4">
 					<h5 class="card-title text-center">Already have an account?</h5>
@@ -58,11 +58,17 @@ Vue.component("register-form", {
 		</div>
 `
 	,
-	methods: {
-	},
 	mounted() {
-		axios
-			.get('api/manifestations')
-			.then(response => (this.manifestations = response.data))
+		
+	},
+	methods: {
+		registerUser : function(registerData){
+			alert(registerData);
+			console.log(registerData);
+			var userData = {username: registerData.username, password1: registerData.password1, password2: registerData.password2, firstName: registerData.firstName, lastName: registerData.lastName, gender: 'MALE', birthDate: 12345678}
+			axios
+				.post('api/register', userData)
+				.then(response => (alert(response.data)))
+		}
 	},
 });
