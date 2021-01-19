@@ -1,5 +1,5 @@
 Vue.component("navbar", {
-	data: function() {
+	data: function () {
 		return {
 			manifestations: null
 		}
@@ -7,7 +7,6 @@ Vue.component("navbar", {
 	template: ` 
 	<nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container">
-			<a class="navbar-brand" href="/">Googolplex-Tx</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarNavAltMarkup"
 				aria-controls="navbarNavAltMarkup" aria-expanded="false"
@@ -15,20 +14,30 @@ Vue.component("navbar", {
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-				<div class="navbar-nav">
-					<a class="nav-item nav-link active" href="/">Home <span
-						className="sr-only">(current)</span></a> <a class="nav-item nav-link"
-						href="#/manifestations">Manifestations</a> <a
-						class="nav-item nav-link" href="#/login">login</a> <a
-						class="nav-item nav-link" href="#/register">Register</a>
+				<div class="navbar-nav mr-auto mt-2 mt-lg-0">
+					<a class="navbar-brand" href="/">Googolplex-Tx</a>
+
+					<router-link to="/" class="nav-item nav-link">Home</router-link>
+					<router-link to="/manifestations" class="nav-item nav-link">Manifestations</router-link>
+				</div>
+
+				<div v-if="!user" class="navbar-nav my-2 my-lg-0">
+					<router-link to="/login" class="nav-link">Login</router-link>
+					<router-link to="/register" class="nav-link">Register</router-link>
+				</div>
+				<div v-if="user" class="navbar-nav my-2 my-lg-0">
+					<router-link to="/logout" class="nav-link">Logout</router-link>
 				</div>
 			</div>
 		</div>
 	</nav>
-`
-	,
-	methods: {
-	},
+
+
+	
+
+
+`,
+	methods: {},
 	mounted() {
 		axios
 			.get('api/manifestations')

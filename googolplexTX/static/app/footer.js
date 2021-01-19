@@ -1,13 +1,13 @@
-Vue.component("footer-cmp", {
+Vue.component("footer-comp", {
 	data: function() {
 		return {
 			manifestations: null
 		}
 	},
 	template: ` 
-	<footer className="page-footer font-small blue">
-		<div className="footer-copyright text-center py-3">
-			<span>© 2021 Copyright: </span> <a href="/aboutus">Our team</a>
+	<footer class="page-footer font-small bg-dark text-light">
+		<div class="footer-copyright text-center py-3">
+			<span>© 2021 Copyright: </span"> <a href="#" class="text-info">Don't click here</a>
 		</div>
 	</footer>
 `

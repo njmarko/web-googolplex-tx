@@ -4,7 +4,8 @@ const Register = { template: '<div><navbar></navbar><register-form></register-fo
 
 
 const router = new VueRouter({
-	  mode: 'hash',
+    mode: 'hash',
+    linkExactActiveClass: 'active',
 	  routes: [
 	    { path: '/', component: WebShop},
 	    { path: '/login', component: Login},
@@ -17,9 +18,9 @@ var app = new Vue({
   router,
 	el: '#webShop',
 	  mounted () {
-  	this.$nextTick(() => {
+  	/*this.$nextTick(() => {
     	this.initParticleJS()	
-    })
+    })*/
     
   },
   methods: {
