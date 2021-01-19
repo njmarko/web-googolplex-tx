@@ -1,7 +1,8 @@
 Vue.component("navbar", {
 	data: function () {
 		return {
-			manifestations: null
+			manifestations: null,
+			user: window.localStorage.getItem('user')
 		}
 	},
 	template: ` 

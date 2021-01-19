@@ -68,7 +68,10 @@ Vue.component("login-form", {
 			var user = {username: loginData.username, password: loginData.password}
 			axios
 				.post('api/login', user)
-				.then(response => (alert(response.data)))
+				.then(response => {
+					console.log(response.data)
+					window.localStorage.setItem('user', JSON.stringify(response.data));
+				})
 				.catch(function (error) {
 					if (error.response) {
 						component.loginError = error.response.data;
@@ -80,7 +83,6 @@ Vue.component("login-form", {
 						component.loginError = error.response.data;
 						console.log('Error', error.message);
 					}
-					component.loginError = error.response.data;
 					console.log("error.config");
 					console.log(error.config);
 				});
