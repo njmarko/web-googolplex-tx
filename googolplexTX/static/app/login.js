@@ -1,26 +1,34 @@
 Vue.component("login-form", {
 	data: function() {
 		return {
-			loginUser: {}
+			loginData: {},
+			loginError: ""
 		}
 	},
 	template: ` 
 	<div class="container">
-				<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
+		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
+		<br/>
+
+		<div v-if="loginError" class="alert alert-danger alert-dismissible">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+			<strong>Error</strong> {{loginError}}
+		</div>
+
 		<div class="row">
 			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 			<div class="card card-signin my-5">
 				<div class="card-body">
 				<h5 class="card-title text-center">Sign In</h5>
-				<form class="form-signin">
+				<form class="form-signin" v-on:submit.prevent="loginUser">
 
 					<div class="form-label-group">
-					<input type="text" id="inputUsername" class="form-control" placeholder="Username" v-model="loginUser.username" required autofocus>
+					<input type="text" id="inputUsername" class="form-control" placeholder="Username" v-model="loginData.username" required autofocus>
 					<label for="inputUsername">Username</label>
 					</div>
 	
 					<div class="form-label-group">
-					<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="loginUser.password" required>
+					<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="loginData.password" required>
 					<label for="inputPassword">Password</label>
 					</div>
 	
@@ -29,11 +37,12 @@ Vue.component("login-form", {
 					<label class="custom-control-label" for="customCheck1">Remember password</label>
 					</div>
 
-					<button class="btn btn-lg btn-primary btn-block text-uppercase" v-on:click="userLogin(loginUser)">Sign in</button>
+					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="SIGN UP" />
 
 					<hr class="my-4">
 					<h5 class="card-title text-center">Don't have an account?</h5>
-					<a class="btn btn-warning btn-block text-uppercase" href="#/register">Register</a>
+
+					<router-link to="/register" class="btn btn-warning btn-block text-uppercase">Register</router-link>
 
 				</form>
 				</div>
@@ -48,13 +57,33 @@ Vue.component("login-form", {
 		
 	},
 	methods: {
-		userLogin : function(loginUser){
-			alert(loginUser);
-			console.log(loginUser);
-			var user = {username: loginUser.username, password: loginUser.password}
+		loginUser : function(){
+
+			let component = this;
+
+			let loginData = this.loginData
+			let errorText = this.loginError
+
+			console.log(this.loginData);
+			var user = {username: loginData.username, password: loginData.password}
 			axios
 				.post('api/login', user)
 				.then(response => (alert(response.data)))
+				.catch(function (error) {
+					if (error.response) {
+						component.loginError = error.response.data;
+						console.log(error.response.data);
+					} else if (error.request) {
+						component.loginError = error.response.data;
+						console.log(error.request);
+					} else {
+						component.loginError = error.response.data;
+						console.log('Error', error.message);
+					}
+					component.loginError = error.response.data;
+					console.log("error.config");
+					console.log(error.config);
+				});
 		}
 	},
 });
