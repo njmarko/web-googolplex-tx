@@ -2,7 +2,7 @@ Vue.component("navbar", {
 	data: function () {
 		return {
 			manifestations: null,
-			user: window.localStorage.getItem('user')
+			user: JSON.parse(window.localStorage.getItem('user'))
 		}
 	},
 	template: ` 
@@ -20,7 +20,7 @@ Vue.component("navbar", {
 
 					<router-link to="/" class="nav-item nav-link">Home</router-link>
 					<router-link to="/manifestations" class="nav-item nav-link">Manifestations</router-link>
-				</div>
+					<router-link v-if="user && user.userRole == 'ADMIN'" to="/users" class="nav-link">Users</router-link> </div>
 
 				<div v-if="!user" class="navbar-nav my-2 my-lg-0">
 					<router-link to="/login" class="nav-link">Login</router-link>
