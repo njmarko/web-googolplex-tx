@@ -23,7 +23,7 @@ Vue.component("login-form", {
 				<form class="form-signin" v-on:submit.prevent="loginUser">
 
 					<div class="form-label-group">
-					<input type="text" id="inputUsername" class="form-control" placeholder="Username" v-model="loginData.username" required autofocus>
+					<input type="text" id="inputUsername" class="form-control" placeholder="Username" v-model="loginData.username" required>
 					<label for="inputUsername">Username</label>
 					</div>
 	

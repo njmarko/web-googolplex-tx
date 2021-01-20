@@ -182,5 +182,32 @@ public class ManifestationControler {
 			return gManifAdapter.toJson(savedEntity);
 		}
 	};
+	
+	public final Route findAllManifestationsForSalesman = new Route() {
 
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			userController.authenticateSalesman.handle(req, res);
+			
+			res.type("application/json");
+			String idu = req.params("idu");
+		    
+			
+		
+			Collection<Manifestation> foundEntities = manifService.findBySalesman(idu);
+			if (foundEntities==null || foundEntities.isEmpty()) {
+				halt(HttpStatus.NOT_FOUND_404,"No manifestations found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return gManifAdapter.toJson(foundEntities);
+		}
+	};
+
+	
+	
 }

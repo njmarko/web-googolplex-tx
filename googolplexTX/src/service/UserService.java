@@ -13,6 +13,7 @@ import web.dto.UserSearchDTO;
 public interface UserService extends GenericService<User, String> {
 
 	public Collection<User> search(UserSearchDTO searchParams);
+	public Collection<User> findUsersThatBoughtFromSalesman(String salesman);
 
 	public User registerUser(RegisterDTO registerData);
 	

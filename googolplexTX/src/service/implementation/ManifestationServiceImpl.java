@@ -158,4 +158,13 @@ public class ManifestationServiceImpl implements ManifestationService {
 		return this.manifestationDAO.save(entity);
 	}
 
+	@Override
+	public Collection<Manifestation> findBySalesman(String salesman) {
+		Collection<Manifestation> entities = this.findAll();
+		entities = entities.stream().filter((Manifestation ent) -> {
+			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
+		}).collect(Collectors.toList());
+		return entities;
+	}
+
 }
