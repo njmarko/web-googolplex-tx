@@ -72,11 +72,10 @@ Vue.component("change-password", {
 			let component = this;
 
 			var userData = {
-				old_password: this.newPasswordData.oldPassword, 
-				password1: this.newPasswordData.password1, 
-				password2: this.newPasswordData.password2}
+				oldPassword: this.newPasswordData.oldPassword, 
+				newPassword: this.newPasswordData.password1}
 			axios
-				.patch('api/users/' + localUserData.username + '/changePassword' , userData)
+				.patch('api/users/' + localUserData.username + '/change-password' , userData)
 				.then(response => (alert(response.data)))
 				.catch(function (error) {
 					if (error.response) {
@@ -96,7 +95,6 @@ Vue.component("change-password", {
 		}
 	},
 	mounted() {
-
 		/*axios
 			.get('api/users/admin')
 			.then(response => {

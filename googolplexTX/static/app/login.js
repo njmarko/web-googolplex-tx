@@ -69,9 +69,14 @@ Vue.component("login-form", {
 			axios
 				.post('api/login', user)
 				.then(response => {
-					console.log(response.data)
+					console.log(response.data);
 					window.localStorage.setItem('user', JSON.stringify(response.data));
+					console.log("111");
+					axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.jwt;
+					console.log("222");
+
 					this.$router.push("/");
+
 				})
 				.catch(function (error) {
 					if (error.response) {
@@ -81,8 +86,8 @@ Vue.component("login-form", {
 						component.loginError = error.response.data;
 						console.log(error.request);
 					} else {
-						component.loginError = error.response.data;
-						console.log('Error', error.message);
+						//component.loginError = error.response.data;
+						//console.log('Error', error.message);
 					}
 					console.log("error.config");
 					console.log(error.config);

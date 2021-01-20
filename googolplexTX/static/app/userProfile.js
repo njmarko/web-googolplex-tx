@@ -1,7 +1,8 @@
 Vue.component("user-profile", {
 	data: function() {
 		return {
-			userData: {}
+			userData: {},
+			saveInfo: null
 		}
 	},
 	template: ` 
@@ -10,6 +11,10 @@ Vue.component("user-profile", {
 	<div id="top" class="container" >
 		<br>
 		
+		<div v-if="saveInfo" class="alert alert-success alert-dismissible">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+			<strong>Success</strong> {{saveInfo}}
+		</div>
 
 		
 		<h1 class="text-center">User Profile <span class="badge badge-danger">{{userData.userRole}}</span></h1>
@@ -81,7 +86,6 @@ Vue.component("user-profile", {
 			</div>
 
 
-
 			<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="Save changes" />
 			<hr class="my-4">
 
@@ -98,36 +102,38 @@ Vue.component("user-profile", {
 
 		</form>
 
+		<div v-if="userData.userRole == 'CUSTOMER'">
 
-		<table class="table table-hover table-bordered table-striped text-center">
-			<tbody>
-				<tr>
-					<td>Username</td>
-					<td>{{userData.username }}</td>
-				</tr>
-				<tr>
-					<td>First Name</td>
-					<td>{{userData.firstName }}</td>
-				</tr>
-				<tr>
-					<td>Last Name</td>
-					<td>{{userData.lastName }}</td>
-				</tr>
-				<tr>
-					<td>Birthday</td>
-					<td>{{userData.birthDate}}</td>
-				</tr>
-				<tr>
-					<td>Gender</td>
-					<td>{{userData.gender}}</td>
-				</tr>
-				<tr>
-					<td>Role</td>
-					<td>{{userData.userRole}}</td>
-				</tr>
-			</tbody>
-		</table>
-		<br>
+			<table class="table table-hover table-bordered table-striped text-center">
+				<tbody>
+					<tr>
+						<td>Username</td>
+						<td>{{userData.username }}</td>
+					</tr>
+					<tr>
+						<td>First Name</td>
+						<td>{{userData.firstName }}</td>
+					</tr>
+					<tr>
+						<td>Last Name</td>
+						<td>{{userData.lastName }}</td>
+					</tr>
+					<tr>
+						<td>Birthday</td>
+						<td>{{userData.birthDate}}</td>
+					</tr>
+					<tr>
+						<td>Gender</td>
+						<td>{{userData.gender}}</td>
+					</tr>
+					<tr>
+						<td>Role</td>
+						<td>{{userData.userRole}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+		</div>
 	</div>	
 </div>		  
 `
@@ -139,7 +145,6 @@ Vue.component("user-profile", {
 		axios
 			.get('api/users/' + localUserData.username)
 			.then(response => {
-				
 				this.userData = response.data;
 				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
 				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
@@ -159,7 +164,9 @@ Vue.component("user-profile", {
 				birthDate: new Date(this.userData.birthDate).getTime()}
 			axios
 				.patch('api/users/' + localUserData.username  , userData)
-				.then(response => (alert(response.data)))
+				.then(response => {
+					this.saveInfo = "Changes successfully saved";
+				})
 				.catch(function (error) {
 					if (error.response) {
 						console.log(error.response.data);

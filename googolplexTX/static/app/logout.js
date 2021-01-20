@@ -11,8 +11,8 @@ Vue.component("logout", {
 	,
 
 	mounted() {
-		alert("logout");
 		window.localStorage.removeItem('user');
+		axios.defaults.headers.common['Authorization'] = "";
 		this.$router.push("/");
 
 	},

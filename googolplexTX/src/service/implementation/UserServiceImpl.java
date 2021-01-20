@@ -18,6 +18,7 @@ import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
 import web.dto.LoginDTO;
+import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
@@ -135,7 +136,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findOne(String key) {
-		return this.userDAO.findOne(key);
+		User user = this.userDAO.findOne(key);
+		if (user.getDeleted()) {
+			return null;
+		}
+		return user;
 	}
 
 	@Override
@@ -293,6 +298,18 @@ public class UserServiceImpl implements UserService {
 		userDAO.saveFile();
 		
 		return user;
+	}
+
+	@Override
+	public User changePassword(PasswordDTO dto) {
+		User user = this.findOne(dto.getUsername());
+		if (user != null && user.getPassword().compareTo(dto.getOldPassword()) == 0) {
+			user.setPassword(dto.getNewPassword());
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+			return user;
+		}
+		return null;
 	}
 
 }

@@ -5,7 +5,6 @@ const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp>
 const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
 const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
 
-
 const router = new VueRouter({
     mode: 'hash',
     linkExactActiveClass: 'active',
@@ -20,10 +19,31 @@ const router = new VueRouter({
 	  ]
 });
 
+
 var app = new Vue({
   router,
 	el: '#webShop',
 	  mounted () {
+
+      let userData = JSON.parse(window.localStorage.getItem('user'));
+      if (userData != null && userData.jwt != null){
+        axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests
+      }
+
+      // error handling
+
+      axios.interceptors.response.use(function (response) {
+
+        return response;
+      }, function (error) {
+        if (error.response.status === 401){
+
+          
+          router.push('/logout');
+        }
+        return Promise.reject(error);
+      });
+
   	/*this.$nextTick(() => {
     	this.initParticleJS()	
     })*/

@@ -12,6 +12,7 @@ import support.UserToUserDTO;
 import spark.Filter;
 import web.dto.LoginDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
@@ -146,6 +147,49 @@ public class UserController {
 		}
 	};
 
+	
+	
+	public final Route changePassword = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			authenticateUser.handle(req,res); 
+			res.type("application/json");
+
+			
+			User authUser = getAuthedUser(req);
+			String idu = req.params("idu");
+
+			String body = req.body();
+			PasswordDTO passwordData = g.fromJson(body, PasswordDTO.class);
+			passwordData.setUsername(idu); // Set username manually from the path
+			
+			
+			String err = passwordData.validate();
+			
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			if (authUser.getUsername().compareTo(idu) != 0) {
+				//TODO: check if admin
+				halt(HttpStatus.FORBIDDEN_403, "You can only change your own password");
+			}
+			
+			User user = userService.changePassword(passwordData);
+			if (user == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Wrong password");
+			}
+			
+			
+			res.status(HttpStatus.OK_200);
+			return g.toJson(UserToUserDTO.convert(user));
+		
+		}
+	};
+	
+	
 	public final Route logout = new Route() {
 
 		@Override
@@ -329,6 +373,8 @@ public class UserController {
 		public void handle(Request req, Response res) throws Exception {
 			authenticateUser.handle(req,res); 
 		
+			
+			// TODO: Replace with getAuthedUser method
 			String auth = req.headers("Authorization");
 			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
 			try {
@@ -349,5 +395,24 @@ public class UserController {
 
 		}
 	};
+	
+	
+	public User getAuthedUser(Request req) {
+		String auth = req.headers("Authorization");
+		if ((auth != null) && (auth.contains("Bearer "))) {
+			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+			try {
+				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+				User user = userService.findOne(claims.getBody().getSubject());
+				return user;
+				
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		
+		return null;
+
+	}
 
 }

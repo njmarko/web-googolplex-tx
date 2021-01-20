@@ -158,6 +158,11 @@ public class GoogolplexTXMain {
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});
+					
+					path("/change-password",()->{
+						patch("", userController.changePassword);				
+					});
+					
 				});				
 			});
 		});
