@@ -206,7 +206,7 @@ public class UserController {
 			if (savedEntity == null) {
 				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}
-			return new Gson().toJson(savedEntity);
+			return new Gson().toJson(UserToUserDTO.convert(savedEntity));
 		}
 	};
 
@@ -229,7 +229,7 @@ public class UserController {
 //				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 //			}
 //			return new Gson().toJson(savedEntity);	
-			return new Gson().toJson(foundEntity);
+			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
 		}
 	};
 	
