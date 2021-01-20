@@ -35,6 +35,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import model.Manifestation;
 import model.User;
 import model.enumerations.UserRole;
 
@@ -47,7 +48,7 @@ public class UserController {
 	public UserController(UserService uService) {
 		super();
 		this.userService = uService;
-		this.g = new Gson();
+		this.g = JsonAdapter.userSerializationToFile();
 		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	}
 
@@ -232,6 +233,8 @@ public class UserController {
 				halt(HttpStatus.NOT_FOUND_404, "No users found");
 			}
 
+			Collection<UserDTO> usersDTO = UserToUserDTO.convert(users);
+			
 			// TODO consider using an adapter
 			// TODO use DTO objects
 //			return g.toJson(users);
@@ -302,6 +305,32 @@ public class UserController {
 		}
 	};
 	
+	public final Route findUsersFromSalesmanTickets = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			authenticateSalesman.handle(req, res);
+			
+			res.type("application/json");
+			String idu = req.params("idu");
+		    
+			
+			// TODO remove debug print message
+		
+			Collection<User> foundEntities = userService.findUsersThatBoughtFromSalesman(idu);
+			if (foundEntities==null || foundEntities.isEmpty()) {
+				halt(HttpStatus.NOT_FOUND_404,"No users found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return g.toJson(foundEntities);
+		}
+	};
+	
 	
 
 	/**
@@ -313,25 +342,35 @@ public class UserController {
 
 		@Override
 		public void handle(Request req, Response res) throws Exception {
-			String auth = req.headers("Authorization");
-			if ((auth != null) && (auth.contains("Bearer "))) {
-				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-				try {
-					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-//					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
-					User user = userService.findOne(claims.getBody().getSubject());
-					if (user == null) {
-						// TODO consider changing status code
-						halt(HttpStatus.UNAUTHORIZED_401, "User no longer exists.");
-					}
-				} catch (Exception e) {
-//					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
-					halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-				}
-				
-			}else {
+			
+			
+			User user = getAuthedUser(req);
+			
+			if (user == null) {
+				// TODO consider changing status code
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
 			}
+			
+			// TODO: Consider User no longer exist....
+//			String auth = req.headers("Authorization");
+//			if ((auth != null) && (auth.contains("Bearer "))) {
+//				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+//				try {
+//					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+////					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
+//					User user = userService.findOne(claims.getBody().getSubject());
+//					if (user == null) {
+//						// TODO consider changing status code
+//						halt(HttpStatus.UNAUTHORIZED_401, "User no longer exists.");
+//					}
+//				} catch (Exception e) {
+////					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
+//					halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+//				}
+//				
+//			}else {
+//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+//			}
 //			User user = req.session().attribute("user");
 //			if (user == null) {
 //				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
@@ -347,24 +386,28 @@ public class UserController {
 		public void handle(Request req, Response res) throws Exception {
 			authenticateUser.handle(req,res); 
 			
-			String auth = req.headers("Authorization");
-			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-			try {
-				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-				User user = userService.findOne(claims.getBody().getSubject());
-				if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
-					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
-				}
-			} catch (Exception e) {
+			User user = getAuthedUser(req);
+			if (user == null) {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
 			}
-				
-//			User user = req.session().attribute("user");
-//			if (user == null) {
+			
+			if (user.getUserRole() != UserRole.SALESMAN && user.getUserRole() != UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+			}
+
+			// Pre implementiranja getAuthedUser Obrisati ako radi
+//			String auth = req.headers("Authorization");
+//			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+//			try {
+//				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+//				User user = userService.findOne(claims.getBody().getSubject());
+//				if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
+//					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+//				}
+//			} catch (Exception e) {
 //				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//			} else if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
-//				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
 //			}
+				
 		}
 	};
 
@@ -377,24 +420,37 @@ public class UserController {
 			authenticateUser.handle(req,res); 
 		
 			
+			
+			
 			// TODO: Replace with getAuthedUser method
-			String auth = req.headers("Authorization");
-			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-			try {
-				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-				User user = userService.findOne(claims.getBody().getSubject());
-				if (user.getUserRole() != UserRole.ADMIN) {
-					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
-				}
-			} catch (Exception e) {
+			User user = getAuthedUser(req);
+			if (user == null) {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
 			}
-//			User user = req.session().attribute("user");
-//			if (user == null) {
-//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//			} else if (user.getUserRole() != UserRole.ADMIN) {
-//				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
-//			}
+			
+			if (user.getUserRole() != UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+			}
+
+		}
+	};
+	
+	/**
+	 * Checks if user is logged in and check if his role is SALESMAN
+	 */
+	public final Filter authenticateSalesmanOnly = new Filter() {
+		@Override
+		public void handle(Request req, Response res) throws Exception {
+			authenticateUser.handle(req,res); 
+			
+			User user = getAuthedUser(req);
+			if (user == null) {
+				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+			}
+			
+			if (user.getUserRole() != UserRole.SALESMAN) {
+				halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+			}
 
 		}
 	};

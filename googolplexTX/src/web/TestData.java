@@ -327,6 +327,10 @@ public class TestData {
 		for (Ticket ticket : ticketDAO.getTickets().values()) {
 			Customer customer = ticket.customer;
 			customer.getTickets().add(ticket);
+			
+			Manifestation manifestation = ticket.getManifestation();
+			manifestation.getTickets().add(ticket);
+			
 		}
 
 		for (Comment comment : commentDAO.getComments().values()) {

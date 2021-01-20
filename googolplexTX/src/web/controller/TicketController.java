@@ -30,7 +30,7 @@ public class TicketController {
 	public TicketController(TicketService ticketService, UserController uCtrl) {
 		super();
 		this.ticketService = ticketService;
-		this.gson = new Gson();
+		this.gson = JsonAdapter.ticketsSeraialization();
 		this.userController = uCtrl;
 	}
 
@@ -131,6 +131,31 @@ public class TicketController {
 			}
 
 			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+	
+	public final Route findReserverTicketsForSalesmanManifestation = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			userController.authenticateSalesman.handle(req, res);
+			
+			res.type("application/json");
+			String idu = req.params("idu");
+		    
+			
+		
+			Collection<Ticket> foundEntities = ticketService.findAllBySalesman(idu);
+			if (foundEntities==null || foundEntities.isEmpty()) {
+				halt(HttpStatus.NOT_FOUND_404,"No tickets found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return gson.toJson(foundEntities);
 		}
 	};
 

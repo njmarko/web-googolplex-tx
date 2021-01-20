@@ -2,13 +2,17 @@ package service.implementation;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import model.Customer;
+import model.Manifestation;
+import model.Salesman;
 import model.Ticket;
 import model.User;
 import model.enumerations.TicketStatus;
@@ -66,6 +70,27 @@ public class TicketServiceImpl implements TicketService {
 		
 	}
 
+	@Override
+	public Collection<Ticket> findAllBySalesman(String key) {
+		// TODO: TEST
+		User user = userDAO.findOne(key);
+		if (user.getUserRole() != UserRole.SALESMAN) {
+			return null;
+		}
+		Salesman salesman = (Salesman) user;
+		
+		Collection<Ticket> entities = new ArrayList<Ticket>();
+		for (Manifestation manifestation : salesman.getManifestation()) {
+			
+			entities.addAll(manifestation.getTickets().stream().filter((Ticket ticket) -> {
+				return ticket.getTicketStatus() == TicketStatus.RESERVED;
+			}).collect(Collectors.toList()));
+			
+		}
+		
+		return entities;
+	}
+	
 	@Override
 	public Collection<Ticket> searchByUser(String key, TicketSearchDTO searchParams) {
 		Collection<Ticket> entities = this.findAllByUser(key);

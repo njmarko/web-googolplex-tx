@@ -3,17 +3,23 @@ package service.implementation;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import model.Customer;
 import model.CustomerType;
+import model.Manifestation;
 import model.Salesman;
+import model.Ticket;
 import model.User;
 import model.enumerations.Gender;
+import model.enumerations.TicketStatus;
 import model.enumerations.UserRole;
 import repository.CustomerTypeDAO;
 import repository.UserDAO;
@@ -314,6 +320,31 @@ public class UserServiceImpl implements UserService {
 			return user;
 		}
 		return null;
+	}
+
+	@Override
+	public Collection<User> findUsersThatBoughtFromSalesman(String key) {
+		// TODO: TEST
+
+		User user = userDAO.findOne(key);
+		if (user.getUserRole() != UserRole.SALESMAN) {
+			return null;
+		}
+		Salesman salesman = (Salesman) user;
+		
+		Collection<Ticket> tickets = new ArrayList<Ticket>();
+		for (Manifestation manifestation : salesman.getManifestation()) {
+			tickets.addAll(manifestation.getTickets());
+		}
+		
+		Set<User> users = new HashSet<User>();
+		for (Ticket ticket : tickets) {
+			if (ticket.getTicketStatus() == TicketStatus.RESERVED)
+				users.add(ticket.getCustomer());
+		}
+		
+		return users;
+		
 	}
 
 }

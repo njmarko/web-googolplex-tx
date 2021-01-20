@@ -159,6 +159,16 @@ public class GoogolplexTXMain {
 						});
 					});
 					
+					path("/manifestations",()->{
+						get("", manifestationControler.findAllManifestationsForSalesman);
+					});
+					path("/manif-tickets",()->{
+						get("", ticketController.findReserverTicketsForSalesmanManifestation);
+					});
+					path("/sold-to-users",()->{
+						get("", userController.findUsersFromSalesmanTickets);
+					});
+					
 					path("/change-password",()->{
 						patch("", userController.changePassword);				
 					});

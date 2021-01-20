@@ -6,6 +6,9 @@ const UserProfile = { template: '<div><navbar></navbar><user-profile></user-prof
 const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
 const DisplayUsers = { template: '<div><navbar></navbar><display-users></display-users><footer-comp></footer-comp></div>' }
 const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-add-user><footer-comp></footer-comp></div>' }
+const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp></div>' }
+const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
+const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -19,7 +22,10 @@ const router = new VueRouter({
 	    { path: '/profile', component: UserProfile},
 	    { path: '/change-password', component: ChangePassword},
       { path: '/users', component: DisplayUsers},
-      { path: '/add-user', component: AdminAddUser}
+      { path: '/add-user', component: AdminAddUser},
+	    { path: '/my-manifestations', component: SalesmanManifestations},
+	    { path: '/sold-tickets', component: SalesmanTickets},
+	    { path: '/sold-to-users', component: SalesmanUsers}
 	  ]
 });
 

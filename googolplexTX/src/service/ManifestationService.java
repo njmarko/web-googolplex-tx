@@ -12,4 +12,6 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	 */
 	
 	public Collection<Manifestation> search(ManifestationSearchDTO searchParams);
+
+	public Collection<Manifestation> findBySalesman(String salesman);
 }
