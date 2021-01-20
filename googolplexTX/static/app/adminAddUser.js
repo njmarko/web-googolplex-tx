@@ -3,7 +3,7 @@ Vue.component("admin-add-user", {
 		return {
 			registerData: {gender:'MALE', userRole: "SALESMAN"},
 			registerError: "",
-			saveInfo: null
+			saveInfo: []
 		}
 	},
 	template: ` 
@@ -14,9 +14,11 @@ Vue.component("admin-add-user", {
 			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
 			<strong>Error</strong> {{registerError}}
 		</div>
-		<div v-if="saveInfo" class="alert alert-success alert-dismissible">
-			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
-			<strong>Success</strong> {{saveInfo}}
+		<div v-for="info in saveInfo">
+			<div  class="alert alert-success alert-dismissible">
+				<a href="#" class="close" aria-label="close" v-on:click="removeSaveInfo(info)">&times;</a>
+				<strong>Success</strong> {{info}}
+			</div>
 		</div>
 		<br />	
 		<div class="row">
@@ -89,7 +91,12 @@ Vue.component("admin-add-user", {
 			this.$nextTick(() => this.$refs.focusMe.focus());		
 	},
 	methods: {
+		removeSaveInfo(info){
+			this.saveInfo.pop();
+		},
 		registerUser : function(){
+			console.log(this.saveInfo)
+			this.registerError = "";
 			let component = this;
 
 			console.log(this.registerData);	// DEBUG
@@ -106,7 +113,7 @@ Vue.component("admin-add-user", {
 			axios
 				.post('api/register', userData)
 				.then(response => {
-					this.saveInfo = "User Registered Successfully";
+					this.saveInfo.push("User Registered Successfully")  ;
 				})
 				.catch(function (error) {
 					if (error.response) {
