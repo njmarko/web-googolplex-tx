@@ -20,8 +20,9 @@ Vue.component("navbar", {
 
 					<router-link to="/" class="nav-item nav-link">Home</router-link>
 					<router-link to="/manifestations" class="nav-item nav-link">Manifestations</router-link>
-					<router-link v-if="user && user.userRole == 'ADMIN'" to="/users" class="nav-link">Users</router-link> </div>
-
+					<router-link v-if="user && user.userRole == 'ADMIN'" to="/users" class="nav-link">Users</router-link> 
+					<router-link v-if="user && user.userRole == 'ADMIN'" to="/add-user" class="nav-link">Add User</router-link>
+				</div>
 				<div v-if="!user" class="navbar-nav my-2 my-lg-0">
 					<router-link to="/login" class="nav-link">Login</router-link>
 					<router-link to="/register" class="nav-link">Register</router-link>

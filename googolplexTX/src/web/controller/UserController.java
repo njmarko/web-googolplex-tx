@@ -72,7 +72,7 @@ public class UserController {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-
+			res.type("application/json");
 			String body = req.body();
 			RegisterDTO registerData = g.fromJson(body, RegisterDTO.class);
 
@@ -80,7 +80,10 @@ public class UserController {
 			// admin can create only customer and salesman, but not other admins
 
 			String err = null;
-			User loggedInUser = req.session().attribute("user");
+			
+			authenticateUser.handle(req,res); 		
+			User loggedInUser = getAuthedUser(req);
+					
 			if (loggedInUser == null) {
 				err = registerData.validate(null);
 			} else {

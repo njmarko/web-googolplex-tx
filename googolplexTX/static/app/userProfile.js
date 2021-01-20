@@ -94,7 +94,7 @@ Vue.component("user-profile", {
 					<h5 class="card-title text-center">Password:</h5>
 				</div>
 				<div class="col-md-6">
-					<router-link to="/changePassword" class="btn btn-warning btn-block text-uppercase">Change password</router-link>
+					<router-link to="/change-password" class="btn btn-warning btn-block text-uppercase">Change password</router-link>
 
 				</div>
 			</div>
