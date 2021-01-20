@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import model.Customer;
 import model.CustomerType;
+import model.Salesman;
 import model.User;
 import model.enumerations.Gender;
 import model.enumerations.UserRole;
@@ -178,9 +179,9 @@ public class UserServiceImpl implements UserService {
 		// Validation for what type of user can be created was done in the validation
 		// method of the dto
 		if (registerData.getUserRole() != null) {
-			if (registerData.getUserRole() == "CUSTOMER") {
+			if (registerData.getUserRole().compareToIgnoreCase("CUSTOMER")==0) {
 				role = UserRole.CUSTOMER;
-			} else if (registerData.getUserRole() == "SALESMAN") {
+			} else if (registerData.getUserRole().compareToIgnoreCase("SALESMAN")==0) {
 				role = UserRole.SALESMAN;
 			} else {
 				// Admin creation is not allowed. Additional admin checks exist in validate
@@ -215,7 +216,10 @@ public class UserServiceImpl implements UserService {
 
 			user = new Customer(registerData.getUsername(), registerData.getPassword1(), registerData.getFirstName(),
 					registerData.getLastName(), gender, birthDate, role, 0d, custType);
-		} 
+		}else if (role == UserRole.SALESMAN) {
+			user = new Salesman(registerData.getUsername(), registerData.getPassword1(), registerData.getFirstName(),
+					registerData.getLastName(), gender, birthDate, role);
+		}
 		
 		userDAO.save(user);
 		// We want to manually call save file function

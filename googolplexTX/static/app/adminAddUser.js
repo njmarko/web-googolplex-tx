@@ -1,8 +1,9 @@
-Vue.component("register-form", {
+Vue.component("admin-add-user", {
 	data: function() {
 		return {
-			registerData: {gender:'MALE'},
-			registerError: ""
+			registerData: {gender:'MALE', userRole: "SALESMAN"},
+			registerError: "",
+			saveInfo: null
 		}
 	},
 	template: ` 
@@ -13,12 +14,16 @@ Vue.component("register-form", {
 			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
 			<strong>Error</strong> {{registerError}}
 		</div>
+		<div v-if="saveInfo" class="alert alert-success alert-dismissible">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+			<strong>Success</strong> {{saveInfo}}
+		</div>
 		<br />	
 		<div class="row">
 			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 			<div class="card card-signin my-5">
 				<div class="card-body">
-				<h5 class="card-title text-center">Sign UP</h5>
+				<h5 class="card-title text-center">Add User</h5>
 				<form class="form-signin" v-on:submit.prevent="registerUser">
 
 					<div class="form-label-group">
@@ -61,13 +66,16 @@ Vue.component("register-form", {
 					<label for="inputGender">Gender</label>
 					</div>
 
+					<div class="form-label-group">
+					<select name="inputUserRole" id="inputUserRole" v-model="registerData.userRole" required>
+						<option value="SALESMAN">Salesman</option>
+						<option value="CUSTOMER">Customer</option>
+					</select>
+					<label for="inputUserRole">User Role</label>
+					</div>
 
-					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="SIGN UP" />
 
-					<hr class="my-4">
-					<h5 class="card-title text-center">Already have an account?</h5>
-
-					<router-link to="/login" class="btn btn-warning btn-block text-uppercase">Log in</router-link>
+					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="REGISTER USER" />
 
 				</form>
 				</div>
@@ -93,11 +101,12 @@ Vue.component("register-form", {
 				firstName: this.registerData.firstName, 
 				lastName: this.registerData.lastName, 
 				gender: this.registerData.gender, 
+				userRole: this.registerData.userRole,
 				birthDate: new Date(this.registerData.birthDate).getTime()}
 			axios
 				.post('api/register', userData)
 				.then(response => {
-					this.$router.push("/login");
+					this.saveInfo = "User Registered Successfully";
 				})
 				.catch(function (error) {
 					if (error.response) {
