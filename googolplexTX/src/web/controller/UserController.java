@@ -232,7 +232,7 @@ public class UserController {
 			// TODO consider using an adapter
 			// TODO use DTO objects
 //			return g.toJson(users);
-			return JsonAdapter.userSerializationToFile().toJson(users);
+			return g.toJson(UserToUserDTO.convert(users));
 		}
 	};
 
@@ -256,7 +256,7 @@ public class UserController {
 			if (savedEntity == null) {
 				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}
-			return new Gson().toJson(UserToUserDTO.convert(savedEntity));
+			return g.toJson(UserToUserDTO.convert(savedEntity));
 		}
 	};
 

@@ -4,6 +4,7 @@ const Register = { template: '<div><navbar></navbar><register-form></register-fo
 const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp></div>' }
 const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
 const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
+const DisplayUsers = { template: '<div><navbar></navbar><display-users></display-users><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -15,7 +16,8 @@ const router = new VueRouter({
 	    { path: '/logout', component: Logout},
 	    { path: '/manifestations', component: WebShop},
 	    { path: '/profile', component: UserProfile},
-	    { path: '/changePassword', component: ChangePassword}
+	    { path: '/changePassword', component: ChangePassword},
+	    { path: '/users', component: DisplayUsers}
 	  ]
 });
 
