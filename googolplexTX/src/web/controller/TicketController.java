@@ -25,11 +25,13 @@ public class TicketController {
 
 	private TicketService ticketService;
 	private Gson gson;
-
-	public TicketController(TicketService ticketService) {
+	private UserController userController;
+	
+	public TicketController(TicketService ticketService, UserController uCtrl) {
 		super();
 		this.ticketService = ticketService;
 		this.gson = new Gson();
+		this.userController = uCtrl;
 	}
 
 	public final Route findAllTicketsForManifestation = new Route() {
@@ -119,7 +121,7 @@ public class TicketController {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			UserController.authenticateAdmin.handle(req, res);
+			userController.authenticateAdmin.handle(req, res);
 
 			res.type("application/json");
 			String id = req.params("idt");
