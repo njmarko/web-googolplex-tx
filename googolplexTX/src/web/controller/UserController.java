@@ -192,7 +192,7 @@ public class UserController {
 		}
 	};
 
-	public final Route saveOneUser = new Route() {
+	public final Route updateOneUser = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) {
@@ -201,8 +201,14 @@ public class UserController {
 			// TODO remove this method because register replaced it
 			res.type("application/json");
 			String body = req.body();
-			User user = new Gson().fromJson(body, User.class);
-			User savedEntity = userService.save(user);
+			UserDTO user = new Gson().fromJson(body, UserDTO.class);
+			
+			String err = user.validate();;
+			if (!StringUtils.isEmpty(err)) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			User savedEntity = userService.update(user);
 			if (savedEntity == null) {
 				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}

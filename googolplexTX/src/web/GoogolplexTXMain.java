@@ -144,11 +144,12 @@ public class GoogolplexTXMain {
 //			before("/users",UserController.authenticateUser); // all paths in manifestations are not allowed without login
 			path("/users",()->{
 				get("", userController.findAllUsers); // req admin
-				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
+//				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
 				path("/:idu",()->{
 					get("", userController.findOneUser); // req admin
 					delete("", userController.deleteOneUser); // req admin
 //					put("", userController.editOneUser); // TODO req different things for different roles possibly
+					patch("", userController.updateOneUser);
 					path("/tickets",()->{
 						get("", ticketController.findAllTicketsForUser); // TODO req admin					
 						path("/:idt", ()->{
