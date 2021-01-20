@@ -1,6 +1,9 @@
 const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp></div>' }
 const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp></div>' }
 const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp></div>' }
+const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp></div>' }
+const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
+const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
 
 
 const router = new VueRouter({
@@ -10,7 +13,10 @@ const router = new VueRouter({
 	    { path: '/', component: WebShop},
 	    { path: '/login', component: Login},
 	    { path: '/register', component: Register},
-	    { path: '/manifestations', component: WebShop}
+	    { path: '/logout', component: Logout},
+	    { path: '/manifestations', component: WebShop},
+	    { path: '/profile', component: UserProfile},
+	    { path: '/changePassword', component: ChangePassword}
 	  ]
 });
 

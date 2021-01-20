@@ -71,6 +71,7 @@ Vue.component("login-form", {
 				.then(response => {
 					console.log(response.data)
 					window.localStorage.setItem('user', JSON.stringify(response.data));
+					this.$router.push("/");
 				})
 				.catch(function (error) {
 					if (error.response) {

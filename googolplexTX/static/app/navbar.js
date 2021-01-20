@@ -27,6 +27,7 @@ Vue.component("navbar", {
 					<router-link to="/register" class="nav-link">Register</router-link>
 				</div>
 				<div v-if="user" class="navbar-nav my-2 my-lg-0">
+					<router-link to="/profile" class="nav-link">Profile</router-link>
 					<router-link to="/logout" class="nav-link">Logout</router-link>
 				</div>
 			</div>

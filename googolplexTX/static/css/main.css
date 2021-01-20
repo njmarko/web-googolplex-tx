@@ -33,6 +33,10 @@
 	width: 100%;
   }
   
+  .form-control:disabled, .form-control[readonly] {
+    z-index: 0 !important;
+}
+
   .form-signin .btn {
 	font-size: 80%;
 	border-radius: 5rem;
@@ -162,5 +166,28 @@
 	.form-label-group select:-ms-select-placeholder {
 	  color: #777;
 	}
+  }
+
+
+  /* Footer */
+
+  html { height: 100%; }
+  body {
+	  min-height:100%; 
+	  position:relative; 
+	  padding-bottom:[footer-height] 
+  }
+
+  .sticky-footer {
+	position: absolute;
+    bottom: 0;
+    width: 100%;
+	height: 60px;
+}
+
+  .footer-gap {
+	display: block;
+	width: 100%;
+	height: 60px;
   }
   
