@@ -22,7 +22,7 @@ Vue.component("register-form", {
 				<form class="form-signin" v-on:submit.prevent="registerUser">
 
 					<div class="form-label-group">
-					<input type="name" id="inputUsername" class="form-control" placeholder="Username" v-model="registerData.username" required autofocus>
+					<input type="name" id="inputUsername" class="form-control" placeholder="Username" v-model="registerData.username" required ref='focusMe'>
 					<label for="inputUsername">Username</label>
 					</div>
 
@@ -78,7 +78,7 @@ Vue.component("register-form", {
 `
 	,
 	mounted() {
-		
+			this.$nextTick(() => this.$refs.focusMe.focus());		
 	},
 	methods: {
 		registerUser : function(){
