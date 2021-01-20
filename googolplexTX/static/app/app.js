@@ -1,7 +1,9 @@
 const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp></div>' }
 const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp></div>' }
 const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp></div>' }
-
+const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp></div>' }
+const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
+const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -10,14 +12,38 @@ const router = new VueRouter({
 	    { path: '/', component: WebShop},
 	    { path: '/login', component: Login},
 	    { path: '/register', component: Register},
-	    { path: '/manifestations', component: WebShop}
+	    { path: '/logout', component: Logout},
+	    { path: '/manifestations', component: WebShop},
+	    { path: '/profile', component: UserProfile},
+	    { path: '/changePassword', component: ChangePassword}
 	  ]
 });
+
 
 var app = new Vue({
   router,
 	el: '#webShop',
 	  mounted () {
+
+      let userData = JSON.parse(window.localStorage.getItem('user'));
+      if (userData != null && userData.jwt != null){
+        axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests
+      }
+
+      // error handling
+
+      axios.interceptors.response.use(function (response) {
+
+        return response;
+      }, function (error) {
+        if (error.response.status === 401){
+
+          
+          router.push('/logout');
+        }
+        return Promise.reject(error);
+      });
+
   	/*this.$nextTick(() => {
     	this.initParticleJS()	
     })*/

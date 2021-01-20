@@ -36,13 +36,17 @@ public class ManifestationControler {
 	
 	private Gson gManifAdapter;
 
+	private UserController userController;
+	
 	// TODO consider if empty constructor is needed
 	
-	public ManifestationControler(ManifestationService manifService) {
+	public ManifestationControler(ManifestationService manifService, UserController uCntr) {
 		super();
 		this.manifService = manifService;
 		//this.g = JsonAdapter.manifestationSeraialization();
 		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
+		this.userController = uCntr;
+		
 	}
 
 //	public ManifestationControler() {
@@ -143,7 +147,7 @@ public class ManifestationControler {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			UserController.authenticateAdmin.handle(req, res);
+			userController.authenticateAdmin.handle(req, res);
 			
 			// res.type("application/json");
 			String id = req.params("idm");

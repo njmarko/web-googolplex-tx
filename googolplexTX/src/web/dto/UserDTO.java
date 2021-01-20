@@ -2,6 +2,8 @@ package web.dto;
 
 import java.util.Collection;
 
+import spark.utils.StringUtils;
+
 public class UserDTO {
 	// User
 	private String username;
@@ -23,6 +25,25 @@ public class UserDTO {
 	private Collection<String> comments;
 	private Collection<String> tickets;
 
+	public String validate() {
+		String err = null;
+
+		if (StringUtils.isEmpty(username)) {
+			err = "You have to enter username";
+		} else if (StringUtils.isEmpty(firstName)) {
+			err = "You have to enter the first name";
+		} else if (StringUtils.isEmpty(lastName)) {
+			err = "You have to enter the last name";
+		} else if (StringUtils.isEmpty(gender)) {
+			err = "You have to enter the gender";
+		} else if (birthDate == null) {
+			err = "You have to enter the birth date";
+		} 
+		return err;
+	}
+	
+	
+	
 	public UserDTO() {
 		super();
 	}

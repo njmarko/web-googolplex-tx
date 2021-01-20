@@ -96,7 +96,9 @@ Vue.component("register-form", {
 				birthDate: new Date(this.registerData.birthDate).getTime()}
 			axios
 				.post('api/register', userData)
-				.then(response => (alert(response.data)))
+				.then(response => {
+					this.$router.push("/login");
+				})
 				.catch(function (error) {
 					if (error.response) {
 						component.registerError = error.response.data;

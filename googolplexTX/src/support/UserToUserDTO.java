@@ -25,13 +25,13 @@ public class UserToUserDTO {
 		retVal.setUsername(u.getUsername());
 		retVal.setFirstName(u.getFirstName());
 		retVal.setLastName(u.getLastName());
-		retVal.setGender(u.getGender().toString());
+		retVal.setGender(u.getGender().name());
 
 		Long birthDate = u.getBirthDate().atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
 		
 		retVal.setBirthDate(birthDate);
 		
-		retVal.setUserRole(u.getUserRole().toString());
+		retVal.setUserRole(u.getUserRole().name());
 		
 		retVal.setBlocked(u.getBlocked());
 		

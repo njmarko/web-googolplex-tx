@@ -12,6 +12,7 @@ import support.UserToUserDTO;
 import spark.Filter;
 import web.dto.LoginDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
@@ -43,9 +44,9 @@ public class UserController {
 	private Gson g;
 	private Key key;
 	
-	public UserController(UserService userService) {
+	public UserController(UserService uService) {
 		super();
-		this.userService = userService;
+		this.userService = uService;
 		this.g = new Gson();
 		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	}
@@ -146,6 +147,49 @@ public class UserController {
 		}
 	};
 
+	
+	
+	public final Route changePassword = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			authenticateUser.handle(req,res); 
+			res.type("application/json");
+
+			
+			User authUser = getAuthedUser(req);
+			String idu = req.params("idu");
+
+			String body = req.body();
+			PasswordDTO passwordData = g.fromJson(body, PasswordDTO.class);
+			passwordData.setUsername(idu); // Set username manually from the path
+			
+			
+			String err = passwordData.validate();
+			
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			if (authUser.getUsername().compareTo(idu) != 0) {
+				//TODO: check if admin
+				halt(HttpStatus.FORBIDDEN_403, "You can only change your own password");
+			}
+			
+			User user = userService.changePassword(passwordData);
+			if (user == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Wrong password");
+			}
+			
+			
+			res.status(HttpStatus.OK_200);
+			return g.toJson(UserToUserDTO.convert(user));
+		
+		}
+	};
+	
+	
 	public final Route logout = new Route() {
 
 		@Override
@@ -169,7 +213,7 @@ public class UserController {
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
 			res.type("application/json");
-			UserController.authenticateAdmin.handle(req, res);
+			authenticateAdmin.handle(req, res);
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
@@ -192,7 +236,7 @@ public class UserController {
 		}
 	};
 
-	public final Route saveOneUser = new Route() {
+	public final Route updateOneUser = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) {
@@ -201,12 +245,18 @@ public class UserController {
 			// TODO remove this method because register replaced it
 			res.type("application/json");
 			String body = req.body();
-			User user = new Gson().fromJson(body, User.class);
-			User savedEntity = userService.save(user);
+			UserDTO user = new Gson().fromJson(body, UserDTO.class);
+			
+			String err = user.validate();;
+			if (!StringUtils.isEmpty(err)) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			User savedEntity = userService.update(user);
 			if (savedEntity == null) {
 				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 			}
-			return new Gson().toJson(savedEntity);
+			return new Gson().toJson(UserToUserDTO.convert(savedEntity));
 		}
 	};
 
@@ -229,7 +279,7 @@ public class UserController {
 //				halt(HttpURLConnection.HTTP_BAD_REQUEST);
 //			}
 //			return new Gson().toJson(savedEntity);	
-			return new Gson().toJson(foundEntity);
+			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
 		}
 	};
 	
@@ -237,7 +287,7 @@ public class UserController {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			UserController.authenticateAdmin.handle(req, res);
+			authenticateAdmin.handle(req, res);
 			
 			// res.type("application/json");
 			String id = req.params("idm");
@@ -256,46 +306,113 @@ public class UserController {
 	 * SALESMAN, ADMIN). It can be called in the before method for all the paths
 	 * that require the user to be logged in
 	 */
-	public static final Filter authenticateUser = new Filter() {
+	public final Filter authenticateUser = new Filter() {
 
 		@Override
 		public void handle(Request req, Response res) throws Exception {
-			User user = req.session().attribute("user");
-			if (user == null) {
+			String auth = req.headers("Authorization");
+			if ((auth != null) && (auth.contains("Bearer "))) {
+				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+				try {
+					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+//					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
+					User user = userService.findOne(claims.getBody().getSubject());
+					if (user == null) {
+						// TODO consider changing status code
+						halt(HttpStatus.UNAUTHORIZED_401, "User no longer exists.");
+					}
+				} catch (Exception e) {
+//					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
+					halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+				}
+				
+			}else {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
 			}
+//			User user = req.session().attribute("user");
+//			if (user == null) {
+//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+//			}
 		}
 	};
 
 	/**
 	 * Checks if user is logged in and check if his role is SALESMAN or ADMIN
 	 */
-	public static final Filter authenticateSalesman = new Filter() {
+	public final Filter authenticateSalesman = new Filter() {
 		@Override
 		public void handle(Request req, Response res) throws Exception {
-			User user = req.session().attribute("user");
-			if (user == null) {
+			authenticateUser.handle(req,res); 
+			
+			String auth = req.headers("Authorization");
+			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+			try {
+				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+				User user = userService.findOne(claims.getBody().getSubject());
+				if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
+					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+				}
+			} catch (Exception e) {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-			} else if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
-				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
 			}
+				
+//			User user = req.session().attribute("user");
+//			if (user == null) {
+//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+//			} else if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
+//				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
+//			}
 		}
 	};
 
 	/**
 	 * Checks if user is logged in and check if his role is ADMIN
 	 */
-	public static final Filter authenticateAdmin = new Filter() {
+	public final Filter authenticateAdmin = new Filter() {
 		@Override
 		public void handle(Request req, Response res) throws Exception {
-			User user = req.session().attribute("user");
-			if (user == null) {
+			authenticateUser.handle(req,res); 
+		
+			
+			// TODO: Replace with getAuthedUser method
+			String auth = req.headers("Authorization");
+			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+			try {
+				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+				User user = userService.findOne(claims.getBody().getSubject());
+				if (user.getUserRole() != UserRole.ADMIN) {
+					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
+				}
+			} catch (Exception e) {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-			} else if (user.getUserRole() != UserRole.ADMIN) {
-				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
 			}
+//			User user = req.session().attribute("user");
+//			if (user == null) {
+//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+//			} else if (user.getUserRole() != UserRole.ADMIN) {
+//				halt(HttpStatus.UNAUTHORIZED_401, "This action is not allowed for your role.");
+//			}
 
 		}
 	};
+	
+	
+	public User getAuthedUser(Request req) {
+		String auth = req.headers("Authorization");
+		if ((auth != null) && (auth.contains("Bearer "))) {
+			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
+			try {
+				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
+				User user = userService.findOne(claims.getBody().getSubject());
+				return user;
+				
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		
+		return null;
+
+	}
 
 }

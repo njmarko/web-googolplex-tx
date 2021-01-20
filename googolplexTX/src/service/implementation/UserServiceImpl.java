@@ -18,7 +18,9 @@ import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
 import web.dto.LoginDTO;
+import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
+import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
 
 public class UserServiceImpl implements UserService {
@@ -134,7 +136,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findOne(String key) {
-		return this.userDAO.findOne(key);
+		User user = this.userDAO.findOne(key);
+		if (user.getDeleted()) {
+			return null;
+		}
+		return user;
 	}
 
 	@Override
@@ -156,6 +162,10 @@ public class UserServiceImpl implements UserService {
 		entity.setPassword(user.getPassword());
 		return this.userDAO.save(entity);
 	}
+	
+	
+	
+	
 
 	@Override
 	public User registerUser(RegisterDTO registerData) {
@@ -248,6 +258,58 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		return found;
+	}
+
+	/**
+	 * Currently sets firstName, lastName, gender and birthDate.
+	 * Use other methods to set othe user attributes.
+	 */
+	@Override
+	public User update(UserDTO dto) {
+		
+		User user = userDAO.findOne(dto.getUsername());
+		if (user == null) {
+			return null;
+		}
+		
+		user.setFirstName(dto.getFirstName());
+		user.setLastName(dto.getLastName());
+		Gender gender = null;
+		if (dto.getGender().trim().equalsIgnoreCase(Gender.MALE.toString())) {
+			gender = Gender.MALE;
+		} else if (dto.getGender().trim().equalsIgnoreCase(Gender.FEMALE.toString())) {
+			gender = Gender.FEMALE;
+		} else {
+			gender = user.getGender();
+		}
+		user.setGender(gender);
+		
+		LocalDate birthDate = null;
+		if (dto.getBirthDate() != null) {
+			Instant epochTime = Instant.ofEpochMilli(dto.getBirthDate());
+			birthDate = LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC")).toLocalDate();
+		} else {
+			birthDate = user.getBirthDate();
+		}
+		user.setBirthDate(birthDate);
+		
+		userDAO.save(user);
+		// We want to manually call save file function
+		userDAO.saveFile();
+		
+		return user;
+	}
+
+	@Override
+	public User changePassword(PasswordDTO dto) {
+		User user = this.findOne(dto.getUsername());
+		if (user != null && user.getPassword().compareTo(dto.getOldPassword()) == 0) {
+			user.setPassword(dto.getNewPassword());
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+			return user;
+		}
+		return null;
 	}
 
 }

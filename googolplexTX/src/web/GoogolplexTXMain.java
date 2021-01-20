@@ -47,9 +47,9 @@ public class GoogolplexTXMain {
 		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
 		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
 		
-		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl);
 		UserController userController = new UserController(userServiceImpl);
-		TicketController ticketController = new TicketController(ticketServiceImpl);
+		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
+		TicketController ticketController = new TicketController(ticketServiceImpl,userController);
 			
 		//DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
 		//daoFileParser.loadData();
@@ -144,11 +144,12 @@ public class GoogolplexTXMain {
 //			before("/users",UserController.authenticateUser); // all paths in manifestations are not allowed without login
 			path("/users",()->{
 				get("", userController.findAllUsers); // req admin
-				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
+//				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
 				path("/:idu",()->{
 					get("", userController.findOneUser); // req admin
 					delete("", userController.deleteOneUser); // req admin
 //					put("", userController.editOneUser); // TODO req different things for different roles possibly
+					patch("", userController.updateOneUser);
 					path("/tickets",()->{
 						get("", ticketController.findAllTicketsForUser); // TODO req admin					
 						path("/:idt", ()->{
@@ -157,6 +158,11 @@ public class GoogolplexTXMain {
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});
+					
+					path("/change-password",()->{
+						patch("", userController.changePassword);				
+					});
+					
 				});				
 			});
 		});
