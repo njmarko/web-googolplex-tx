@@ -16,7 +16,9 @@ import spark.Response;
 import spark.Route;
 import spark.http.matching.Halt;
 import support.JsonAdapter;
+import support.TicketToTicketDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.TicketDTO;
 import web.dto.TicketSearchDTO;
 
 import static spark.Spark.*;
@@ -43,6 +45,7 @@ public class TicketController {
 			// function depending on parameters
 			// TODO add pagination
 			res.type("application/json");
+			String idm = req.params("idm");
 
 			// ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams),
 			// ManifestationSearchDTO.class);
@@ -50,7 +53,8 @@ public class TicketController {
 			// System.out.println("[DBG] searchParamsDTO" + searchParams);
 
 			// Collection<Ticket> foundEntities = ticketService.search(searchParams);
-			Collection<Ticket> foundEntities = ticketService.findAll();
+			
+			Collection<Ticket> foundEntities = ticketService.findAllByManifestation(idm);
 
 			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404);
@@ -59,7 +63,8 @@ public class TicketController {
 			// TODO consider using an adapter
 			// TODO use DTO objects
 
-			return new Gson().toJson(foundEntities);
+			
+			return gson.toJson(TicketToTicketDTO.convert(foundEntities));
 		}
 	};
 

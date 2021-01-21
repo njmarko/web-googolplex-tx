@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import model.Comment;
 import model.Manifestation;
+import model.Ticket;
 import repository.ManifestationDAO;
 import service.ManifestationService;
 import web.dto.ManifestationSearchDTO;
@@ -165,6 +167,16 @@ public class ManifestationServiceImpl implements ManifestationService {
 			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
 		}).collect(Collectors.toList());
 		return entities;
+	}
+
+	@Override
+	public Collection<Comment> findAllCommentsFromManifestation(String key) {
+		Manifestation manifestation = this.findOne(key);
+		
+		// TODO: Consider Creating using function to filter deleted like this.findAll
+		return manifestation.getComments().stream().filter((Comment ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 	}
 
 }

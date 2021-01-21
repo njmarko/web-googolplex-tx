@@ -45,7 +45,7 @@ public class GoogolplexTXMain {
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
 		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
-		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
+		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO, manifestationDAO); 
 		
 		UserController userController = new UserController(userServiceImpl);
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
@@ -138,6 +138,13 @@ public class GoogolplexTXMain {
 //							delete("", ticketController.deleteOneTicket); // TODO req admin
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
+					});
+					
+					path("/comments",()->{
+//						before("*",UserController.authenticateUser); // all ticket paths require login
+
+						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman					
+
 					});
 				});
 			});
