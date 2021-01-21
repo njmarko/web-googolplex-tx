@@ -13,6 +13,7 @@
 # Package Files #
 *.jar
 !googolplexTX/lib/*.jar
+**/data/*.json
 *.war
 *.nar
 *.ear

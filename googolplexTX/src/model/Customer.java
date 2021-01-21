@@ -18,6 +18,19 @@ public class Customer extends User {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param deleted
+	 * @param points
+	 * @param customerType
+	 */
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
 			CustomerType customerType) {
@@ -43,9 +56,25 @@ public class Customer extends User {
 	 */
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, double points, CustomerType customerType) {
-		super(username, password, firstName, lastName, gender, birthDate, userRole, false, false);
+		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false, points, customerType);
 	}
 
+	
+	/**
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param deleted
+	 * @param points
+	 * @param customerType
+	 * @param comments
+	 * @param tickets
+	 */
 	public Customer(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted, double points,
 			CustomerType customerType, Collection<Comment> comments, Collection<Ticket> tickets) {

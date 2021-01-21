@@ -3,7 +3,7 @@ package web;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import model.Address;
+import model.Comment;
 import model.Customer;
 import model.CustomerType;
 import model.Location;
@@ -11,16 +11,24 @@ import model.Manifestation;
 import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
+import model.User;
+import model.enumerations.CommentStatus;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
-import repository.InMemoryRepository;
+import repository.CommentDAO;
+import repository.CustomerTypeDAO;
+import repository.ManifestationDAO;
+import repository.ManifestationTypeDAO;
+import repository.TicketDAO;
+import repository.UserDAO;
 
 public class TestData {
 
-	public static void createTestData() {
+	public static void createTestData(UserDAO userDAO, ManifestationDAO manifestationDAO, TicketDAO ticketDAO,
+			CommentDAO commentDAO, ManifestationTypeDAO manifestationTypeDAO, CustomerTypeDAO customerTypeDAO) {
 
 		// CUSTOMER TYPES---------------------------------------------------
 		CustomerType custType0 = new CustomerType("Peasant", 3.0, 0d, false);
@@ -34,6 +42,12 @@ public class TestData {
 
 		// saving TODO add saving for customer types
 		// InMemoryRepository.save
+
+		// ADMINS---------------------------------------------------
+		User admin1 = new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+				UserRole.ADMIN);
+
+		User admin2 = new User("root", "root", "rootFirst", "rootLast", Gender.FEMALE, LocalDate.now(), UserRole.ADMIN);
 
 		// CUSTOMERS---------------------------------------------------
 		Customer cust1 = new Customer("pera", "pera", "Pera", "Peric", Gender.MALE, LocalDate.now(), UserRole.CUSTOMER,
@@ -66,18 +80,6 @@ public class TestData {
 		Customer cust10 = new Customer("blocked_cust", "deleted_cust", "Blocked_cust_First", "Blocked_cust_Last",
 				Gender.FEMALE, LocalDate.now(), UserRole.CUSTOMER, true, false, 3400.3, custType3); // blocked
 
-		// saving
-		InMemoryRepository.save(cust1);
-		InMemoryRepository.save(cust2);
-		InMemoryRepository.save(cust3);
-		InMemoryRepository.save(cust4);
-		InMemoryRepository.save(cust5);
-		InMemoryRepository.save(cust6);
-		InMemoryRepository.save(cust7);
-		InMemoryRepository.save(cust8);
-		InMemoryRepository.save(cust9);
-		InMemoryRepository.save(cust10);
-
 		// SALESPEOPLE---------------------------------------------------
 		Salesman sal1 = new Salesman("prodavac1", "prodavac1", "Prodavac1First", "Prodavac1Last", Gender.MALE,
 				LocalDate.now(), UserRole.SALESMAN, false, false);
@@ -97,14 +99,6 @@ public class TestData {
 		Salesman sal6 = new Salesman("blocked_sal", "blocked_sal", "blocked_sal_First", "blocked_sal_Last",
 				Gender.FEMALE, LocalDate.now(), UserRole.SALESMAN, true, false); // Blocked
 
-		// saving
-		InMemoryRepository.save(sal1);
-		InMemoryRepository.save(sal2);
-		InMemoryRepository.save(sal3);
-		InMemoryRepository.save(sal4);
-		InMemoryRepository.save(sal5);
-		InMemoryRepository.save(sal6);
-
 		// MANIFESTATION TYPES---------------------------------------------------
 		ManifestationType mt1 = new ManifestationType("Threatre"); // I have created combination of active and inactive
 																	// manifestations for this
@@ -120,159 +114,231 @@ public class TestData {
 		// TODO implement saving of manifestation types in memory repository
 
 		// MANIFESTATIONS WITH LOCATIONS AND ADDRESSES---------------------------
-		Address adrs1 = new Address("1", "Novi Sad", 21000, "Cika Perina");
-		Location loc1 = new Location(111.3, 1111.3, adrs1);
+
+		Location loc1 = new Location(111.3, 1111.3, "1", "Novi Sad", 21000, "Cika Perina");
 		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.now(), 123.3,
 				ManifestationStatus.ACTIVE, "poster", false, mt1, sal1, loc1);
 
-		Address adrs2 = new Address("2", "Novi Sad", 21000, "Cika Perina"); // different number compared to adrs1
-		Location loc2 = new Location(222.3, 2222.3, adrs2);
+		Location loc2 = new Location(222.3, 2222.3, "2", "Novi Sad", 21000, "Cika Perina"); // different number compared
+																							// to adrs1
 		Manifestation man2 = new Manifestation("2222", "Man2NegativeValsInactive", -3, LocalDateTime.now(), -1d, // Intentionally
 																													// set
 																													// this
 				// to negative values
 				ManifestationStatus.INACTIVE, "poster", false, mt2, sal1, loc2);
 
-		Address adrs3 = new Address("33", "Novi Sad", 21000, "Bulevar Oslobodjenja");
-		Location loc3 = new Location(333.3, 3333.3, adrs3);
+		Location loc3 = new Location(333.3, 3333.3, "33", "Novi Sad", 21000, "Bulevar Oslobodjenja");
 		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.now(), 11d,
 				ManifestationStatus.INACTIVE, "poster", false, mt1, sal1, loc3);
 
-		Address adrs4 = new Address("44", "Beograd", 11000, "Marka Kraljevica");
-		Location loc4 = new Location(444.3, 4444.3, adrs4);
+		Location loc4 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
 		Manifestation man4 = new Manifestation("4444", "Man4Deleted", 51, LocalDateTime.now(), 33.3d,
 				ManifestationStatus.ACTIVE, "poster", true, mt1, sal2, loc4); // deleted
 
-		Address adrs5 = new Address("44", "Beograd", 11000, "Marka Kraljevica");
-		Location loc5 = new Location(444.3, 4444.3, adrs5);
+		Location loc5 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
 		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.now(),
 				33.3d, ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
 																						// manifestation
 
-		Address adrs6 = new Address("44", "Beograd", 11001, "Marka Kraljevica"); // different zip code, everything else
-																					// is
-																					// same
-		Location loc6 = new Location(444.3, 4444.3, adrs6); // same coordinates as previous
+		Location loc6 = new Location(444.3, 4444.3, "44", "Beograd", 11001, "Marka Kraljevica"); // same coordinates as
+																									// previous //
+																									// different zip
+																									// code, everything
+																									// else
+		// is
+		// same
 		Manifestation man6 = new Manifestation("6666", "Man6SameLocationDifferentZip", 17, LocalDateTime.now(), 22.3d,
 				ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
 																				// manifestation
 
-		Address adrs7 = new Address("11a", "Prigrevica", 25263, "Apatinska");
-		Location loc7 = new Location(777.3, 7777.3, adrs7);
+		Location loc7 = new Location(777.3, 7777.3, "11a", "Prigrevica", 25263, "Apatinska");
 		Manifestation man7 = new Manifestation("7777", "Man7Inactive", 1000, LocalDateTime.now(), 550d,
 				ManifestationStatus.INACTIVE, "poster", false, mt2, sal3, loc7);
 
-		Address adrs8 = new Address("11a", "Slepcevic", 25263, "Apatinska"); // Only city is different in the address
-		Location loc8 = new Location(777.3, 7777.3, adrs8);
+		Location loc8 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Apatinska"); // Only city is different
+																								// in the address
 		Manifestation man8 = new Manifestation("8888", "Man8InAddressOnlyCityDifferent", 15, LocalDateTime.now(), 333d,
 				ManifestationStatus.ACTIVE, "poster", false, mt3, sal3, loc8);
 
-		Address adrs9 = new Address("11a", "Slepcevic", 25263, "Apatinska"); // Only city is different in the address
-		Location loc9 = new Location(777.3, 7777.3, adrs9);
+		Location loc9 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Apatinska"); // Only city is different
+																								// in the address
 		Manifestation man9 = new Manifestation("9999", "Man9InAddressOnlyCityDifferent", 71, LocalDateTime.now(), 21d,
 				ManifestationStatus.ACTIVE, "poster", false, mt3, sal3, loc9);
 
-		Address adrs10 = new Address("11a", "Slepcevic", 25263, "Kicoska"); // Only Street is different in the address
-		Location loc10 = new Location(777.3, 7777.3, adrs10);
+		Location loc10 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Kicoska"); // Only Street is different
+																							// in the address
 		Manifestation man10 = new Manifestation("10101010", "Man10InAddressOnlyCityDifferentDELETED", 332,
 				LocalDateTime.now(), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
 																											// deleted
-		// Saving
-		InMemoryRepository.save(man1);
-		InMemoryRepository.save(man2);
-		InMemoryRepository.save(man3);
-		InMemoryRepository.save(man4);
-		InMemoryRepository.save(man5);
-		InMemoryRepository.save(man6);
-		InMemoryRepository.save(man7);
-		InMemoryRepository.save(man8);
-		InMemoryRepository.save(man9);
-		InMemoryRepository.save(man10);
 
 		// TICKETS---------------------------------------------------
 
 		// For customer 1
-		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, cust1.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust1, man1);
+		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+				cust1, man1);
 
-		Ticket t2 = new Ticket("2", LocalDateTime.now(), 242.42, cust1.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust1, man1);
+		Ticket t2 = new Ticket("2", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+				cust1, man1);
 
-		Ticket t3 = new Ticket("3", LocalDateTime.now(), 484.84d, cust1.getFirstName(), TicketType.FAN_PIT,
-				TicketStatus.RESERVED, null, false, cust1, man1);
+		Ticket t3 = new Ticket("3", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+				false, cust1, man1);
 
-		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, cust1.getFirstName(), TicketType.REGULAR,
-				TicketStatus.CANCELED, null, false, cust1, man1);
+		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null, false,
+				cust1, man1);
 
-		Ticket t5 = new Ticket("5", LocalDateTime.now(), 969.68d, cust1.getFirstName(), TicketType.VIP,
-				TicketStatus.RESERVED, null, true, cust1, man1); // deleted reserved ticket
+		Ticket t5 = new Ticket("5", LocalDateTime.now(), 969.68d, TicketType.VIP, TicketStatus.RESERVED, null, true,
+				cust1, man1); // deleted reserved ticket
 
-		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, cust1.getFirstName(), TicketType.VIP,
-				TicketStatus.CANCELED, null, false, cust1, man4); // references a deleted manifestation and is also
-																	// canceled
+		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+				cust1, man4); // references a deleted manifestation and is also
+								// canceled
 
-		Ticket t7 = new Ticket("7", LocalDateTime.now(), 160d, cust1.getFirstName(), TicketType.VIP,
-				TicketStatus.RESERVED, null, false, cust1, man10); // references a deleted manifestation and is reserved
+		Ticket t7 = new Ticket("7", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust1, man10); // references a deleted manifestation and is reserved
 
 		// for customer 2 same as first 4 tickets for cust 1
-		Ticket t8 = new Ticket("8", LocalDateTime.now(), 242.42, cust2.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust2, man1);
+		Ticket t8 = new Ticket("8", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+				cust2, man1);
 
-		Ticket t9 = new Ticket("9", LocalDateTime.now(), 242.42, cust2.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust2, man1);
+		Ticket t9 = new Ticket("9", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+				cust2, man1);
 
-		Ticket t10 = new Ticket("10", LocalDateTime.now(), 484.84d, cust2.getFirstName(), TicketType.FAN_PIT,
-				TicketStatus.RESERVED, null, false, cust2, man1);
+		Ticket t10 = new Ticket("10", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+				false, cust2, man1);
 
-		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, cust2.getFirstName(), TicketType.REGULAR,
-				TicketStatus.CANCELED, null, false, cust2, man1);
+		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+				false, cust2, man1);
 
 		// for customer 3 same as first 4 tickets for cust 1 and 2
-		Ticket t12 = new Ticket("12", LocalDateTime.now(), 242.42, cust3.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust3, man1);
+		Ticket t12 = new Ticket("12", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
+				false, cust3, man1);
 
-		Ticket t13 = new Ticket("13", LocalDateTime.now(), 242.42, cust3.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust3, man1);
+		Ticket t13 = new Ticket("13", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
+				false, cust3, man1);
 
-		Ticket t14 = new Ticket("14", LocalDateTime.now(), 484.84d, cust3.getFirstName(), TicketType.FAN_PIT,
-				TicketStatus.RESERVED, null, false, cust3, man1);
+		Ticket t14 = new Ticket("14", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+				false, cust3, man1);
 
-		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, cust3.getFirstName(), TicketType.REGULAR,
-				TicketStatus.CANCELED, null, false, cust3, man1);
+		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+				false, cust3, man1);
 
 		// for customer 4 different event from cust 1,2 and 3
-		Ticket t16 = new Ticket("16", LocalDateTime.now(), 100d, cust4.getFirstName(), TicketType.REGULAR,
-				TicketStatus.RESERVED, null, false, cust4, man5);
+		Ticket t16 = new Ticket("16", LocalDateTime.now(), 100d, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+				cust4, man5);
 
-		Ticket t17 = new Ticket("17", LocalDateTime.now(), 400d, cust4.getFirstName(), TicketType.VIP,
-				TicketStatus.RESERVED, null, false, cust4, man5);
+		Ticket t17 = new Ticket("17", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust4, man5);
 
-		Ticket t18 = new Ticket("18", LocalDateTime.now(), 200d, cust4.getFirstName(), TicketType.FAN_PIT,
-				TicketStatus.RESERVED, null, false, cust4, man5);
+		Ticket t18 = new Ticket("18", LocalDateTime.now(), 200d, TicketType.FAN_PIT, TicketStatus.RESERVED, null, false,
+				cust4, man5);
 
-		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, cust4.getFirstName(), TicketType.VIP,
-				TicketStatus.CANCELED, null, false, cust4, man5);
+		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+				cust4, man5);
+
+		// saving
+		userDAO.save(admin1);
+		userDAO.save(admin2);
+
+		
+		Comment c1 = new Comment("1", "Predobarr film", 5, CommentStatus.ACCEPTED, false, man1, cust1);
+		Comment c2 = new Comment("2", "Jadnooo", 2, CommentStatus.ACCEPTED, false, man5, cust4);
+		Comment c3 = new Comment("3", "Okej", 3, CommentStatus.ACCEPTED, false, man1, cust3);
+		
+		
+		// CustomerTypes
+		customerTypeDAO.save(custType0);
+		customerTypeDAO.save(custType1);
+		customerTypeDAO.save(custType2);
+		customerTypeDAO.save(custType3);
+		customerTypeDAO.save(custType4);
+		customerTypeDAO.save(custType5);
+
+		// Manifestatoin Types
+		manifestationTypeDAO.save(mt1);
+		manifestationTypeDAO.save(mt2);
+		manifestationTypeDAO.save(mt3);
+		manifestationTypeDAO.save(mt4);
+		manifestationTypeDAO.save(mt5);
+		
+		// saving
+		userDAO.save(cust1);
+		userDAO.save(cust2);
+		userDAO.save(cust3);
+		userDAO.save(cust4);
+		userDAO.save(cust5);
+		userDAO.save(cust6);
+		userDAO.save(cust7);
+		userDAO.save(cust8);
+		userDAO.save(cust9);
+		userDAO.save(cust10);
+
+		// saving
+		userDAO.save(sal1);
+		userDAO.save(sal2);
+		userDAO.save(sal3);
+		userDAO.save(sal4);
+		userDAO.save(sal5);
+		userDAO.save(sal6);
 
 		// Saving
-		InMemoryRepository.save(t1);
-		InMemoryRepository.save(t2);
-		InMemoryRepository.save(t3);
-		InMemoryRepository.save(t4);
-		InMemoryRepository.save(t5);
-		InMemoryRepository.save(t6);
-		InMemoryRepository.save(t7);
-		InMemoryRepository.save(t8);
-		InMemoryRepository.save(t9);
-		InMemoryRepository.save(t10);
-		InMemoryRepository.save(t11);
-		InMemoryRepository.save(t12);
-		InMemoryRepository.save(t13);
-		InMemoryRepository.save(t14);
-		InMemoryRepository.save(t15);
-		InMemoryRepository.save(t16);
-		InMemoryRepository.save(t17);
-		InMemoryRepository.save(t18);
-		InMemoryRepository.save(t19);
+		manifestationDAO.save(man1);
+		manifestationDAO.save(man2);
+		manifestationDAO.save(man3);
+		manifestationDAO.save(man4);
+		manifestationDAO.save(man5);
+		manifestationDAO.save(man6);
+		manifestationDAO.save(man7);
+		manifestationDAO.save(man8);
+		manifestationDAO.save(man9);
+		manifestationDAO.save(man10);
+
+		// Saving
+
+		ticketDAO.save(t1);
+		ticketDAO.save(t2);
+		ticketDAO.save(t3);
+		ticketDAO.save(t4);
+		ticketDAO.save(t5);
+		ticketDAO.save(t6);
+		ticketDAO.save(t7);
+		ticketDAO.save(t8);
+		ticketDAO.save(t9);
+		ticketDAO.save(t10);
+		ticketDAO.save(t11);
+		ticketDAO.save(t12);
+		ticketDAO.save(t13);
+		ticketDAO.save(t14);
+		ticketDAO.save(t15);
+		ticketDAO.save(t16);
+		ticketDAO.save(t17);
+		ticketDAO.save(t18);
+		ticketDAO.save(t19);
+
+		commentDAO.save(c1);
+		commentDAO.save(c2);
+		commentDAO.save(c3);
+		
+		
+		for (Manifestation m : manifestationDAO.getManifestations().values()) {
+			Salesman u = m.getSalesman();
+			u.getManifestation().add(m);
+		}
+
+		for (Ticket ticket : ticketDAO.getTickets().values()) {
+			Customer customer = ticket.customer;
+			customer.getTickets().add(ticket);
+			
+			Manifestation manifestation = ticket.getManifestation();
+			manifestation.getTickets().add(ticket);
+			
+		}
+
+		for (Comment comment : commentDAO.getComments().values()) {
+			Customer customer = comment.getCustomer();
+			Manifestation manifestation = comment.getManifestation();
+			customer.getComments().add(comment);
+			manifestation.getComments().add(comment);
+		}
 
 	}
 

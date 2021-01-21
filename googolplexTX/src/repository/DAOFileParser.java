@@ -1,6 +1,10 @@
-package support;
+package repository;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,7 +22,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import model.Comment;
@@ -36,24 +39,272 @@ import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
-import repository.InMemoryRepository;
+import support.JsonAdapter;
 
-public class FileToJsonAdapter {
+public class DAOFileParser {
+
+	private UserDAO userDAO;
+	private ManifestationDAO manifestationDAO;
+	private TicketDAO ticketDAO;
+	private CommentDAO commentDAO;
+	private CustomerTypeDAO customerTypeDAO;
+	private ManifestationTypeDAO manifestationTypeDAO;
+
+	private Map<String, Class<?>> userCastMap = new TreeMap<String, Class<?>>();
+
+	public DAOFileParser(UserDAO userDAO, ManifestationDAO manifestationDAO, TicketDAO ticketDAO, CommentDAO commentDAO,
+			CustomerTypeDAO customerTypeDAO, ManifestationTypeDAO manifestationTypeDAO) {
+		this();
+		this.userDAO = userDAO;
+		this.manifestationDAO = manifestationDAO;
+		this.ticketDAO = ticketDAO;
+		this.commentDAO = commentDAO;
+		this.customerTypeDAO = customerTypeDAO;
+		this.manifestationTypeDAO = manifestationTypeDAO;
+	}
 	
-	private static Map<String, Class<?>> userCastMap = new TreeMap<String, Class<?>>();
-
-	static {
+	public DAOFileParser() {
+		super();
 		userCastMap.put(UserRole.ADMIN.name(), User.class);
 		userCastMap.put(UserRole.SALESMAN.name(), Salesman.class);
 		userCastMap.put(UserRole.CUSTOMER.name(), Customer.class);
 	}
+	
+	public UserDAO getUserDAO() {
+		return userDAO;
+	}
+	public void setUserDAO(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
+	public ManifestationDAO getManifestationDAO() {
+		return manifestationDAO;
+	}
+	public void setManifestationDAO(ManifestationDAO manifestationDAO) {
+		this.manifestationDAO = manifestationDAO;
+	}
+	public TicketDAO getTicketDAO() {
+		return ticketDAO;
+	}
+	public void setTicketDAO(TicketDAO ticketDAO) {
+		this.ticketDAO = ticketDAO;
+	}
+	public CommentDAO getCommentDAO() {
+		return commentDAO;
+	}
+	public void setCommentDAO(CommentDAO commentDAO) {
+		this.commentDAO = commentDAO;
+	}
+	public CustomerTypeDAO getCustomerTypeDAO() {
+		return customerTypeDAO;
+	}
+	public void setCustomerTypeDAO(CustomerTypeDAO customerTypeDAO) {
+		this.customerTypeDAO = customerTypeDAO;
+	}
+	public ManifestationTypeDAO getManifestationTypeDAO() {
+		return manifestationTypeDAO;
+	}
+	public void setManifestationTypeDAO(ManifestationTypeDAO manifestationTypeDAO) {
+		this.manifestationTypeDAO = manifestationTypeDAO;
+	}
+	
+	public void loadData() {
+		try {
+			this.loadCustomerTypes();
+			this.loadManifestationTypes();
+			this.loadUsers();
+			this.loadManifestations();
+			this.loadTickets();
+			this.loadComments();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private void loadCustomerTypes() throws IOException {
+		Gson gson = this.getCustomerTypeJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/customerTypes.json"));
+	    
+		Type mapType = new TypeToken<Map<String, CustomerType>>() {}.getType();
+	    Map<String, CustomerType> customerTypes = gson.fromJson(reader, mapType);
+	    customerTypeDAO.setCustomerTypes(customerTypes);
+		
+	    System.out.println("[DBG] Ucitani customer typovi");
+	}
+	
+	private void loadManifestationTypes() throws IOException {
+		Gson gson = this.getManifestationTypeJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/manifestationTypes.json"));
+	    
+		Type mapType = new TypeToken<Map<String, ManifestationType>>() {}.getType();
+		Map<String, ManifestationType> manifestationTypes = gson.fromJson(reader, mapType);
+		manifestationTypeDAO.setManifestationTypes(manifestationTypes);
+		
+	    System.out.println("[DBG] Ucitani manifestation typovi");
+	}
+	
+	private void loadUsers() throws IOException {
+		Gson gson = this.getUserJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/users.json"));
+	    
+		Type mapType = new TypeToken<Map<String, User>>() {}.getType();
+		Map<String, User> users = gson.fromJson(reader, mapType);
+		userDAO.setUsers(users);
+		
+	    System.out.println("[DBG] Ucitani useri");
+	}
+	
+	private void loadManifestations() throws IOException {
+		Gson gson = this.getManifestationsJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/manifestations.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Manifestation>>() {}.getType();
+		Map<String, Manifestation> manifestations = gson.fromJson(reader, mapType);
+		manifestationDAO.setManifestations(manifestations);
+	}
 
 	
+	private void loadTickets() throws IOException {
+		Gson gson = this.getTicketsJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/tickets.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Ticket>>() {}.getType();
+		Map<String, Ticket> tickets = gson.fromJson(reader, mapType);
+		ticketDAO.setTickets(tickets);
+	}
+	
+
+	private void loadComments() throws IOException {
+		Gson gson = this.getCommentsJsonBuilder();
+		
+	    Reader reader = Files.newBufferedReader(Paths.get("data/comments.json"));
+	    
+		Type mapType = new TypeToken<Map<String, Comment>>() {}.getType();
+		Map<String, Comment> comments = gson.fromJson(reader, mapType);
+		commentDAO.setComments(comments);
+		
+	    System.out.println("[DBG] Ucitani komentari");
+	}
+	
+	//////////////////////////////
+	//		GSON BUILDERS		//
+	//////////////////////////////
+	private Gson getUserJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		Type usersType = new TypeToken<Map<String, User>>() {}.getType();
+		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
+		Type manifestationsType = new TypeToken<Collection<Manifestation>>() {}.getType();
+
+		gsonBuilder.registerTypeAdapter(usersType, adapterUserMapFromJson);
+		gsonBuilder.registerTypeAdapter(User.class, adapterUserFromJson);
+		gsonBuilder.registerTypeAdapter(Salesman.class, adapterSalesmanFromJson);
+		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
+		
+		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationIdFromJson);
+		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketIdFromJson);
+		gsonBuilder.registerTypeAdapter(CustomerType.class, adapterCustomerTypeIdFromJson);
+		gsonBuilder.registerTypeAdapter(Comment.class, adapterCommentIdFromJson);
+		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentIdCollectionFromJson);
+		gsonBuilder.registerTypeAdapter(manifestationsType, adapterManifestationIdCollectionFromJson);
+
+		Gson customGson = gsonBuilder.create();
+		return customGson;	
+	}
+	
+	private Gson getManifestationsJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
+		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
+
+		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationFromJson);	
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
+		
+		gsonBuilder.registerTypeAdapter(ManifestationType.class, adapterManifestationTypeIdFromJson);
+		gsonBuilder.registerTypeAdapter(Salesman.class, adapterSalesmanIdFromJson);
+		gsonBuilder.registerTypeAdapter(Comment.class, adapterCommentIdFromJson);
+		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentIdCollectionFromJson);
+		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketIdFromJson);
+		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketIdCollectionFromJson);
+
+		
+		
+
+		Gson customGson = gsonBuilder.create();
+		return customGson;
+	}
+	
+	private Gson getTicketsJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+
+		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketFromJson);	
+		gsonBuilder.registerTypeAdapter(LocalDate.class, JsonAdapter.adapterLocalDateFromJson);
+		gsonBuilder.registerTypeAdapter(LocalTime.class, JsonAdapter.adapterLocalTimeFromJson);
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, JsonAdapter.adapterLocalDateTimeFromJson);
+		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationIdFromJson);	
+		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerIdFromJson);	
+
+		
+
+		Gson customGson = gsonBuilder.create();
+		return customGson;
+	}
+	
+	private Gson getCommentsJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		//Type manifestationsType = new TypeToken<Map<String, Manifestation>>() {}.getType();
+
+		//gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);	
+		gsonBuilder.registerTypeAdapter(Comment.class, adapterCommentFromJson);	
+		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerIdFromJson);	
+		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationIdFromJson);	
+
+
+		Gson customGson = gsonBuilder.create();
+		return customGson;
+	}
+	
+	private Gson getCustomerTypeJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.registerTypeAdapter(Comment.class, adapterCustomerTypeFromJson);	
+		
+		Gson customGson = gsonBuilder.create();
+		return customGson;
+	}
+	
+	private Gson getManifestationTypeJsonBuilder() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+
+		gsonBuilder.registerTypeAdapter(Comment.class, adapterManifestationTypeFromJson);	
+
+		Gson customGson = gsonBuilder.create();
+		return customGson;
+	}
+	
+	
+	//////////////////////////
+	//		ADAPTERS		//
+	//////////////////////////
+
 	/**
 	 * Adapter for Admin (Base User) Class
 	 * Consumes basic User json
 	 */
-	public static final JsonDeserializer<User> adapterUser = new JsonDeserializer<User>() {
+	private final JsonDeserializer<User> adapterUserFromJson = new JsonDeserializer<User>() {
 
 		@Override
 		public User deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -65,7 +316,7 @@ public class FileToJsonAdapter {
 	        UserRole userRole = context.deserialize(jsonObject.get("userRole"), UserRole.class);
 	        
 	        String id = jsonObject.get("username").getAsString();
-	        User user = InMemoryRepository.findOneUser(id);
+	        User user = userDAO.findOne(id);
 
 	        if (user == null) {
 				return new User(
@@ -100,18 +351,19 @@ public class FileToJsonAdapter {
 	 * Create new bare class and save or get from repository if exists with that id
 	 * Consumes jsonPrimitive containing id
 	 */
-	public static final JsonDeserializer<User> adapterUserId = new JsonDeserializer<User>() {
+	@SuppressWarnings("unused")
+	private final JsonDeserializer<User> adapterUserIdFromJson = new JsonDeserializer<User>() {
 
 		@Override
 		public User deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        User user = InMemoryRepository.findOneUser(id);
+	        User user = userDAO.findOne(id);
 
 	        if (user == null) {
 	        	user = new User();
 	        	user.setUsername(id);
-	        	InMemoryRepository.save(user);
+	        	userDAO.save(user);
 	        }
 	        
 			return user;
@@ -120,12 +372,11 @@ public class FileToJsonAdapter {
 
 	};
 	
-	
 	/**
 	 * Adapter for Salesman Class
 	 * Consumes basic Salesman json
 	 */
-	public static final JsonDeserializer<Salesman> adapterBasicSalesman = new JsonDeserializer<Salesman>() {
+	private final JsonDeserializer<Salesman> adapterSalesmanFromJson = new JsonDeserializer<Salesman>() {
 
 		@Override
 		public Salesman deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -140,7 +391,7 @@ public class FileToJsonAdapter {
 	        Collection<Manifestation> manifestations = context.deserialize(jsonObject.get("manifestations"), manifestationsType);
 	        
 	        String id = jsonObject.get("username").getAsString();
-	        Salesman salesman = (Salesman) InMemoryRepository.findOneUser(id);
+	        Salesman salesman = (Salesman) userDAO.findOne(id);
 
 	        if (salesman == null) {
 				return new Salesman(
@@ -171,18 +422,18 @@ public class FileToJsonAdapter {
 		}
 
 	};
-	public static final JsonDeserializer<Salesman> adapterSalesmanId = new JsonDeserializer<Salesman>() {
+	private final JsonDeserializer<Salesman> adapterSalesmanIdFromJson  = new JsonDeserializer<Salesman>() {
 
 		@Override
 		public Salesman deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        Salesman salesman = (Salesman) InMemoryRepository.findOneUser(id);
+	        Salesman salesman = (Salesman) userDAO.findOne(id);
 
 	        if (salesman == null) {
 	        	salesman = new Salesman();
 	        	salesman.setUsername(id);
-	        	InMemoryRepository.save(salesman);
+	        	userDAO.save(salesman);
 	        }
 	        
 			return salesman;
@@ -196,7 +447,7 @@ public class FileToJsonAdapter {
 	 * Adapter for Customer Class
 	 * Consumes basic Customer json
 	 */
-	public static final JsonDeserializer<Customer> adapterBasicCustomer = new JsonDeserializer<Customer>() {
+	private final JsonDeserializer<Customer> adapterCustomerFromJson  = new JsonDeserializer<Customer>() {
 
 		@Override
 		public Customer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -214,7 +465,7 @@ public class FileToJsonAdapter {
 	        CustomerType customerType = context.deserialize(jsonObject.get("customerType"), CustomerType.class);
 
 	        String id = jsonObject.get("username").getAsString();
-	        Customer customer = (Customer) InMemoryRepository.findOneUser(id);
+	        Customer customer = (Customer) userDAO.findOne(id);
 
 	        if (customer == null) {
 			return new Customer(
@@ -257,18 +508,18 @@ public class FileToJsonAdapter {
 	 * Create new bare class and save or get from repository if exists with that id
 	 * Consumes jsonPrimitive containing id
 	 */
-	public static final JsonDeserializer<Customer> adapterCustomerId = new JsonDeserializer<Customer>() {
+	private final JsonDeserializer<Customer> adapterCustomerIdFromJson  = new JsonDeserializer<Customer>() {
 
 		@Override
 		public Customer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        Customer customer = (Customer) InMemoryRepository.findOneUser(id);
+	        Customer customer = (Customer) userDAO.findOne(id);
 
 	        if (customer == null) {
 	        	customer = new Customer();
 	        	customer.setUsername(id);
-	        	InMemoryRepository.save(customer);
+	        	userDAO.save(customer);
 	        }
 	        
 			return customer;
@@ -283,8 +534,8 @@ public class FileToJsonAdapter {
 	 * Map into User, Salesman and Customer based on userRole attribute
 	 * Consumes Users Json Array
 	 */
-	public static final JsonDeserializer<Map<String, User>> adapterUserMap = new JsonDeserializer<Map<String, User>>() {
-
+	private final JsonDeserializer<Map<String, User>> adapterUserMapFromJson  = new JsonDeserializer<Map<String, User>>() {
+		//TODO: Check is this neccesery
 		@Override
 		public Map<String, User> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
@@ -315,7 +566,7 @@ public class FileToJsonAdapter {
 	 * Manifestation Adapter
 	 * Generate Manifestation from basic manifestation Json Object
 	 */
-	public static final JsonDeserializer<Manifestation> adapterBareManifestation = new JsonDeserializer<Manifestation>() {
+	private final JsonDeserializer<Manifestation> adapterManifestationFromJson  = new JsonDeserializer<Manifestation>() {
 
 		@Override
 		public Manifestation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -329,9 +580,14 @@ public class FileToJsonAdapter {
 	        ManifestationType manifestationType = context.deserialize(jsonObject.get("manifestationType"), ManifestationType.class);
 	        Salesman salesman = context.deserialize(jsonObject.get("salesman"), Salesman.class);
 	        
+	        Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
+			Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
+	        ArrayList<Comment> comments = context.deserialize(jsonObject.get("comments"), commentsType);
+	        ArrayList<Ticket> tickets = context.deserialize(jsonObject.get("tickets"), ticketsType);
+	        
 	        // Generate new Manifestation or supplement pre-created obj (used in links)
 	        String id = jsonObject.get("id").getAsString();
-	        Manifestation manifestation = InMemoryRepository.findOneManifestation(id);
+	        Manifestation manifestation = manifestationDAO.findOne(id);
 	        if (manifestation == null) {
 				return new Manifestation(
 						jsonObject.get("id").getAsString(), 
@@ -350,11 +606,14 @@ public class FileToJsonAdapter {
 	        	manifestation.setAvailableSeats(jsonObject.get("availableSeats").getAsInt());
 	        	manifestation.setDateOfOccurence(dateOfOccurence);
 	        	manifestation.setRegularPrice(jsonObject.get("regularPrice").getAsDouble());
+	        	manifestation.setStatus(manifestationStatus);
 	        	manifestation.setPoster(jsonObject.get("poster").getAsString());
 	        	manifestation.setDeleted(jsonObject.get("deleted").getAsBoolean());
 	        	manifestation.setManifestationType(manifestationType);
 	        	manifestation.setSalesman(salesman);
 	        	manifestation.setLocation(location);
+	        	manifestation.setComments(comments);
+	        	manifestation.setTickets(tickets);
 	        	return manifestation;
 	        }
 			
@@ -367,18 +626,18 @@ public class FileToJsonAdapter {
 	 * Create new bare class and save or get from repository if exists with that id
 	 * Consumes jsonPrimitive containing id
 	 */
-	public static final JsonDeserializer<Manifestation> adapterManifestationId = new JsonDeserializer<Manifestation>() {
+	private final JsonDeserializer<Manifestation> adapterManifestationIdFromJson  = new JsonDeserializer<Manifestation>() {
 
 		@Override
 		public Manifestation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        Manifestation manifestation = InMemoryRepository.findOneManifestation(id);
+	        Manifestation manifestation = manifestationDAO.findOne(id);
 
 	        if (manifestation == null) {
 	        	manifestation = new Manifestation();
 	        	manifestation.setId(id);
-	        	InMemoryRepository.save(manifestation);
+	        	manifestationDAO.save(manifestation);
 	        }
 	        
 			return manifestation;
@@ -392,7 +651,7 @@ public class FileToJsonAdapter {
 	 * Create new bare classes and save or get from repository if exists with that id
 	 * Consumes jsonArray containing ids
 	 */
-	public static final JsonDeserializer<Collection<Manifestation>> adapterManifestationIdCollection = new JsonDeserializer<Collection<Manifestation>>() {
+	private final JsonDeserializer<Collection<Manifestation>> adapterManifestationIdCollectionFromJson  = new JsonDeserializer<Collection<Manifestation>>() {
 
 		@Override
 		public Collection<Manifestation> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -401,11 +660,11 @@ public class FileToJsonAdapter {
 	        ArrayList<Manifestation> manifestations = new ArrayList<Manifestation>();
 	        
 	        for (JsonElement id : ids) {
-	        	Manifestation manifestation = InMemoryRepository.findOneManifestation(id.getAsString());
+	        	Manifestation manifestation = manifestationDAO.findOne(id.getAsString());
 		        if (manifestation == null) {
 		        	manifestation = new Manifestation();
 		        	manifestation.setId(id.getAsString());
-		        	InMemoryRepository.save(manifestation);
+		        	manifestationDAO.save(manifestation);
 		        }
 		        manifestations.add(manifestation);
 		        
@@ -422,7 +681,7 @@ public class FileToJsonAdapter {
 	 * Ticket Adapter
 	 * Generate Ticket from basic tickets Json Object
 	 */
-	public static final JsonDeserializer<Ticket> adapterBareTicket = new JsonDeserializer<Ticket>() {
+	private final JsonDeserializer<Ticket> adapterTicketFromJson  = new JsonDeserializer<Ticket>() {
 
 		@Override
 		public Ticket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -438,13 +697,12 @@ public class FileToJsonAdapter {
 
 	        
 	        String id = jsonObject.get("id").getAsString();
-	        Ticket ticket = InMemoryRepository.findOneTicket(id);
+	        Ticket ticket = ticketDAO.findOne(id);
 	        if (ticket == null) {
 				return new Ticket(
 						jsonObject.get("id").getAsString(), 
 						dateOfOccurence, 
 						jsonObject.get("price").getAsDouble(), 
-						jsonObject.get("customerName").getAsString(), 
 						ticketType, 
 						ticketStatus, 
 						cancelationDate, 
@@ -454,7 +712,6 @@ public class FileToJsonAdapter {
 	        } else {
 	        	ticket.setDateOfManifestation(dateOfOccurence);
 	        	ticket.setPrice(jsonObject.get("price").getAsDouble());
-	        	ticket.setCustomerName(id);
 	        	ticket.setTicketType(ticketType);
 	        	ticket.setTicketStatus(ticketStatus);
 	        	ticket.setCancelationDate(cancelationDate);
@@ -472,17 +729,17 @@ public class FileToJsonAdapter {
 	 * Create new bare class and save or get from repository if exists with that id
 	 * Consumes jsonPrimitive containing id
 	 */
-	public static final JsonDeserializer<Ticket> adapterTicketId = new JsonDeserializer<Ticket>() {
+	private final JsonDeserializer<Ticket> adapterTicketIdFromJson  = new JsonDeserializer<Ticket>() {
 
 		@Override
 		public Ticket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        Ticket ticket = InMemoryRepository.findOneTicket(id);
+	        Ticket ticket = ticketDAO.findOne(id);
 	        if (ticket == null) {
 	        	ticket = new Ticket();
 	        	ticket.setId(id);
-	        	InMemoryRepository.save(ticket);
+	        	ticketDAO.save(ticket);
 	        }
 	        
 			return ticket;
@@ -496,7 +753,7 @@ public class FileToJsonAdapter {
 	 * Create new bare classes and save or get from repository if exists with that id
 	 * Consumes jsonArray containing ids
 	 */
-	public static final JsonDeserializer<Collection<Ticket>> adapterTicketIdCollection = new JsonDeserializer<Collection<Ticket>>() {
+	private final JsonDeserializer<Collection<Ticket>> adapterTicketIdCollectionFromJson  = new JsonDeserializer<Collection<Ticket>>() {
 
 		@Override
 		public Collection<Ticket> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -505,11 +762,11 @@ public class FileToJsonAdapter {
 	        ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 	        
 	        for (JsonElement id : ids) {
-	        	Ticket ticket = InMemoryRepository.findOneTicket(id.getAsString());
+	        	Ticket ticket = ticketDAO.findOne(id.getAsString());
 		        if (ticket == null) {
 		        	ticket = new Ticket();
 		        	ticket.setId(id.getAsString());
-		        	InMemoryRepository.save(ticket);
+		        	ticketDAO.save(ticket);
 		        }
 		        tickets.add(ticket);
 		        
@@ -527,7 +784,7 @@ public class FileToJsonAdapter {
 	 * Comment Adapter
 	 * Generate Comment from basic comment Json Object
 	 */
-	public static final JsonDeserializer<Comment> commentBareTicket = new JsonDeserializer<Comment>() {
+	private final JsonDeserializer<Comment> adapterCommentFromJson = new JsonDeserializer<Comment>() {
 
 		@Override
 		public Comment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -537,7 +794,7 @@ public class FileToJsonAdapter {
 	        CommentStatus commentStatus = context.deserialize(jsonObject.get("approved"), CommentStatus.class);  
 
 	        String id = jsonObject.get("id").getAsString();
-	        Comment comment = InMemoryRepository.findOneComment(id);
+	        Comment comment = commentDAO.findOne(id);
 
 	        Customer customer = context.deserialize(jsonObject.get("customer"), Customer.class);
 	        Manifestation manifestation = context.deserialize(jsonObject.get("manifestation"), Manifestation.class);
@@ -552,7 +809,7 @@ public class FileToJsonAdapter {
 						manifestation,
 						customer);
 	        } else {
-	        	comment.setText(id);
+	        	comment.setText(jsonObject.get("text").getAsString());
 	        	comment.setRating(jsonObject.get("rating").getAsInt());
 	        	comment.setApproved(commentStatus);
 	        	comment.setDeleted(jsonObject.get("deleted").getAsBoolean());
@@ -569,17 +826,17 @@ public class FileToJsonAdapter {
 	 * Create new bare class and save or get from repository if exists with that id
 	 * Consumes jsonPrimitive containing id
 	 */
-	public static final JsonDeserializer<Comment> adapterCommentId = new JsonDeserializer<Comment>() {
+	private final JsonDeserializer<Comment> adapterCommentIdFromJson = new JsonDeserializer<Comment>() {
 
 		@Override
 		public Comment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        Comment comment = InMemoryRepository.findOneComment(id);
+	        Comment comment = commentDAO.findOne(id);
 	        if (comment == null) {
 	        	comment = new Comment();
 	        	comment.setId(id);
-	        	InMemoryRepository.save(comment);
+	        	commentDAO.save(comment);
 	        }
 	        
 			return comment;
@@ -593,7 +850,7 @@ public class FileToJsonAdapter {
 	 * Create new bare classes and save or get from repository if exists with that id
 	 * Consumes jsonArray containing ids
 	 */
-	public static final JsonDeserializer<Collection<Comment>> adapterCommentIdCollection = new JsonDeserializer<Collection<Comment>>() {
+	private final JsonDeserializer<Collection<Comment>> adapterCommentIdCollectionFromJson = new JsonDeserializer<Collection<Comment>>() {
 
 		@Override
 		public Collection<Comment> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -602,11 +859,11 @@ public class FileToJsonAdapter {
 	        ArrayList<Comment> comments = new ArrayList<Comment>();
 	        
 	        for (JsonElement id : ids) {
-	        	Comment comment = InMemoryRepository.findOneComment(id.getAsString());
+	        	Comment comment = commentDAO.findOne(id.getAsString());
 		        if (comment == null) {
 		        	comment = new Comment();
 		        	comment.setId(id.getAsString());
-		        	InMemoryRepository.save(comment);
+		        	commentDAO.save(comment);
 		        }
 		        comments.add(comment);
 		        
@@ -618,23 +875,48 @@ public class FileToJsonAdapter {
 
 	};
 	
-	
-	// Manifesattion Type id
 	/**
 	 * ManifestationType Adapter
 	 * Generate ManifestationType from basic Customer Type Json Object
 	 */
-	public static final JsonDeserializer<ManifestationType> adapterManifestationTypeId = new JsonDeserializer<ManifestationType>() {
+	private final JsonDeserializer<ManifestationType> adapterManifestationTypeFromJson = new JsonDeserializer<ManifestationType>() {
+
+		@Override
+		public ManifestationType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+	        
+			JsonObject jsonObject = json.getAsJsonObject();
+
+	        String id = jsonObject.get("id").getAsString();	        
+	        ManifestationType manifestationType = manifestationTypeDAO.findOne(id);
+	        
+	        if (manifestationType == null) {
+	        	return new ManifestationType(
+	        			jsonObject.get("name").getAsString(), 
+	        			jsonObject.get("deleted").getAsBoolean());
+	        } else {
+	        	manifestationType.setDeleted(jsonObject.get("deleted").getAsBoolean());
+	        	return manifestationType;
+	        }
+
+		}
+
+	};		// Manifesattion Type id
+	/**
+	 * ManifestationType Adapter
+	 * Generate ManifestationType from id or find in DAO
+	 */
+	private final JsonDeserializer<ManifestationType> adapterManifestationTypeIdFromJson = new JsonDeserializer<ManifestationType>() {
 
 		@Override
 		public ManifestationType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        ManifestationType manifestationType = InMemoryRepository.findOneManifestationType(id);
+	        ManifestationType manifestationType = manifestationTypeDAO.findOne(id);
 	        if (manifestationType == null) {
 	        	manifestationType = new ManifestationType();
 	        	manifestationType.setName(id);
-	        	InMemoryRepository.save(manifestationType);
+	        	manifestationTypeDAO.save(manifestationType);
 	        }
 	        
 			return manifestationType;
@@ -643,22 +925,54 @@ public class FileToJsonAdapter {
 
 	};	
 	
-	// Customer Type id
+	
 	/**
 	 * CustomerType Adapter
 	 * Generate CustomerType from basic Customer Type Json Object
 	 */
-	public static final JsonDeserializer<CustomerType> adapterCustomerTypeId = new JsonDeserializer<CustomerType>() {
+	private final JsonDeserializer<CustomerType> adapterCustomerTypeFromJson = new JsonDeserializer<CustomerType>() {
+
+		@Override
+		public CustomerType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+	        JsonObject jsonObject = json.getAsJsonObject();
+
+	        String id = jsonObject.get("id").getAsString();	        
+	        CustomerType customerType = customerTypeDAO.findOne(id);
+	        
+	        if (customerType == null) {
+	        	return new CustomerType(
+	        			jsonObject.get("name").getAsString(), 
+	        			jsonObject.get("discount").getAsDouble(), 
+	        			jsonObject.get("requiredPoints").getAsDouble(), 
+	        			jsonObject.get("deleted").getAsBoolean());
+	        } else {
+	        	customerType.setDiscount(jsonObject.get("discount").getAsDouble());
+	        	customerType.setRequiredPoints(jsonObject.get("requiredPoints").getAsDouble());
+	        	customerType.setDeleted(jsonObject.get("deleted").getAsBoolean());
+	        	return customerType;
+	        }
+	        
+			
+		}
+
+	};
+	// Customer Type id
+	/**
+	 * CustomerType Adapter
+	 * Generate CustomerType from id or find in DAO
+	 */
+	private final JsonDeserializer<CustomerType> adapterCustomerTypeIdFromJson = new JsonDeserializer<CustomerType>() {
 
 		@Override
 		public CustomerType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 	        String id = json.getAsString();
-	        CustomerType customerType = InMemoryRepository.findOneCustomerType(id);
+	        CustomerType customerType = customerTypeDAO.findOne(id);
 	        if (customerType == null) {
 	        	customerType = new CustomerType();
 	        	customerType.setName(id);
-	        	InMemoryRepository.save(customerType);
+	        	customerTypeDAO.save(customerType);
 	        }
 	        
 			return customerType;
@@ -667,169 +981,4 @@ public class FileToJsonAdapter {
 
 	};
 	
-	// Date Time
-	/**
-	 * LocalTime Adapter
-	 * Used to avoid warnings
-	 */
-	public static final JsonDeserializer<LocalDate> adapterLocalDate = new JsonDeserializer<LocalDate>() {
-
-		@Override
-		public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        
-	        return LocalDate.of(
-	                jsonObject.get("year").getAsInt(),
-	                jsonObject.get("month").getAsInt(),
-	                jsonObject.get("day").getAsInt()
-	                );   
-	        
-		}
-
-	};
-	
-	/**
-	 * LocalTime Adapter
-	 * Used to avoid warnings
-	 */
-	public static final JsonDeserializer<LocalTime> adapterLocalTime = new JsonDeserializer<LocalTime>() {
-
-		@Override
-		public LocalTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        
-	        return LocalTime.of(
-	                jsonObject.get("hour").getAsInt(),
-	                jsonObject.get("minute").getAsInt(),
-	                jsonObject.get("second").getAsInt()
-	                );   
-	        
-		}
-
-	};
-	
-	/**
-	 * LocalDateTime Adapter
-	 * Used to avoid warnings
-	 */
-	public static final JsonDeserializer<LocalDateTime> adapterLocalDateTime = new JsonDeserializer<LocalDateTime>() {
-
-		@Override
-		public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        LocalDate date = context.deserialize(jsonObject.get("date"), LocalDate.class);
-	        LocalTime time = context.deserialize(jsonObject.get("time"), LocalTime.class);
-
-	        
-	        return LocalDateTime.of(date,time);   
-	        
-		}
-
-	};
-	
-	
-	public static Gson usersSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		Type usersType = new TypeToken<Map<String, User>>() {}.getType();
-		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
-		Type manifestationsType = new TypeToken<Collection<Manifestation>>() {}.getType();
-
-		gsonBuilder.registerTypeAdapter(usersType, adapterUserMap);
-		gsonBuilder.registerTypeAdapter(User.class, adapterUser);
-		gsonBuilder.registerTypeAdapter(Salesman.class, adapterBasicSalesman);
-		gsonBuilder.registerTypeAdapter(Customer.class, adapterBasicCustomer);
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
-		
-		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationId);
-		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketId);
-		gsonBuilder.registerTypeAdapter(CustomerType.class, adapterCustomerTypeId);
-		gsonBuilder.registerTypeAdapter(Comment.class, adapterCommentId);
-		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentIdCollection);
-		gsonBuilder.registerTypeAdapter(manifestationsType, adapterManifestationIdCollection);
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
-	
-	
-	public static Gson manifestationsSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
-		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
-
-		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterBareManifestation);	
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
-		
-		gsonBuilder.registerTypeAdapter(ManifestationType.class, adapterManifestationTypeId);
-		gsonBuilder.registerTypeAdapter(Salesman.class, adapterSalesmanId);
-		gsonBuilder.registerTypeAdapter(Comment.class, adapterCommentId);
-		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentIdCollection);
-		gsonBuilder.registerTypeAdapter(Ticket.class, adapterTicketId);
-		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketIdCollection);
-
-		
-		
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
-	
-	public static Gson ticketsSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-
-		gsonBuilder.registerTypeAdapter(Ticket.class, adapterBareTicket);	
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDate);
-		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTime);
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTime);
-		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationId);	
-		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerId);	
-
-		
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
-	
-	public static Gson commentsSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		//Type manifestationsType = new TypeToken<Map<String, Manifestation>>() {}.getType();
-
-		//gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);	
-		gsonBuilder.registerTypeAdapter(Comment.class, commentBareTicket);	
-		gsonBuilder.registerTypeAdapter(Customer.class, adapterCustomerId);	
-		gsonBuilder.registerTypeAdapter(Manifestation.class, adapterManifestationId);	
-
-		
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
-	
-	public static Gson customerTypeSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
-	
-	public static Gson manifestationTypeSerializationFromFile() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-
-		Gson customGson = gsonBuilder.create();
-		return customGson;
-	}
 }

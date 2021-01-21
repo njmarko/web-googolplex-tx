@@ -15,6 +15,17 @@ public class Salesman extends User {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param deleted
+	 */
 	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted) {
 
@@ -38,6 +49,18 @@ public class Salesman extends User {
 		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false);
 	}
 
+	/**
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param deleted
+	 * @param manifestation
+	 */
 	public Salesman(String username, String password, String firstName, String lastName, Gender gender,
 			LocalDate birthDate, UserRole userRole, Boolean blocked, Boolean deleted,
 			Collection<Manifestation> manifestation) {

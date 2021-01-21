@@ -5,7 +5,7 @@ Vue.component("web-shop", {
 		}
 	},
 	template: ` 
-<div  class="row" >
+<div  class="d-flex" >
 		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 	<div id="top" class="container" >
 		<br>
@@ -42,7 +42,7 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td>Manifestation Type</td>
-						<td>{{p.manifestationType.name}}</td>
+						<td>{{p.manifestationType}}</td>
 					</tr>
 					<tr>
 						<td>Salesman</td>
@@ -50,7 +50,7 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td>Location</td>
-						<td>{{p.location.address.city}}</td>
+						<td>{{p.location.city}}</td>
 					</tr>
 				</tbody>
 			</table>

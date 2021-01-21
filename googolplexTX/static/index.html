@@ -6,73 +6,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Load required Bootstrap and BootstrapVue CSS -->
-<link type="text/css" rel="stylesheet"
-	href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-<link type="text/css" rel="stylesheet"
-	href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="css/bootstrap-vue.min.css" />
 
-<!-- Load polyfills to support older browsers -->
+<!-- Bootstrap JS -->
+<script src="./js/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Load polyfills to support older browsers ONLY TAG THAT WAS NOT REPLACED WITH LOCAL LIBRARY-->
 <script
 	src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"
 	crossorigin="anonymous"></script>
+	
 
-<!-- Load Vue followed by BootstrapVue -->
-<script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
-<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
-
-<!-- Load the following for BootstrapVueIcons support -->
-<script
-	src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+<link type="text/css" rel="stylesheet" href="css/main.css" />
 </head>
-
-<link type="text/css" rel="stylesheet"
-	href="css/main.css" />
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-
 
 <body>
 	<div id="webShop">
-		<nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<div class="container">
-				<a class="navbar-brand" href="/">Googolplex-Tx</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
-					data-target="#navbarNavAltMarkup"
-					aria-controls="navbarNavAltMarkup" aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-					<div class="navbar-nav">
-						<a class="nav-item nav-link active" href="/">Home <span
-							className="sr-only">(current)</span></a> <a class="nav-item nav-link"
-							href="#/manifestations">Manifestations</a> 
-							<a class="nav-item nav-link" href="#/login">login</a>
-					</div>
-				</div>
-			</div>
-		</nav>
-		  
 		<router-view></router-view>
-		<br />
-		            <footer className="page-footer font-small blue">
-
-            <div className="footer-copyright text-center py-3"><span>© 2020 Copyright: </span>
-                 <a href="/aboutus">Our team</a>
-            </div>
-
-            </footer>
-
 	</div>
-
+	<!-- Load Vue followed by BootstrapVue -->
 	<script src="js/vue.js"></script>
 	<script src="js/vue-router.js"></script>
 	<script src="js/axios.js"></script>
 	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap-vue.min.js"></script>
+	<!-- Load the following for BootstrapVueIcons support -->
+	<script src="js/bootstrap-vue-icons.min.js"></script>
+
+	<!-- particles.js lib - https://github.com/VincentGarreau/particles.js -->
+	<script src="js/particles.min.js"></script>
+	<!-- stats.js lib -->
+	<script src="js/stats.min.js"></script>
+
 	<script src="app/webShop.js"></script>
+	<script src="app/login.js"></script>
+	<script src="app/register.js"></script>
+	<script src="app/navbar.js"></script>
+	<script src="app/footer.js"></script>
+	<script src="app/userProfile.js"></script>
+	<script src="app/logout.js"></script>
+	<script src="app/changePassword.js"></script>
+	<script src="app/displayUsers.js"></script>
+	<script src="app/adminAddUser.js"></script>
+	<!-- Add all components before app.js -->
+	<script src="app/salesmanManifestations.js"></script>
+	<script src="app/salesmanTickets.js"></script>
+	<script src="app/salesmanUsers.js"></script>
 	<script src="app/app.js"></script>
 
-	
+
 
 
 

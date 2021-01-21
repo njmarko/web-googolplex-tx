@@ -4,4 +4,4 @@ Web application for ticket reservation.
 ![progress_visualization](/resources/progress-vis.webp)
 
 
-![class_diagram](/projectDesign/GoogolplexTxClassDiagram.png)
+![class_diagram](/projectDesign/GoogolplexTxClassDiagramV2.png)

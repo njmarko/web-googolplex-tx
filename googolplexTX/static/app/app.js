@@ -1,21 +1,62 @@
-const WebShop = { template: '<web-shop></web-shop>' }
-
+const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp></div>' }
+const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp></div>' }
+const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp></div>' }
+const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp></div>' }
+const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
+const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
+const DisplayUsers = { template: '<div><navbar></navbar><display-users></display-users><footer-comp></footer-comp></div>' }
+const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-add-user><footer-comp></footer-comp></div>' }
+const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp></div>' }
+const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
+const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
-	  mode: 'hash',
+    mode: 'hash',
+    linkExactActiveClass: 'active',
 	  routes: [
 	    { path: '/', component: WebShop},
-	    { path: '/manifestations', component: WebShop}
+	    { path: '/login', component: Login},
+	    { path: '/register', component: Register},
+	    { path: '/logout', component: Logout},
+	    { path: '/manifestations', component: WebShop},
+	    { path: '/profile', component: UserProfile},
+	    { path: '/change-password', component: ChangePassword},
+      { path: '/users', component: DisplayUsers},
+      { path: '/add-user', component: AdminAddUser},
+	    { path: '/my-manifestations', component: SalesmanManifestations},
+	    { path: '/sold-tickets', component: SalesmanTickets},
+	    { path: '/sold-to-users', component: SalesmanUsers}
 	  ]
 });
 
+
 var app = new Vue({
-	router,
+  router,
 	el: '#webShop',
 	  mounted () {
-  	this.$nextTick(() => {
+
+      let userData = JSON.parse(window.localStorage.getItem('user'));
+      if (userData != null && userData.jwt != null){
+        axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests
+      }
+
+      // error handling
+
+      axios.interceptors.response.use(function (response) {
+
+        return response;
+      }, function (error) {
+        if (error.response.status === 401){
+
+          
+          router.push('/logout');
+        }
+        return Promise.reject(error);
+      });
+
+  	/*this.$nextTick(() => {
     	this.initParticleJS()	
-    })
+    })*/
     
   },
   methods: {
@@ -30,7 +71,7 @@ var app = new Vue({
               }
             },
             "color": {
-              "value": "#ff0000"
+              "value": "#ffffff"
             },
             "shape": {
               "type": "circle",
@@ -65,7 +106,7 @@ var app = new Vue({
             "line_linked": {
               "enable": true,
               "distance": 150,
-              "color": "#ff0000",
+              "color": "#ffffff",
               "opacity": 0.4,
               "width": 1
             },
