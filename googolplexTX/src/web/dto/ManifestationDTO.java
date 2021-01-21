@@ -8,22 +8,47 @@ public class ManifestationDTO {
 	private String id;
 	private String name;
 	private Integer availableSeats;
-	private String dateOfOccurence;
+	private Long dateOfOccurence;
 	private Double regularPrice;
 	private String status;
 	private String poster;
 
 	private String manifestationType;
-	public String salesman;
-	public Location location;
-	public Collection<String> comments;
-	public Collection<String> tickets;
+	private String salesman;
+	private Location location;
+	private Collection<String> comments;
+	private Collection<String> tickets;
 
+	
+	public String validate() {
+		String err = null;
+		// TODO Add validation
+		
+		
+		return err;
+	}
+	
+	
 	public ManifestationDTO() {
 		super();
 	}
 
-	public ManifestationDTO(String id, String name, Integer availableSeats, String dateOfOccurence, Double regularPrice,
+	
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 * @param comments
+	 * @param tickets
+	 */
+	public ManifestationDTO(String id, String name, Integer availableSeats, Long dateOfOccurence, Double regularPrice,
 			String status, String poster, String manifestationType, String salesman, Location location,
 			Collection<String> comments, Collection<String> tickets) {
 		super();
@@ -65,11 +90,11 @@ public class ManifestationDTO {
 		this.availableSeats = availableSeats;
 	}
 
-	public String getDateOfOccurence() {
+	public Long getDateOfOccurence() {
 		return dateOfOccurence;
 	}
 
-	public void setDateOfOccurence(String dateOfOccurence) {
+	public void setDateOfOccurence(Long dateOfOccurence) {
 		this.dateOfOccurence = dateOfOccurence;
 	}
 
