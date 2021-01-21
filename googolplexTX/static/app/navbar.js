@@ -45,9 +45,5 @@ Vue.component("navbar", {
 
 `,
 	methods: {},
-	mounted() {
-		axios
-			.get('api/manifestations')
-			.then(response => (this.manifestations = response.data))
-	},
+	mounted() {},
 });

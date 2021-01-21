@@ -195,15 +195,20 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation save(ManifestationDTO dto) {
 		
-		Manifestation found = manifestationDAO.findOne(dto.getId());
+		Manifestation found = null;
+		if (dto.getId() != null) {
+			found = manifestationDAO.findOne(dto.getId());
+		}
 		if (found == null) {
 			found = new Manifestation();
 			found.setId(manifestationDAO.findNextId());
+			found.setDeleted(false);
 		}
 		
+		// TODO: should i check for null and then add, is this save/edit or just save
 		found.setName(dto.getName());
 		found.setAvailableSeats(dto.getAvailableSeats());
-		
+		found.setPoster(dto.getPoster());
 		
 		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
 		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
@@ -220,8 +225,13 @@ public class ManifestationServiceImpl implements ManifestationService {
 		} else {
 			return null;
 		}
-		
 		found.setStatus(status);
+		
+
+		ManifestationType mType = manifestationTypeDAO.findOne(dto.getManifestationType());
+		if (mType == null)
+			return null;
+		found.setManifestationType(mType);
 		
 		// TODO add poster
 		
@@ -244,7 +254,6 @@ public class ManifestationServiceImpl implements ManifestationService {
 		if (found.getTickets() == null) {
 			found.setTickets(new ArrayList<Ticket>());
 		}
-		
 		
 		manifestationDAO.save(found);
 		manifestationDAO.saveFile();

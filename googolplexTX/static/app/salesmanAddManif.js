@@ -60,33 +60,33 @@ Vue.component("salesman-add-manif", {
                     
                     
 					<div class="form-label-group">
-					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
+					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.longitude" required>
 					<label for="inputLongitude">Longitude</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
+					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.latitude" required>
 					<label for="inputLatitude">Latitude</label>
                     </div>
 
 
 					<div class="form-label-group">
-					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
+					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.number" required >
 					<label for="inputNumber">Number</label>
 					</div>
 
 					<div class="form-label-group">
-					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.location.city" required >
+					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.city" required >
 					<label for="inputCity">City</label>
                     </div>
                     
 					<div class="form-label-group">
-					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.location.street" required >
+					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.street" required >
 					<label for="inputStreet">Street</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.location.zipCode" required>
+					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.zipCode" required>
 					<label for="inputZipCode">Zip Code</label>
                     </div>
 
@@ -122,19 +122,27 @@ Vue.component("salesman-add-manif", {
 
 			console.log(this.manifData);	// DEBUG
 
-			var userData = {
-				username: this.manifData.username,
-				password1: this.manifData.password1,
-				password2: this.manifData.password2,
-				firstName: this.manifData.firstName, 
-				lastName: this.manifData.lastName, 
-				gender: this.manifData.gender, 
-				userRole: this.manifData.userRole,
-				birthDate: new Date(this.manifData.birthDate).getTime()}
+			var manifParams = {
+				name: this.manifData.name,
+				availableSeats: this.manifData.availableSeats,
+				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
+				regularPrice: this.manifData.regularPrice, 
+				manifestationType: this.manifData.manifType, 
+				poster: 'poster',
+				location: {
+					longitude: this.manifData.longitude,
+					latitude: this.manifData.latitude,
+					number: this.manifData.number,
+					city: this.manifData.city,
+					zipCode: this.manifData.zipCode,
+					street: this.manifData.street,
+				}, 
+			};
+
 			axios
-				.post('api/register', userData)
+				.post('api/manifestations', manifParams)
 				.then(response => {
-					this.saveInfo.push("User Registered Successfully")  ;
+					this.saveInfo.push("Manifestation added successfully")  ;
 				})
 				.catch(function (error) {
 					if (error.response) {
