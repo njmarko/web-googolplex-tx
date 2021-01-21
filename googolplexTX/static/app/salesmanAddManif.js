@@ -50,8 +50,8 @@ Vue.component("salesman-add-manif", {
                     </div>
 
 					<div class="form-label-group">
-                    <select name="inputManifType" id="inputManifType" v-model="manifTypes" required>
-                        <option v-for='t in manifTypes' value="{{p.name}}"> {{p.name}}</option>
+                    <select name="inputManifType" id="inputManifType" v-model="manifData.manifType" required>
+                        <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
 					</select>
 					<label for="inputManifType">Manifestation Type</label>
                     </div>
@@ -106,7 +106,9 @@ Vue.component("salesman-add-manif", {
             axios
                 .get("api/manifestation-type")
                 .then(response =>{
+                    console.log(response.data);
                     this.manifTypes = response.data;
+                    console.log()
                 });
 	},
 	methods: {

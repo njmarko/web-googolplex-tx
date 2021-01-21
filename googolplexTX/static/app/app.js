@@ -9,7 +9,7 @@ const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-
 const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp></div>' }
 const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
 const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
-const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-admin><footer-comp></footer-comp></div>' }
+const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
