@@ -3,7 +3,8 @@ Vue.component("salesman-add-manif", {
 		return {
 			manifData: {location:{}},
 			registerError: "",
-			saveInfo: []
+            saveInfo: [],
+            manifTypes: {}
 		}
 	},
 	template: ` 
@@ -46,6 +47,13 @@ Vue.component("salesman-add-manif", {
 					<div class="form-label-group">
 					<input type="number" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
 					<label for="inputRegularPrice">Regular Price</label>
+                    </div>
+
+					<div class="form-label-group">
+                    <select name="inputManifType" id="inputManifType" v-model="manifTypes" required>
+                        <option v-for='t in manifTypes' value="{{p.name}}"> {{p.name}}</option>
+					</select>
+					<label for="inputManifType">Manifestation Type</label>
                     </div>
 
                     <br class="my-4">
@@ -93,7 +101,13 @@ Vue.component("salesman-add-manif", {
 `
 	,
 	mounted() {
-			this.$nextTick(() => this.$refs.focusMe.focus());		
+            this.$nextTick(() => this.$refs.focusMe.focus());		
+            
+            axios
+                .get("api/manifestation-type")
+                .then(response =>{
+                    this.manifTypes = response.data;
+                });
 	},
 	methods: {
 		removeSaveInfo(info){
