@@ -52,6 +52,11 @@ Vue.component("web-shop", {
 						<td>Location</td>
 						<td>{{p.location.city}}</td>
 					</tr>
+					<tr>
+						<td colspan="2">
+							<router-link :to="{ path: '/manifestations/' + p.id}" class="btn btn-warning btn-block text-uppercase">View</router-link>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<br>

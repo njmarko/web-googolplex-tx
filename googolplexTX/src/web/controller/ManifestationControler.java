@@ -15,6 +15,7 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.google.gson.Gson;
 
+import model.Comment;
 import model.Manifestation;
 import model.ManifestationType;
 import model.User;
@@ -252,5 +253,27 @@ public class ManifestationControler {
 		}
 	};
 
-	
+	public final Route findAllCommentsFromManifestation = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+						
+			res.type("application/json");
+			String idm = req.params("idm");
+		    
+			
+		
+			Collection<Comment> foundEntities = manifService.findAllCommentsFromManifestation(idm);
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No comments found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return JsonAdapter.commentsSerializationToFile().toJson(foundEntities);
+		}
+	};
+
 }

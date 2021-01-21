@@ -10,6 +10,7 @@ const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-mani
 const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
 const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
 const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp></div>' }
+const ManifestationView = { template: '<div><navbar></navbar><manifestation-view></manifestation-view><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -20,6 +21,8 @@ const router = new VueRouter({
 	    { path: '/register', component: Register},
 	    { path: '/logout', component: Logout},
 	    { path: '/manifestations', component: WebShop},
+      { path: '/manifestations/:id', component: ManifestationView},
+      
 	    { path: '/profile', component: UserProfile},
 	    { path: '/change-password', component: ChangePassword},
       { path: '/users', component: DisplayUsers},

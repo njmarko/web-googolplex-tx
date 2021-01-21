@@ -2,6 +2,7 @@ package service;
 
 import java.util.Collection;
 
+import model.Comment;
 import model.Manifestation;
 import model.ManifestationType;
 import web.dto.ManifestationDTO;
@@ -20,4 +21,5 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	public Collection<ManifestationType> findAllManifestationTypes();
 	
 	public Manifestation save(ManifestationDTO dto);
+	public Collection<Comment> findAllCommentsFromManifestation(String key);
 }

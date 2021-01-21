@@ -20,6 +20,8 @@ import model.User;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
+import model.Manifestation;
+import model.Ticket;
 import repository.ManifestationDAO;
 import repository.ManifestationTypeDAO;
 import repository.UserDAO;
@@ -191,6 +193,17 @@ public class ManifestationServiceImpl implements ManifestationService {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
 	}
+
+	@Override
+	public Collection<Comment> findAllCommentsFromManifestation(String key) {
+		Manifestation manifestation = this.findOne(key);
+		
+		// TODO: Consider Creating using function to filter deleted like this.findAll
+		return manifestation.getComments().stream().filter((Comment ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+	}
+
 
 	@Override
 	public Manifestation save(ManifestationDTO dto) {
