@@ -2,25 +2,43 @@ package service.implementation;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import model.Comment;
+import model.Location;
 import model.Manifestation;
+import model.ManifestationType;
+import model.Salesman;
+import model.Ticket;
+import model.User;
+import model.enumerations.Gender;
+import model.enumerations.ManifestationStatus;
+import model.enumerations.UserRole;
 import repository.ManifestationDAO;
+import repository.ManifestationTypeDAO;
+import repository.UserDAO;
 import service.ManifestationService;
+import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
 public class ManifestationServiceImpl implements ManifestationService {
 
 	private ManifestationDAO manifestationDAO;
+	private ManifestationTypeDAO manifestationTypeDAO;
+	private UserDAO userDAO;
 	// TODO: Add required DAOs
 
-	public ManifestationServiceImpl(ManifestationDAO manifestationDAO) {
+	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO, UserDAO userDao) {
 		super();
 		this.manifestationDAO = manifestationDAO;
+		this.manifestationTypeDAO = manifestationTypeDAO;
+		this.userDAO = userDao;
 	}
 
 	@Override
@@ -165,6 +183,82 @@ public class ManifestationServiceImpl implements ManifestationService {
 			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
 		}).collect(Collectors.toList());
 		return entities;
+	}
+
+	@Override
+	public Collection<ManifestationType> findAllManifestationTypes() {
+		return manifestationTypeDAO.findAll().stream().filter((ManifestationType ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+	}
+
+	@Override
+	public Manifestation save(ManifestationDTO dto) {
+		
+		Manifestation found = null;
+		if (dto.getId() != null) {
+			found = manifestationDAO.findOne(dto.getId());
+		}
+		if (found == null) {
+			found = new Manifestation();
+			found.setId(manifestationDAO.findNextId());
+			found.setDeleted(false);
+		}
+		
+		// TODO: should i check for null and then add, is this save/edit or just save
+		found.setName(dto.getName());
+		found.setAvailableSeats(dto.getAvailableSeats());
+		found.setPoster(dto.getPoster());
+		
+		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
+		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
+		found.setDateOfOccurence(dateOfOccurence);
+		
+		found.setRegularPrice(dto.getRegularPrice());
+		
+		
+		ManifestationStatus status = null;
+		if (dto.getStatus().trim().equalsIgnoreCase(ManifestationStatus.ACTIVE.name())) {
+			status = ManifestationStatus.ACTIVE;
+		} else if (dto.getStatus().trim().equalsIgnoreCase(ManifestationStatus.INACTIVE.name())) {
+			status = ManifestationStatus.INACTIVE;
+		} else {
+			return null;
+		}
+		found.setStatus(status);
+		
+
+		ManifestationType mType = manifestationTypeDAO.findOne(dto.getManifestationType());
+		if (mType == null)
+			return null;
+		found.setManifestationType(mType);
+		
+		// TODO add poster
+		
+		
+		User foundUser = userDAO.findOne(dto.getSalesman());
+		if (foundUser == null || foundUser.getUserRole() != UserRole.SALESMAN) {
+			return null;
+		}
+		
+		found.setSalesman((Salesman) foundUser);
+		
+		found.setLocation(dto.getLocation());
+		
+		// Tickets and comments are added with other methods and are not assigned here.
+		
+		if (found.getComments() == null) {
+			found.setComments(new ArrayList<Comment>());
+		}
+		
+		if (found.getTickets() == null) {
+			found.setTickets(new ArrayList<Ticket>());
+		}
+		
+		manifestationDAO.save(found);
+		manifestationDAO.saveFile();
+		
+		return found;
 	}
 
 }

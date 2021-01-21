@@ -3,27 +3,88 @@ package web.dto;
 import java.util.Collection;
 
 import model.Location;
+import spark.utils.StringUtils;
 
 public class ManifestationDTO {
 	private String id;
 	private String name;
 	private Integer availableSeats;
-	private String dateOfOccurence;
+	private Long dateOfOccurence;
 	private Double regularPrice;
 	private String status;
 	private String poster;
 
 	private String manifestationType;
-	public String salesman;
-	public Location location;
-	public Collection<String> comments;
-	public Collection<String> tickets;
+	private String salesman;
+	private Location location;
+	private Collection<String> comments;
+	private Collection<String> tickets;
 
+	
+	public String validate() {
+		String err = null;		
+		
+		if (StringUtils.isEmpty(name)) {
+			err = "You have to enter name";
+		} else if (StringUtils.isEmpty(status)) {
+			err = "You have to enter status";
+		} else if (StringUtils.isEmpty(poster)) {
+			err = "You have to enter poster";
+		} else if (StringUtils.isEmpty(manifestationType)) {
+			err = "You have to enter manifestationType";
+		} else if (StringUtils.isEmpty(salesman)) {
+			err = "You have to enter salesman";
+		} else if (location == null) {
+			err = "You have to enter location";
+		} else if (StringUtils.isEmpty(location.getCity())) {
+			err = "You have to enter city";
+		} else if (location.getLatitude() == null) {
+			err = "You have to enter latitude";
+		} else if (location.getLongitude() == null) {
+			err = "You have to enter longitude";
+		} else if (StringUtils.isEmpty(location.getNumber())) {
+			err = "You have to enter street number";
+		} else if (StringUtils.isEmpty(location.getStreet())) {
+			err = "You have to enter street";
+		} else if (location.getZipCode() == null) {
+			err = "You have to enter zipCode";
+		} else if (availableSeats == null) {
+			err = "You have to enter availableSeats";
+		} else if (dateOfOccurence == null){
+			err = "You have to enter dateOfOccurence";
+		} else if (regularPrice == null){
+			err = "You have to enter regularPrice";
+		} else if (availableSeats <= 0) {
+			err = "Manifestation mush have at least one available seat";
+		} else if (regularPrice < 0) {
+			err = "Manifestation mush have at least one available seat";
+		}
+		
+		
+		return err;
+	}
+	
+	
 	public ManifestationDTO() {
 		super();
 	}
 
-	public ManifestationDTO(String id, String name, Integer availableSeats, String dateOfOccurence, Double regularPrice,
+	
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 * @param comments
+	 * @param tickets
+	 */
+	public ManifestationDTO(String id, String name, Integer availableSeats, Long dateOfOccurence, Double regularPrice,
 			String status, String poster, String manifestationType, String salesman, Location location,
 			Collection<String> comments, Collection<String> tickets) {
 		super();
@@ -65,11 +126,11 @@ public class ManifestationDTO {
 		this.availableSeats = availableSeats;
 	}
 
-	public String getDateOfOccurence() {
+	public Long getDateOfOccurence() {
 		return dateOfOccurence;
 	}
 
-	public void setDateOfOccurence(String dateOfOccurence) {
+	public void setDateOfOccurence(Long dateOfOccurence) {
 		this.dateOfOccurence = dateOfOccurence;
 	}
 

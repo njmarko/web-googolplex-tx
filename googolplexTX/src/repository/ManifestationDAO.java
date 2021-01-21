@@ -15,6 +15,17 @@ import support.JsonAdapter;
 public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 
 	private Map<String, Manifestation> manifestations = new ConcurrentHashMap<String, Manifestation>();
+	
+	
+	public String findNextId() {
+		if (manifestations != null && manifestations.size() > 0) {		
+			String highest = manifestations.keySet().stream().sorted().findFirst().get();
+			Long id = Long.parseLong(highest) + 1 ;
+			return id.toString();
+		}else {
+			return "1";
+		}
+	}
 
 	public Map<String, Manifestation> getManifestations() {
 		return manifestations;

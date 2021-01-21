@@ -9,6 +9,7 @@ const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-
 const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp></div>' }
 const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
 const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
+const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
     mode: 'hash',
@@ -25,7 +26,9 @@ const router = new VueRouter({
       { path: '/add-user', component: AdminAddUser},
 	    { path: '/my-manifestations', component: SalesmanManifestations},
 	    { path: '/sold-tickets', component: SalesmanTickets},
-	    { path: '/sold-to-users', component: SalesmanUsers}
+      { path: '/sold-to-users', component: SalesmanUsers},
+      { path: '/salesman-add-manif', component: SalesmanAddManif}
+
 	  ]
 });
 

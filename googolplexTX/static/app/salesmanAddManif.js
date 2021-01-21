@@ -1,0 +1,164 @@
+Vue.component("salesman-add-manif", {
+	data: function() {
+		return {
+			manifData: {location:{}},
+			registerError: "",
+            saveInfo: [],
+            manifTypes: {}
+		}
+	},
+	template: ` 
+	<div class="container">
+				<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
+		
+		<div v-if="registerError" class="alert alert-danger alert-dismissible">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+			<strong>Error</strong> {{registerError}}
+		</div>
+		<div v-for="info in saveInfo">
+			<div  class="alert alert-success alert-dismissible">
+				<a href="#" class="close" aria-label="close" v-on:click="removeSaveInfo(info)">&times;</a>
+				<strong>Success</strong> {{info}}
+			</div>
+		</div>
+		<br />	
+		<div class="row">
+			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+			<div class="card card-signin my-5">
+				<div class="card-body">
+				<h5 class="card-title text-center">Add Manifestation</h5>
+				<form class="form-signin" v-on:submit.prevent="addManifestation">
+
+					<div class="form-label-group">
+					<input type="text" id="inputName" class="form-control" placeholder="Name" v-model="manifData.name" required ref='focusMe'>
+					<label for="inputName">Name</label>
+					</div>
+
+					<div class="form-label-group">
+					<input type="number" step='1' id="inputAvailableSeats" class="form-control" placeholder="Available Seats" v-model="manifData.availableSeats" required>
+					<label for="inputAvailableSeats">Available Seats</label>
+					</div>
+
+					<div class="form-label-group">
+					<input type="date" id="inputDateOfOccurence" class="form-control" placeholder="Date of Occurence" v-model="manifData.dateOfOccurence" required autofocus>
+                    <label for="inputDateOfOccurence">Date of Occurence</label>
+                    </div>
+                    
+					<div class="form-label-group">
+					<input type="number" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
+					<label for="inputRegularPrice">Regular Price</label>
+                    </div>
+
+					<div class="form-label-group">
+                    <select name="inputManifType" id="inputManifType" v-model="manifData.manifType" required>
+                        <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
+					</select>
+					<label for="inputManifType">Manifestation Type</label>
+                    </div>
+
+                    <br class="my-4">
+                    
+                    
+					<div class="form-label-group">
+					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.longitude" required>
+					<label for="inputLongitude">Longitude</label>
+                    </div>
+
+					<div class="form-label-group">
+					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.latitude" required>
+					<label for="inputLatitude">Latitude</label>
+                    </div>
+
+
+					<div class="form-label-group">
+					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.number" required >
+					<label for="inputNumber">Number</label>
+					</div>
+
+					<div class="form-label-group">
+					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.city" required >
+					<label for="inputCity">City</label>
+                    </div>
+                    
+					<div class="form-label-group">
+					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.street" required >
+					<label for="inputStreet">Street</label>
+                    </div>
+
+					<div class="form-label-group">
+					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.zipCode" required>
+					<label for="inputZipCode">Zip Code</label>
+                    </div>
+
+					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="ADD MANIFESTATION" />
+
+				</form>
+				</div>
+			</div>
+			</div>
+		</div>
+		</div>
+`
+	,
+	mounted() {
+            this.$nextTick(() => this.$refs.focusMe.focus());		
+            
+            axios
+                .get("api/manifestation-type")
+                .then(response =>{
+                    console.log(response.data);
+                    this.manifTypes = response.data;
+                    console.log()
+                });
+	},
+	methods: {
+		removeSaveInfo(info){
+			this.saveInfo.pop();
+		},
+		addManifestation : function(){
+			console.log(this.saveInfo)
+			this.registerError = "";
+			let component = this;
+
+			console.log(this.manifData);	// DEBUG
+
+			var manifParams = {
+				name: this.manifData.name,
+				availableSeats: this.manifData.availableSeats,
+				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
+				regularPrice: this.manifData.regularPrice, 
+				manifestationType: this.manifData.manifType, 
+				poster: 'poster',
+				location: {
+					longitude: this.manifData.longitude,
+					latitude: this.manifData.latitude,
+					number: this.manifData.number,
+					city: this.manifData.city,
+					zipCode: this.manifData.zipCode,
+					street: this.manifData.street,
+				}, 
+			};
+
+			axios
+				.post('api/manifestations', manifParams)
+				.then(response => {
+					this.saveInfo.push("Manifestation added successfully")  ;
+				})
+				.catch(function (error) {
+					if (error.response) {
+						component.registerError = error.response.data;
+						console.log(error.response.data);
+					} else if (error.request) {
+						component.registerError = error.response.data;
+						console.log(error.request);
+					} else {
+						component.registerError = error.response.data;
+						console.log('Error', error.message);
+					}
+					component.registerError = error.response.data;
+					console.log("error.config");
+					console.log(error.config);
+				});
+		}
+	},
+});

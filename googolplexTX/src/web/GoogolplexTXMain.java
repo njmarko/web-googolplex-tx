@@ -44,7 +44,7 @@ public class GoogolplexTXMain {
 		CustomerTypeDAO customerTypeDAO = new CustomerTypeDAO();
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
-		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
+		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO, manifestationTypeDAO, userDAO);
 		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
 		
 		UserController userController = new UserController(userServiceImpl);
@@ -174,6 +174,10 @@ public class GoogolplexTXMain {
 					});
 					
 				});				
+			});
+			
+			path("/manifestation-type",()->{
+				get("",manifestationControler.findAllManifestationTypes);
 			});
 		});
 

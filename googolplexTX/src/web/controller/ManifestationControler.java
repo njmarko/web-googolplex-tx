@@ -16,7 +16,9 @@ import org.eclipse.jetty.http.HttpStatus;
 import com.google.gson.Gson;
 
 import model.Manifestation;
+import model.ManifestationType;
 import model.User;
+import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
 import service.ManifestationService;
 import service.implementation.ManifestationServiceImpl;
@@ -25,6 +27,8 @@ import spark.Response;
 import spark.Route;
 import spark.RouteImpl;
 import support.JsonAdapter;
+import support.ManifToManifDTO;
+import support.ManifTypeToManifTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -35,7 +39,7 @@ public class ManifestationControler {
 	private ManifestationService manifService;
 	
 	private Gson gManifAdapter;
-
+	private Gson g;
 	private UserController userController;
 	
 	// TODO consider if empty constructor is needed
@@ -43,7 +47,7 @@ public class ManifestationControler {
 	public ManifestationControler(ManifestationService manifService, UserController uCntr) {
 		super();
 		this.manifService = manifService;
-		//this.g = JsonAdapter.manifestationSeraialization();
+		this.g = new Gson();
 		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
 		this.userController = uCntr;
 		
@@ -117,19 +121,37 @@ public class ManifestationControler {
 	public final Route saveOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateSalesman.handle(req, res);
 			res.type("application/json");
 			// TODO Add adapters so there are no warnings
 
 			// TODO check if admin or salesman
 			String body = req.body();
 			// TODO replace with DTO if needed and use adapters to awoid warnings
-			Manifestation manif = gManifAdapter.fromJson(body, Manifestation.class);
-			Manifestation savedEntity = manifService.save(manif);
+			
+			ManifestationDTO manifestationData = gManifAdapter.fromJson(body, ManifestationDTO.class);
+
+			User loggedInUser = userController.getAuthedUser(req);
+			if (loggedInUser.getUserRole() == UserRole.SALESMAN) {
+				manifestationData.setSalesman(loggedInUser.getUsername());
+				manifestationData.setStatus(ManifestationStatus.INACTIVE.name());
+			}
+			
+			
+			String err = manifestationData.validate();
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			
+			Manifestation savedEntity = manifService.save(manifestationData);
 			if (savedEntity == null) {
 				halt(HttpStatus.BAD_REQUEST_400);
 			}
-			return gManifAdapter.toJson(savedEntity);
+			return gManifAdapter.toJson(ManifToManifDTO.convert(savedEntity));
+			
+			
 			
 ////			Example with adapter
 //			String body = req.body();
@@ -208,6 +230,27 @@ public class ManifestationControler {
 		}
 	};
 
-	
+	public final Route findAllManifestationTypes = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			
+			res.type("application/json");
+		    
+			
+			Collection<ManifestationType> foundEntities = manifService.findAllManifestationTypes();
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No manifestation types found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
 	
 }
