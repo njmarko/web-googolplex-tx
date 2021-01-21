@@ -16,6 +16,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import com.google.gson.Gson;
 
 import model.Manifestation;
+import model.ManifestationType;
 import model.User;
 import model.enumerations.UserRole;
 import service.ManifestationService;
@@ -25,6 +26,7 @@ import spark.Response;
 import spark.Route;
 import spark.RouteImpl;
 import support.JsonAdapter;
+import support.ManifTypeToManifTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -35,7 +37,7 @@ public class ManifestationControler {
 	private ManifestationService manifService;
 	
 	private Gson gManifAdapter;
-
+	private Gson g;
 	private UserController userController;
 	
 	// TODO consider if empty constructor is needed
@@ -43,7 +45,7 @@ public class ManifestationControler {
 	public ManifestationControler(ManifestationService manifService, UserController uCntr) {
 		super();
 		this.manifService = manifService;
-		//this.g = JsonAdapter.manifestationSeraialization();
+		this.g = new Gson();
 		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
 		this.userController = uCntr;
 		
@@ -205,6 +207,28 @@ public class ManifestationControler {
 			// TODO consider using an adapter
 			// TODO use DTO objects
 			return gManifAdapter.toJson(foundEntities);
+		}
+	};
+
+	public final Route findAllManifestationTypes = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			
+			res.type("application/json");
+		    
+			
+			Collection<ManifestationType> foundEntities = manifService.findAllManifestationTypes();
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No manifestation types found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
 		}
 	};
 

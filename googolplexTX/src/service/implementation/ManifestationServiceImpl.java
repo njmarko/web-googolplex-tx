@@ -9,18 +9,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.Manifestation;
+import model.ManifestationType;
 import repository.ManifestationDAO;
+import repository.ManifestationTypeDAO;
 import service.ManifestationService;
 import web.dto.ManifestationSearchDTO;
 
 public class ManifestationServiceImpl implements ManifestationService {
 
 	private ManifestationDAO manifestationDAO;
+	private ManifestationTypeDAO manifestationTypeDAO;
 	// TODO: Add required DAOs
 
-	public ManifestationServiceImpl(ManifestationDAO manifestationDAO) {
+	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO) {
 		super();
 		this.manifestationDAO = manifestationDAO;
+		this.manifestationTypeDAO = manifestationTypeDAO;
 	}
 
 	@Override
@@ -165,6 +169,13 @@ public class ManifestationServiceImpl implements ManifestationService {
 			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
 		}).collect(Collectors.toList());
 		return entities;
+	}
+
+	@Override
+	public Collection<ManifestationType> findAllManifestationTypes() {
+		return manifestationTypeDAO.findAll().stream().filter((ManifestationType ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 	}
 
 }
