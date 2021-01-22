@@ -69,7 +69,7 @@ Vue.component("manifestation-view", {
 			<br>
 			<hr>
 
-			<div  v-if="tickets">
+			<div  v-if="tickets && (userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username)))">
 				<h2>Tickets</h2>
 				<br>
 				<a class="btn btn-primary" data-toggle="collapse" href="#collapseTickets" role="button" aria-expanded="false" aria-controls="collapseTickets">
