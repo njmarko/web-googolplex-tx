@@ -127,29 +127,15 @@ Vue.component("edit-manif", {
 			let component = this;
 
 			console.log(this.manifData);	// DEBUG
-
-			var manifParams = {
-                id: this.manifData.id,
-				name: this.manifData.name,
-				availableSeats: this.manifData.availableSeats,
-				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
-				regularPrice: this.manifData.regularPrice, 
-                manifestationType: this.manifData.manifestationType, 
-                status: this.manifData.status,
-                salesman: this.manifData.salesman,
-				poster: 'poster',
-				location: {
-					longitude: this.manifData.location.longitude,
-					latitude: this.manifData.location.latitude,
-					number: this.manifData.location.number,
-					city: this.manifData.location.city,
-					zipCode: this.manifData.location.zipCode,
-					street: this.manifData.location.street,
-				}, 
-			};
+            
+            // MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
+            // this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
+            var requestData = {...this.manifData};
+            requestData.location = {...this.manifData.location};
+            requestData.dateOfOccurence =  new Date(this.manifData.dateOfOccurence).getTime();
 
 			axios
-				.patch('api/manifestations/'+this.manifData.id, manifParams)
+				.patch('api/manifestations/'+this.manifData.id, requestData)
 				.then(response => {
 					this.saveInfo.push("Manifestation information updated successfully")  ;
 				})
