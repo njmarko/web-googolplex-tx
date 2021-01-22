@@ -49,7 +49,7 @@ Vue.component("manifestation-view", {
 					</tr>
 					<tr>
 						<td>Salesman</td>
-						<td>{{manifestation.salesman.firstName + " " + manifestation.salesman.lastName}}</td>
+						<td>{{manifestation.salesman}}</td>
 					</tr>
 					<tr>
 						<td>Location</td>

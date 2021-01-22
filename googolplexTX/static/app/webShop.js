@@ -46,7 +46,7 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td>Salesman</td>
-						<td>{{p.salesman.firstName + " " + p.salesman.lastName}}</td>
+						<td>{{p.salesman}}</td>
 					</tr>
 					<tr>
 						<td>Location</td>
