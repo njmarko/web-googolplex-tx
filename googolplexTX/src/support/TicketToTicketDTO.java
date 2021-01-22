@@ -32,6 +32,10 @@ public class TicketToTicketDTO {
 			retVal.setCancelationDate(cancelationDate);
 		}
 		
+		retVal.setCutomerFullName(t.getCustomer().getFirstName() + " " + t.getCustomer().getLastName());
+		retVal.setManifestationName(t.getManifestation().getName());
+		
+		
 		return retVal;
 	}
 	

@@ -12,6 +12,7 @@ const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></sales
 const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp></div>' }
 const ManifestationView = { template: '<div><navbar></navbar><manifestation-view></manifestation-view><footer-comp></footer-comp></div>' }
 const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><footer-comp></footer-comp></div>' }
+const CustomerTickets = { template: '<div><navbar></navbar><customer-tickets></customer-tickets><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
   mode: 'hash',
@@ -33,6 +34,7 @@ const router = new VueRouter({
     { path: '/sold-tickets', component: SalesmanTickets },
     { path: '/sold-to-users', component: SalesmanUsers },
     { path: '/salesman-add-manif', component: SalesmanAddManif },
+    { path: '/my-tickets', component: CustomerTickets },
 
   ]
 });
@@ -43,6 +45,7 @@ var app = new Vue({
   el: '#webShop',
   mounted() {
 
+    alert("my burer");
     let userData = JSON.parse(window.localStorage.getItem('user'));
     if (userData != null && userData.jwt != null) {
       axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests

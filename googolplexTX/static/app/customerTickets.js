@@ -1,4 +1,4 @@
-Vue.component("salesman-tickets", {
+Vue.component("customer-tickets", {
 	data: function () {
 		return {
 			error: {},
@@ -19,7 +19,7 @@ Vue.component("salesman-tickets", {
 		</div>
 
 		
-		<h1 class="text-center">User Profile <span class="badge badge-danger">{{userData.userRole}}</span></h1>
+		<h1 class="text-center">My Tickets<span class="badge badge-danger">{{userData.userRole}}</span></h1>
 
 		
 		<div v-for="t in tickets">
@@ -60,15 +60,9 @@ Vue.component("salesman-tickets", {
 `
 	,
 	mounted() {
-
-
-
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null) {
-			this.$router.push("/");
-		}
 		console.log(JSON.parse(window.localStorage.getItem('user')).username);
-		let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/manif-tickets';
+		let path ='api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets'; 
 		console.log(path);
 		axios
 			.get(path)
