@@ -60,33 +60,33 @@ Vue.component("salesman-add-manif", {
                     
                     
 					<div class="form-label-group">
-					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.longitude" required>
+					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
 					<label for="inputLongitude">Longitude</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.latitude" required>
+					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
 					<label for="inputLatitude">Latitude</label>
                     </div>
 
 
 					<div class="form-label-group">
-					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.number" required >
+					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
 					<label for="inputNumber">Number</label>
 					</div>
 
 					<div class="form-label-group">
-					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.city" required >
+					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.location.city" required >
 					<label for="inputCity">City</label>
                     </div>
                     
 					<div class="form-label-group">
-					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.street" required >
+					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.location.street" required >
 					<label for="inputStreet">Street</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.zipCode" required>
+					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.location.zipCode" required>
 					<label for="inputZipCode">Zip Code</label>
                     </div>
 
@@ -130,12 +130,12 @@ Vue.component("salesman-add-manif", {
 				manifestationType: this.manifData.manifType, 
 				poster: 'poster',
 				location: {
-					longitude: this.manifData.longitude,
-					latitude: this.manifData.latitude,
-					number: this.manifData.number,
-					city: this.manifData.city,
-					zipCode: this.manifData.zipCode,
-					street: this.manifData.street,
+					longitude: this.manifData.location.longitude,
+					latitude: this.manifData.location.latitude,
+					number: this.manifData.location.number,
+					city: this.manifData.location.city,
+					zipCode: this.manifData.location.zipCode,
+					street: this.manifData.location.street,
 				}, 
 			};
 
