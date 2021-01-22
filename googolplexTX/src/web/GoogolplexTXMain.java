@@ -44,8 +44,8 @@ public class GoogolplexTXMain {
 		CustomerTypeDAO customerTypeDAO = new CustomerTypeDAO();
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
-		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO);
-		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO); 
+		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO, manifestationTypeDAO, userDAO);
+		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO, manifestationDAO); 
 		
 		UserController userController = new UserController(userServiceImpl);
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
@@ -127,7 +127,7 @@ public class GoogolplexTXMain {
 					get("", manifestationControler.findOneManifestation);
 									
 					delete("", manifestationControler.deleteOneManifestation); // req admin
-					put("", manifestationControler.editOneManifestation); // req salesman
+					patch("", manifestationControler.editOneManifestation); // req salesman or admin
 					
 					path("/tickets",()->{
 //						before("*",UserController.authenticateUser); // all ticket paths require login
@@ -138,6 +138,13 @@ public class GoogolplexTXMain {
 //							delete("", ticketController.deleteOneTicket); // TODO req admin
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
+					});
+					
+					path("/comments",()->{
+//						before("*",UserController.authenticateUser); // all ticket paths require login
+
+						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman					
+
 					});
 				});
 			});
@@ -174,6 +181,10 @@ public class GoogolplexTXMain {
 					});
 					
 				});				
+			});
+			
+			path("/manifestation-type",()->{
+				get("",manifestationControler.findAllManifestationTypes);
 			});
 		});
 

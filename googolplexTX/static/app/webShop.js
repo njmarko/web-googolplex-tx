@@ -1,5 +1,5 @@
 Vue.component("web-shop", {
-	data: function() {
+	data: function () {
 		return {
 			manifestations: null
 		}
@@ -46,11 +46,16 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td>Salesman</td>
-						<td>{{p.salesman.firstName + " " + p.salesman.lastName}}</td>
+						<td>{{p.salesman}}</td>
 					</tr>
 					<tr>
 						<td>Location</td>
 						<td>{{p.location.city}}</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<router-link :to="{ path: '/manifestations/' + p.id}" class="btn btn-warning btn-block text-uppercase">View</router-link>
+						</td>
 					</tr>
 				</tbody>
 			</table>

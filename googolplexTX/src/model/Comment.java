@@ -20,6 +20,13 @@ public class Comment {
 		super();
 	}
 
+	/**
+	 * @param id
+	 * @param text
+	 * @param rating
+	 * @param approved
+	 * @param deleted
+	 */
 	public Comment(String id, String text, Integer rating, CommentStatus approved, Boolean deleted) {
 		super();
 		this.id = id;
@@ -40,6 +47,15 @@ public class Comment {
 		this(id, text, rating, CommentStatus.PENDING, false);
 	}
 
+	/**
+	 * @param id
+	 * @param text
+	 * @param rating
+	 * @param approved
+	 * @param deleted
+	 * @param manifestation
+	 * @param customer
+	 */
 	public Comment(String id, String text, Integer rating, CommentStatus approved, Boolean deleted,
 			Manifestation manifestation, Customer customer) {
 		this(id, text, rating, approved, deleted);

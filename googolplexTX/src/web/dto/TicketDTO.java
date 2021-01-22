@@ -2,11 +2,11 @@ package web.dto;
 
 public class TicketDTO {
 	private String id;
-	private String dateOfManifestation;
+	private Long dateOfManifestation;
 	private Double price;
 	private String ticketType;
 	private String ticketStatus;
-	private String cancelationDate;
+	private Long cancelationDate;
 	private Boolean deleted;
 
 	public String customer;
@@ -15,8 +15,8 @@ public class TicketDTO {
 	public TicketDTO() {
 		super();
 	}
-	public TicketDTO(String id, String dateOfManifestation, Double price, String ticketType, String ticketStatus,
-			String cancelationDate, Boolean deleted, String customer, String manifestation) {
+	public TicketDTO(String id, Long dateOfManifestation, Double price, String ticketType, String ticketStatus,
+			Long cancelationDate, Boolean deleted, String customer, String manifestation) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
@@ -34,10 +34,10 @@ public class TicketDTO {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getDateOfManifestation() {
+	public Long getDateOfManifestation() {
 		return dateOfManifestation;
 	}
-	public void setDateOfManifestation(String dateOfManifestation) {
+	public void setDateOfManifestation(Long dateOfManifestation) {
 		this.dateOfManifestation = dateOfManifestation;
 	}
 	public Double getPrice() {
@@ -58,10 +58,10 @@ public class TicketDTO {
 	public void setTicketStatus(String ticketStatus) {
 		this.ticketStatus = ticketStatus;
 	}
-	public String getCancelationDate() {
+	public Long getCancelationDate() {
 		return cancelationDate;
 	}
-	public void setCancelationDate(String cancelationDate) {
+	public void setCancelationDate(Long cancelationDate) {
 		this.cancelationDate = cancelationDate;
 	}
 	public Boolean getDeleted() {

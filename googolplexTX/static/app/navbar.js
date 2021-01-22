@@ -22,6 +22,7 @@ Vue.component("navbar", {
 					<router-link to="/manifestations" class="nav-item nav-link">Manifestations</router-link>
 					<router-link v-if="user && user.userRole == 'ADMIN'" to="/users" class="nav-link">Users</router-link> 
 					<router-link v-if="user && user.userRole == 'ADMIN'" to="/add-user" class="nav-link">Add User</router-link>
+					<router-link v-if="user && user.userRole == 'SALESMAN'" to="/salesman-add-manif" class="nav-link">Add Manifestation</router-link>
 					<router-link to="/my-manifestations" v-if="user && user.userRole == 'SALESMAN'" class="nav-item nav-link">My Manifestations</router-link>
 					<router-link to="/sold-tickets" v-if="user && user.userRole == 'SALESMAN'" class="nav-item nav-link">Sold Tickets</router-link>
 					<router-link to="/sold-to-users" v-if="user && user.userRole == 'SALESMAN'" class="nav-item nav-link">My Customers</router-link>
@@ -44,9 +45,5 @@ Vue.component("navbar", {
 
 `,
 	methods: {},
-	mounted() {
-		axios
-			.get('api/manifestations')
-			.then(response => (this.manifestations = response.data))
-	},
+	mounted() { },
 });

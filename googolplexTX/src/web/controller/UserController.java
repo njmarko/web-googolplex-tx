@@ -115,16 +115,10 @@ public class UserController {
 
 			// check if user is logged in
 			
-			String auth = req.headers("Authorization");
-			if ((auth != null) && (auth.contains("Bearer "))) {
-				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-				try {
-					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
-				} catch (Exception e) {
-					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
-				}
-			}	
+			User loggedIn = getAuthedUser(req);
+			if (loggedIn != null) {
+				halt(HttpStatus.OK_200, "User " + loggedIn.getUsername() + " is already logged in");
+			}
 							
 			String err = loginData.validate();;
 			if (!StringUtils.isEmpty(err)) {
@@ -132,8 +126,11 @@ public class UserController {
 			}
 
 			User user = userService.login(loginData);
+			System.out.println(user);
 			if (user == null) {
 				halt(HttpStatus.BAD_REQUEST_400, "The username or password is wrong");
+			}else if (user.getBlocked()) {
+				halt(HttpStatus.FORBIDDEN_403, "Your account is blocked.");
 			}
 			
 			String jwt = Jwts.builder()
@@ -235,9 +232,6 @@ public class UserController {
 
 			Collection<UserDTO> usersDTO = UserToUserDTO.convert(users);
 			
-			// TODO consider using an adapter
-			// TODO use DTO objects
-//			return g.toJson(users);
 			return g.toJson(UserToUserDTO.convert(users));
 		}
 	};
@@ -277,14 +271,7 @@ public class UserController {
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No users found");
 			}
-//			String body = req.body();
-//			System.out.println(body);
-//			User user = new Gson().fromJson(body, User.class);
-//			User savedEntity = userService.save(user);
-//			if (savedEntity == null) {
-//				halt(HttpURLConnection.HTTP_BAD_REQUEST);
-//			}
-//			return new Gson().toJson(savedEntity);	
+
 			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
 		}
 	};
@@ -312,7 +299,7 @@ public class UserController {
 			// No login needed for this request.
 			// TODO add pagination
 			
-			authenticateSalesman.handle(req, res);
+			authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");
@@ -347,41 +334,20 @@ public class UserController {
 			User user = getAuthedUser(req);
 			
 			if (user == null) {
-				// TODO consider changing status code
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
+			}else if (user.getBlocked()) {
+				halt(HttpStatus.UNAUTHORIZED_401, "Your account is blocked.");
+			}else if (user.getDeleted()) {
+				halt(HttpStatus.UNAUTHORIZED_401, "Your account no longer exists.");
 			}
 			
-			// TODO: Consider User no longer exist....
-//			String auth = req.headers("Authorization");
-//			if ((auth != null) && (auth.contains("Bearer "))) {
-//				String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-//				try {
-//					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-////					halt(HttpStatus.OK_200, "User " + claims.getBody().getSubject() + " is already logged in");
-//					User user = userService.findOne(claims.getBody().getSubject());
-//					if (user == null) {
-//						// TODO consider changing status code
-//						halt(HttpStatus.UNAUTHORIZED_401, "User no longer exists.");
-//					}
-//				} catch (Exception e) {
-////					halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
-//					halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//				}
-//				
-//			}else {
-//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//			}
-//			User user = req.session().attribute("user");
-//			if (user == null) {
-//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//			}
 		}
 	};
 
 	/**
 	 * Checks if user is logged in and check if his role is SALESMAN or ADMIN
 	 */
-	public final Filter authenticateSalesman = new Filter() {
+	public final Filter authenticateSalesmanOrAdmin = new Filter() {
 		@Override
 		public void handle(Request req, Response res) throws Exception {
 			authenticateUser.handle(req,res); 
@@ -394,19 +360,6 @@ public class UserController {
 			if (user.getUserRole() != UserRole.SALESMAN && user.getUserRole() != UserRole.ADMIN) {
 				halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
 			}
-
-			// Pre implementiranja getAuthedUser Obrisati ako radi
-//			String auth = req.headers("Authorization");
-//			String incommingJwt = auth.substring(auth.indexOf("Bearer ") + 7);
-//			try {
-//				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(incommingJwt);
-//				User user = userService.findOne(claims.getBody().getSubject());
-//				if (user.getUserRole() != UserRole.SALESMAN || user.getUserRole() != UserRole.ADMIN) {
-//					halt(HttpStatus.FORBIDDEN_403, "This action is not allowed for your role.");
-//				}
-//			} catch (Exception e) {
-//				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
-//			}
 				
 		}
 	};
@@ -419,10 +372,6 @@ public class UserController {
 		public void handle(Request req, Response res) throws Exception {
 			authenticateUser.handle(req,res); 
 		
-			
-			
-			
-			// TODO: Replace with getAuthedUser method
 			User user = getAuthedUser(req);
 			if (user == null) {
 				halt(HttpStatus.UNAUTHORIZED_401, "You must be logged in.");
@@ -466,6 +415,7 @@ public class UserController {
 				return user;
 				
 			} catch (Exception e) {
+				// TODO We are currently not throwing this error anywhere, so consider if we should add it in somewhere: halt(HttpStatus.BAD_REQUEST_400, "Invalid JWT token");
 				return null;
 			}
 		}

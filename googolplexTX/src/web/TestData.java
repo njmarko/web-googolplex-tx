@@ -108,7 +108,7 @@ public class TestData {
 																	// type
 		ManifestationType mt4 = new ManifestationType("NoManifestationsType"); // No manifestations should be created
 																				// for this type
-		ManifestationType mt5 = new ManifestationType("DeletedManifestationType"); // Deleted Manifestation types
+		ManifestationType mt5 = new ManifestationType("DeletedManifestationType", true); // Deleted Manifestation types
 
 		// Saving
 		// TODO implement saving of manifestation types in memory repository

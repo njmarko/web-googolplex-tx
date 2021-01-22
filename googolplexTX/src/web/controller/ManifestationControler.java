@@ -15,8 +15,11 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.google.gson.Gson;
 
+import model.Comment;
 import model.Manifestation;
+import model.ManifestationType;
 import model.User;
+import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
 import service.ManifestationService;
 import service.implementation.ManifestationServiceImpl;
@@ -25,6 +28,8 @@ import spark.Response;
 import spark.Route;
 import spark.RouteImpl;
 import support.JsonAdapter;
+import support.ManifToManifDTO;
+import support.ManifTypeToManifTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -35,7 +40,7 @@ public class ManifestationControler {
 	private ManifestationService manifService;
 	
 	private Gson gManifAdapter;
-
+	private Gson g;
 	private UserController userController;
 	
 	// TODO consider if empty constructor is needed
@@ -43,7 +48,7 @@ public class ManifestationControler {
 	public ManifestationControler(ManifestationService manifService, UserController uCntr) {
 		super();
 		this.manifService = manifService;
-		//this.g = JsonAdapter.manifestationSeraialization();
+		this.g = new Gson();
 		this.gManifAdapter = JsonAdapter.manifestationSeraialization();
 		this.userController = uCntr;
 		
@@ -100,36 +105,49 @@ public class ManifestationControler {
 		
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// TODO Consider if user has to be logged in
-
+			
 			res.type("application/json");
 			String id = req.params("idm");
 			Manifestation foundEntity = manifService.findOne(id);
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestation found");
 			}
-			// TODO Since it contains date consider using adapters. Replace with DTO if
-			// needed
-			return gManifAdapter.toJson(foundEntity);
+
+			return g.toJson(ManifToManifDTO.convert(foundEntity));
 		}
 	};
 
 	public final Route saveOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			res.type("application/json");
-			// TODO Add adapters so there are no warnings
 
 			// TODO check if admin or salesman
 			String body = req.body();
-			// TODO replace with DTO if needed and use adapters to awoid warnings
-			Manifestation manif = gManifAdapter.fromJson(body, Manifestation.class);
-			Manifestation savedEntity = manifService.save(manif);
+			
+			ManifestationDTO manifestationData = g.fromJson(body, ManifestationDTO.class);
+
+			User loggedInUser = userController.getAuthedUser(req);
+			if (loggedInUser.getUserRole() == UserRole.SALESMAN) {
+				manifestationData.setSalesman(loggedInUser.getUsername());
+				manifestationData.setStatus(ManifestationStatus.INACTIVE.name());
+			}			
+			
+			String err = manifestationData.validate();
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
+			}
+			
+			
+			Manifestation savedEntity = manifService.save(manifestationData);
 			if (savedEntity == null) {
 				halt(HttpStatus.BAD_REQUEST_400);
 			}
-			return gManifAdapter.toJson(savedEntity);
+			return gManifAdapter.toJson(ManifToManifDTO.convert(savedEntity));
+			
+			
 			
 ////			Example with adapter
 //			String body = req.body();
@@ -155,7 +173,7 @@ public class ManifestationControler {
 			if (deletedEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
-			System.out.println(deletedEntity);
+
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
@@ -163,23 +181,39 @@ public class ManifestationControler {
 	public final Route editOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
-			// TODO check if admin or salesman
+		public Object handle(Request req, Response res) throws Exception {
+
 			res.type("application/json");
 			String idm = req.params("idm");
 			String body = req.body();
-			System.out.println(idm);
 
-			// TODO consider using adapters to awoid warnings
-			Manifestation newEntity = gManifAdapter.fromJson(body, Manifestation.class);
-			System.out.println(newEntity.getId());
-			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
-				halt(HttpStatus.BAD_REQUEST_400);
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
+			
+			
+			ManifestationDTO newEntity = g.fromJson(body, ManifestationDTO.class);
+
+			User loggedIn = userController.getAuthedUser(req);
+					
+			if (idm == null || newEntity == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation data must be sent");
+			}else if (idm.compareToIgnoreCase(newEntity.getId())!= 0) {
+				halt(HttpStatus.BAD_REQUEST_400, "Id in the path must match the manifestation id in the data.");
+			}
+			
+			Manifestation existingManif = manifService.findOne(newEntity.getId());
+			String err = newEntity.validate(loggedIn,existingManif);
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
 
+			if (existingManif == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation not found");
+			}else if (loggedIn.getUserRole() == UserRole.SALESMAN  && !loggedIn.equals(existingManif.getSalesman())) {
+				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only edit his own manifestations");
+			}
 			Manifestation savedEntity = manifService.save(newEntity);
 
-			return gManifAdapter.toJson(savedEntity);
+			return g.toJson(ManifToManifDTO.convert(savedEntity));
 		}
 	};
 	
@@ -190,7 +224,7 @@ public class ManifestationControler {
 			// No login needed for this request.
 			// TODO add pagination
 			
-			userController.authenticateSalesman.handle(req, res);
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");
@@ -208,6 +242,47 @@ public class ManifestationControler {
 		}
 	};
 
-	
-	
+	public final Route findAllManifestationTypes = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+			
+			
+			res.type("application/json");
+		    
+			
+			Collection<ManifestationType> foundEntities = manifService.findAllManifestationTypes();
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No manifestation types found");
+			}
+			
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route findAllCommentsFromManifestation = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// No login needed for this request.
+			// TODO add pagination
+						
+			res.type("application/json");
+			String idm = req.params("idm");
+		    
+			
+		
+			Collection<Comment> foundEntities = manifService.findAllCommentsFromManifestation(idm);
+			if (foundEntities==null) {
+				halt(HttpStatus.NOT_FOUND_404,"No comments found");
+			}
+			
+			// TODO consider using an adapter
+			// TODO use DTO objects
+			return JsonAdapter.commentsSerializationToFile().toJson(foundEntities);
+		}
+	};
+
 }

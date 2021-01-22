@@ -1,5 +1,5 @@
 Vue.component("salesman-users", {
-	data: function() {
+	data: function () {
 		return {
 			error: {},
 			users: {},
@@ -62,7 +62,7 @@ Vue.component("salesman-users", {
 	,
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null){
+		if (localUserData == null) {
 			this.$router.push("/");
 		}
 		console.log(localUserData);
@@ -73,36 +73,36 @@ Vue.component("salesman-users", {
 				this.users = response.data;
 				console.log(this.users);
 			});
-		
+
 	},
 	methods: {
-/*
-		updateUser : function(){
-			let localUserData = JSON.parse(window.localStorage.getItem('user'));
-			var userData = {
-				username: this.userData.username, 
-				firstName: this.userData.firstName, 
-				lastName: this.userData.lastName, 
-				gender: this.userData.gender, 
-				birthDate: new Date(this.userData.birthDate).getTime()}
-			axios
-				.patch('api/users/' + localUserData.username  , userData)
-				.then(response => {
-					this.saveInfo = "Changes successfully saved";
-				})
-				.catch(function (error) {
-					if (error.response) {
-						console.log(error.response.data);
-					} else if (error.request) {
-						console.log(error.request);
-					} else {
-						console.log('Error', error.message);
-					}
-					console.log("error.config");
-					console.log(error.config);
-				});
-		}
-		*/
+		/*
+				updateUser : function(){
+					let localUserData = JSON.parse(window.localStorage.getItem('user'));
+					var userData = {
+						username: this.userData.username, 
+						firstName: this.userData.firstName, 
+						lastName: this.userData.lastName, 
+						gender: this.userData.gender, 
+						birthDate: new Date(this.userData.birthDate).getTime()}
+					axios
+						.patch('api/users/' + localUserData.username  , userData)
+						.then(response => {
+							this.saveInfo = "Changes successfully saved";
+						})
+						.catch(function (error) {
+							if (error.response) {
+								console.log(error.response.data);
+							} else if (error.request) {
+								console.log(error.request);
+							} else {
+								console.log('Error', error.message);
+							}
+							console.log("error.config");
+							console.log(error.config);
+						});
+				}
+				*/
 	},
 
 

@@ -1,5 +1,5 @@
 Vue.component("logout", {
-	data: function() {
+	data: function () {
 		return {
 		}
 	},

@@ -2,27 +2,27 @@ package web.dto;
 
 public class ManifestationTypeDTO {
 	private String name;
-	private Boolean deleted;
-	
+
 	public ManifestationTypeDTO() {
 		super();
 	}
-	public ManifestationTypeDTO(String name, Boolean deleted) {
+
+	public ManifestationTypeDTO(String name) {
 		super();
 		this.name = name;
-		this.deleted = deleted;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Boolean getDeleted() {
-		return deleted;
+
+	@Override
+	public String toString() {
+		return "ManifestationTypeDTO [name=" + name + "]";
 	}
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-	
+
 }

@@ -18,6 +18,7 @@ import model.User;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
+import repository.ManifestationDAO;
 import repository.TicketDAO;
 import repository.UserDAO;
 import service.TicketService;
@@ -27,21 +28,32 @@ public class TicketServiceImpl implements TicketService {
 
 	private TicketDAO ticketDAO;
 	private UserDAO userDAO;
+	private ManifestationDAO manifestationDAO;
 
-	public TicketServiceImpl(TicketDAO ticketDAO, UserDAO userDAO) {
+	public TicketServiceImpl(TicketDAO ticketDAO, UserDAO userDAO, ManifestationDAO manifestationDAO) {
 		super();
 		this.ticketDAO = ticketDAO;
 		this.userDAO = userDAO;
+		this.manifestationDAO = manifestationDAO;
 	}
 
 	@Override
 	public Collection<Ticket> findAll() {
-		return this.ticketDAO.findAll();
+		Collection<Ticket> entities = this.ticketDAO.findAll();
+		entities = entities.stream().filter((Ticket ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+		return entities;
 	}
 
 	@Override
 	public Ticket findOne(String key) {
-		return this.ticketDAO.findOne(key);
+		Ticket found = this.ticketDAO.findOne(key);
+		if (found != null && found.getDeleted()) {
+			return null;
+		}
+		return found;
+		
 	}
 
 	@Override
@@ -170,6 +182,12 @@ public class TicketServiceImpl implements TicketService {
 		
 		
 		return entities;
+	}
+
+	@Override
+	public Collection<Ticket> findAllByManifestation(String key) {
+		Manifestation manifestation = manifestationDAO.findOne(key);
+		return manifestation.tickets;
 	}
 
 }

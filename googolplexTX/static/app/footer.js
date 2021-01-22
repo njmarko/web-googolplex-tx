@@ -1,5 +1,5 @@
 Vue.component("footer-comp", {
-	data: function() {
+	data: function () {
 		return {
 			manifestations: null
 		}
@@ -15,11 +15,6 @@ Vue.component("footer-comp", {
 	</div>
 `
 	,
-	methods: {
-	},
-	mounted() {
-		axios
-			.get('api/manifestations')
-			.then(response => (this.manifestations = response.data))
-	},
+	methods: {},
+	mounted() { },
 });

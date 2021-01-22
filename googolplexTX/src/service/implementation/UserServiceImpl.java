@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findOne(String key) {
 		User user = this.userDAO.findOne(key);
-		if (user.getDeleted()) {
+		if (user != null && user.getDeleted()) {
 			return null;
 		}
 		return user;

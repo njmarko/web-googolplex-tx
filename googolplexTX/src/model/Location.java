@@ -12,6 +12,14 @@ public class Location {
 		super();
 	}
 
+	/**
+	 * @param longitude
+	 * @param latitude
+	 * @param number
+	 * @param city
+	 * @param zipCode
+	 * @param street
+	 */
 	public Location(Double longitude, Double latitude, String number, String city, Integer zipCode, String street) {
 		super();
 		this.longitude = longitude;

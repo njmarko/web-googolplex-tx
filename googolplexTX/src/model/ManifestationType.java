@@ -9,6 +9,10 @@ public class ManifestationType {
 		super();
 	}
 
+	/**
+	 * @param name
+	 * @param deleted
+	 */
 	public ManifestationType(String name, Boolean deleted) {
 		super();
 		this.name = name;

@@ -1,5 +1,5 @@
 Vue.component("salesman-tickets", {
-	data: function() {
+	data: function () {
 		return {
 			error: {},
 			tickets: {},
@@ -61,7 +61,7 @@ Vue.component("salesman-tickets", {
 	,
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null){
+		if (localUserData == null) {
 			this.$router.push("/");
 		}
 
@@ -71,7 +71,7 @@ Vue.component("salesman-tickets", {
 				this.tickets = response.data;
 				console.log(this.tickets);
 			});
-		
+
 	},
 	methods: {
 
@@ -100,7 +100,7 @@ Vue.component("salesman-tickets", {
 					console.log(error.config);
 				});
 		}*/
-		
+
 	},
 
 

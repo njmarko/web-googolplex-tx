@@ -23,6 +23,17 @@ public class User {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param deleted
+	 */
 	public User(String username, String password, String firstName, String lastName, Gender gender, LocalDate birthDate,
 			UserRole userRole, Boolean blocked, Boolean deleted) {
 		super();

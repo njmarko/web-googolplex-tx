@@ -1,5 +1,5 @@
 Vue.component("login-form", {
-	data: function() {
+	data: function () {
 		return {
 			loginData: {},
 			loginError: ""
@@ -54,10 +54,10 @@ Vue.component("login-form", {
 	,
 
 	mounted() {
-		this.$nextTick(() => this.$refs.focusMe.focus());	
+		this.$nextTick(() => this.$refs.focusMe.focus());
 	},
 	methods: {
-		loginUser : function(){
+		loginUser: function () {
 
 			let component = this;
 
@@ -65,7 +65,7 @@ Vue.component("login-form", {
 			let errorText = this.loginError
 
 			console.log(this.loginData);
-			var user = {username: loginData.username, password: loginData.password}
+			var user = { username: loginData.username, password: loginData.password }
 			axios
 				.post('api/login', user)
 				.then(response => {

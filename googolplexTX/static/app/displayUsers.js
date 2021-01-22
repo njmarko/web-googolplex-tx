@@ -1,5 +1,5 @@
 Vue.component("display-users", {
-	data: function() {
+	data: function () {
 		return {
 			users: null
 		}
@@ -66,10 +66,10 @@ Vue.component("display-users", {
 		axios
 			.get('api/users')
 			.then(response => {
-                this.users = response.data;
-                this.users.forEach(element => {
-                    element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-                });
-                })
+				this.users = response.data;
+				this.users.forEach(element => {
+					element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+				});
+			})
 	},
 });
