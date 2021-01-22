@@ -3,7 +3,8 @@ Vue.component("manifestation-view", {
 		return {
 			manifestation: null,
 			tickets: null,
-			comments: null
+			comments: null,
+			userData: {}
 		}
 	},
 	template: ` 
@@ -55,7 +56,7 @@ Vue.component("manifestation-view", {
 						<td>Location</td>
 						<td>{{manifestation.location.city}}</td>
 					</tr>
-					<tr>
+					<tr v-if="userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username))">
 						<td colspan="2">
 							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
 						</td>
@@ -161,16 +162,17 @@ Vue.component("manifestation-view", {
 </div>		  
 `
 	,
-	methods: {
-
-		// TODO: Make this global (store or smth)
-		dateFromInt: function(value) {
-			return new Date(value).toISOString().substring(0, 10);
-
-		}
-
-	},
-	mounted() {
+		mounted() {
+		let localUserData = JSON.parse(window.localStorage.getItem('user'));
+        axios
+            .get('api/users/' + localUserData.username)
+            .then(response => {
+                this.userData = response.data;
+                console.log(response.data.birthDate);
+                console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+                this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+                this.userData.gender = response.data.gender;
+            });
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
@@ -192,4 +194,14 @@ Vue.component("manifestation-view", {
 			});
 			
 	},
+	methods: {
+
+		// TODO: Make this global (store or smth)
+		dateFromInt: function(value) {
+			return new Date(value).toISOString().substring(0, 10);
+
+		}
+
+	},
+
 });
