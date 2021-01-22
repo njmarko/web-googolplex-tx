@@ -194,14 +194,23 @@ public class ManifestationControler {
 
 			User loggedIn = userController.getAuthedUser(req);
 					
-			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
-				halt(HttpStatus.BAD_REQUEST_400, "Id of the manifestation and the path variable must match!");
+			if (idm == null || newEntity == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation data must be sent");
+			}else if (idm.compareToIgnoreCase(newEntity.getId())!= 0) {
+				halt(HttpStatus.BAD_REQUEST_400, "Id in the path must match the manifestation id in the data.");
 			}
-			String err = newEntity.validate(loggedIn);
+			
+			Manifestation existingManif = manifService.findOne(newEntity.getId());
+			String err = newEntity.validate(loggedIn,existingManif);
 			if (err != null) {
 				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
 
+			if (existingManif == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation not found");
+			}else if (loggedIn.getUserRole() == UserRole.SALESMAN  && !loggedIn.equals(existingManif.getSalesman())) {
+				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only edit his own manifestations");
+			}
 			Manifestation savedEntity = manifService.save(newEntity);
 
 			return g.toJson(ManifToManifDTO.convert(savedEntity));

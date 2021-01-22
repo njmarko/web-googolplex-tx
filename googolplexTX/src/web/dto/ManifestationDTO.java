@@ -3,6 +3,7 @@ package web.dto;
 import java.util.Collection;
 
 import model.Location;
+import model.Manifestation;
 import model.User;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
@@ -65,12 +66,12 @@ public class ManifestationDTO {
 		return err;
 	}
 	
-	public String validate(User loggedIn) {
+	public String validate(User loggedIn, Manifestation existingManif) {
 		String err = this.validate();
 		if (err == null) {
 			if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
 				err = "Customer can not edit manifestations";
-			}else if (loggedIn.getUserRole() == UserRole.SALESMAN &&  status.trim().compareToIgnoreCase(ManifestationStatus.INACTIVE.name()) != 0) {
+			}else if (loggedIn.getUserRole() == UserRole.SALESMAN &&  status.trim().compareToIgnoreCase(existingManif.getStatus().name()) != 0) {
 				err = "Salesman can only create inactive manifestations and cannot edit their status!";
 			}
 		}
