@@ -105,17 +105,15 @@ public class ManifestationControler {
 		
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// TODO Consider if user has to be logged in
-
+			
 			res.type("application/json");
 			String id = req.params("idm");
 			Manifestation foundEntity = manifService.findOne(id);
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestation found");
 			}
-			// TODO Since it contains date consider using adapters. Replace with DTO if
-			// needed
-			return gManifAdapter.toJson(foundEntity);
+
+			return g.toJson(ManifToManifDTO.convert(foundEntity));
 		}
 	};
 

@@ -55,6 +55,11 @@ Vue.component("manifestation-view", {
 						<td>Location</td>
 						<td>{{manifestation.location.city}}</td>
 					</tr>
+					<tr>
+						<td colspan="2">
+							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
+						</td>
+					</tr>
 
 
 
