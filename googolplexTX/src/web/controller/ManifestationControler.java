@@ -121,7 +121,7 @@ public class ManifestationControler {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			userController.authenticateSalesman.handle(req, res);
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			res.type("application/json");
 
 			// TODO check if admin or salesman
@@ -173,7 +173,7 @@ public class ManifestationControler {
 			if (deletedEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
-			System.out.println(deletedEntity);
+
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
@@ -181,24 +181,30 @@ public class ManifestationControler {
 	public final Route editOneManifestation = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
-			// TODO check if admin or salesman
+		public Object handle(Request req, Response res) throws Exception {
+
 			res.type("application/json");
 			String idm = req.params("idm");
 			String body = req.body();
-			System.out.println(idm);
 
-			// TODO consider using adapters to avoid warnings
-			ManifestationDTO newEntity = gManifAdapter.fromJson(body, ManifestationDTO.class);
-			System.out.println(newEntity);
-			System.out.println(newEntity.getId());
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
+			
+			
+			ManifestationDTO newEntity = g.fromJson(body, ManifestationDTO.class);
+
+			User loggedIn = userController.getAuthedUser(req);
+					
 			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
-				halt(HttpStatus.BAD_REQUEST_400);
+				halt(HttpStatus.BAD_REQUEST_400, "Id of the manifestation and the path variable must match!");
+			}
+			String err = newEntity.validate(loggedIn);
+			if (err != null) {
+				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
 
 			Manifestation savedEntity = manifService.save(newEntity);
 
-			return gManifAdapter.toJson(ManifToManifDTO.convert(savedEntity));
+			return g.toJson(ManifToManifDTO.convert(savedEntity));
 		}
 	};
 	
@@ -209,7 +215,7 @@ public class ManifestationControler {
 			// No login needed for this request.
 			// TODO add pagination
 			
-			userController.authenticateSalesman.handle(req, res);
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");
@@ -243,8 +249,6 @@ public class ManifestationControler {
 				halt(HttpStatus.NOT_FOUND_404,"No manifestation types found");
 			}
 			
-			// TODO consider using an adapter
-			// TODO use DTO objects
 			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
 		}
 	};

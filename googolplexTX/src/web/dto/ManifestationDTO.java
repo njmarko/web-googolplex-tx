@@ -3,6 +3,9 @@ package web.dto;
 import java.util.Collection;
 
 import model.Location;
+import model.User;
+import model.enumerations.ManifestationStatus;
+import model.enumerations.UserRole;
 import spark.utils.StringUtils;
 
 public class ManifestationDTO {
@@ -58,9 +61,19 @@ public class ManifestationDTO {
 			err = "Manifestation mush have at least one available seat";
 		} else if (regularPrice < 0) {
 			err = "Manifestation mush have at least one available seat";
+		}		
+		return err;
+	}
+	
+	public String validate(User loggedIn) {
+		String err = this.validate();
+		if (err == null) {
+			if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
+				err = "Customer can not edit manifestations";
+			}else if (loggedIn.getUserRole() == UserRole.SALESMAN &&  status.trim().compareToIgnoreCase(ManifestationStatus.INACTIVE.name()) != 0) {
+				err = "Salesman can only create inactive manifestations and cannot edit their status!";
+			}
 		}
-		
-		
 		return err;
 	}
 	

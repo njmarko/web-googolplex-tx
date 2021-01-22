@@ -127,7 +127,7 @@ public class GoogolplexTXMain {
 					get("", manifestationControler.findOneManifestation);
 									
 					delete("", manifestationControler.deleteOneManifestation); // req admin
-					patch("", manifestationControler.editOneManifestation); // req salesman
+					patch("", manifestationControler.editOneManifestation); // req salesman or admin
 					
 					path("/tickets",()->{
 //						before("*",UserController.authenticateUser); // all ticket paths require login

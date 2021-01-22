@@ -146,7 +146,7 @@ public class TicketController {
 			// No login needed for this request.
 			// TODO add pagination
 			
-			userController.authenticateSalesman.handle(req, res);
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");

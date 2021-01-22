@@ -152,6 +152,7 @@ Vue.component("edit-manif", {
             var requestData = { ...this.manifData };
             requestData.location = { ...this.manifData.location };
             requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
+            requestData.poster = "pamela.jpg";
 
             axios
                 .patch('api/manifestations/' + this.manifData.id, requestData)

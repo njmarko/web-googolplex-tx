@@ -312,7 +312,7 @@ public class UserController {
 			// No login needed for this request.
 			// TODO add pagination
 			
-			authenticateSalesman.handle(req, res);
+			authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");
@@ -381,7 +381,7 @@ public class UserController {
 	/**
 	 * Checks if user is logged in and check if his role is SALESMAN or ADMIN
 	 */
-	public final Filter authenticateSalesman = new Filter() {
+	public final Filter authenticateSalesmanOrAdmin = new Filter() {
 		@Override
 		public void handle(Request req, Response res) throws Exception {
 			authenticateUser.handle(req,res); 
