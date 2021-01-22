@@ -32,8 +32,6 @@ public class ManifestationDTO {
 			err = "You have to enter name";
 		} else if (StringUtils.isEmpty(status)) {
 			err = "You have to enter status";
-		} else if (StringUtils.isEmpty(poster)) {
-			err = "You have to enter poster";
 		} else if (StringUtils.isEmpty(manifestationType)) {
 			err = "You have to enter manifestationType";
 		} else if (StringUtils.isEmpty(salesman)) {

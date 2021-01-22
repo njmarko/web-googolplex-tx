@@ -54,9 +54,14 @@ Vue.component("web-shop", {
 					</tr>
 					<tr>
 						<td colspan="2">
-							<router-link :to="{ path: '/manifestations/' + p.id}" class="btn btn-warning btn-block text-uppercase">View</router-link>
+							<img v-bind:src="'/uploads/' + p.poster" class="poster-img" />
 						</td>
 					</tr>
+					<tr>
+					<td colspan="2">
+						<router-link :to="{ path: '/manifestations/' + p.id}" class="btn btn-warning btn-block text-uppercase">View</router-link>
+					</td>
+				</tr>
 				</tbody>
 			</table>
 			<br>

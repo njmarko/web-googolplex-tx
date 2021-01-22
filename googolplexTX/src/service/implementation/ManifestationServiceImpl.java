@@ -168,7 +168,9 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 	@Override
 	public Manifestation save(Manifestation entity) {
-		return this.manifestationDAO.save(entity);
+		Manifestation manif = this.manifestationDAO.save(entity);
+		this.manifestationDAO.saveFile();
+		return manif;
 	}
 
 	@Override

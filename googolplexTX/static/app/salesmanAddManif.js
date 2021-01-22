@@ -56,6 +56,11 @@ Vue.component("salesman-add-manif", {
 					<label for="inputManifType">Manifestation Type</label>
                     </div>
 
+					<div class="form-label-group">
+					<input type="file" id="inputPoster" class="form-control" accept="image/*">
+					<label for="inputPoster">Poster</label>
+                    </div>
+
                     <br class="my-4">
                     
                     
@@ -114,23 +119,23 @@ Vue.component("salesman-add-manif", {
 		removeSaveInfo(info) {
 			this.saveInfo.pop();
 		},
+
 		addManifestation: function () {
 			this.registerError = "";
 			let component = this;
-
 
 			// MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
 			// this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
 			var requestData = { ...this.manifData };
 			requestData.location = { ...this.manifData.location };
 			requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
-			// TODO: Add poster
-			requestData.poster = "pamela.jpg";
 
 			axios
 				.post('api/manifestations', requestData)
 				.then(response => {
 					this.saveInfo.push("Manifestation added successfully");
+					console.log(response.data);
+					this.uploadPoster(response.data.id);
 				})
 				.catch(function (error) {
 					if (error.response) {
@@ -139,14 +144,29 @@ Vue.component("salesman-add-manif", {
 					} else if (error.request) {
 						component.registerError = error.response.data;
 						console.log(error.request);
-					} else {
-						component.registerError = error.response.data;
-						console.log('Error', error.message);
 					}
+
 					component.registerError = error.response.data;
 					console.log("error.config");
 					console.log(error.config);
 				});
+
+
+		},
+
+		uploadPoster : function(id){
+			// Image upload
+			var formData = new FormData();
+			var imagefile = document.querySelector('#inputPoster');
+			if (imagefile.files.length > 0){
+				formData.append("filename", imagefile.files[0]);
+				formData.append("id", id);
+				axios.post('api/upload', formData, {
+					headers: {
+					'Content-Type': 'multipart/form-data'
+					}
+				}).then(response =>{})
+			}
 		}
 	},
 });

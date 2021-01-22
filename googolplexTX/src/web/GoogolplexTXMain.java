@@ -119,6 +119,10 @@ public class GoogolplexTXMain {
 				get("",userController.logout);
 			});
 			
+			path("/upload",()->{
+				post("",manifestationControler.uploadImage);
+			});
+			
 			path("/manifestations",()->{				
 				get("",manifestationControler.findAllManifestations);	
 				post("", manifestationControler.saveOneManifestation);	// req salesman		
@@ -189,7 +193,7 @@ public class GoogolplexTXMain {
 		});
 
 
-		
+	
 		/**
 		 * Second method where controllers are constructed. 
 		 * With this method you have to write a full path for every method
@@ -199,5 +203,7 @@ public class GoogolplexTXMain {
 		
 	}
 
+
+	
 
 }
