@@ -76,14 +76,17 @@ Vue.component("salesman-manifestations", {
 		if (localUserData == null) {
 			this.$router.push("/");
 		}
-		console.log(localUserData);
 
-		axios
-			.get('api/users/' + localUserData.username + '/manifestations')
-			.then(response => {
-				this.manifestations = response.data;
-				console.log(this.manifestations);
-			});
+		this.$nextTick(() => {
+			axios
+				.get('api/users/' + localUserData.username + '/manifestations')
+				.then(response => {
+					this.manifestations = response.data;
+					console.log(this.manifestations);
+				});
+		});
+
+
 
 	},
 	methods: {

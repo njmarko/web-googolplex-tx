@@ -64,13 +64,15 @@ Vue.component("salesman-tickets", {
 		if (localUserData == null) {
 			this.$router.push("/");
 		}
+		this.$nextTick(() => {
+			axios
+				.get('api/users/' + localUserData.username + '/manif-tickets')
+				.then(response => {
+					this.tickets = response.data;
+					console.log(this.tickets);
+				});
+		});
 
-		axios
-			.get('api/users/' + localUserData.username + '/manif-tickets')
-			.then(response => {
-				this.tickets = response.data;
-				console.log(this.tickets);
-			});
 
 	},
 	methods: {

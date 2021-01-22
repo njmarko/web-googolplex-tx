@@ -106,14 +106,18 @@ Vue.component("salesman-add-manif", {
 `
 	,
 	mounted() {
-		this.$nextTick(() => this.$refs.focusMe.focus());
+		this.$nextTick(() => {
+			this.$refs.focusMe.focus();
+			axios
+				.get("api/manifestation-type")
+				.then(response => {
+					this.manifTypes = response.data;
+					this.manifData.manifestationType = Object.values(this.manifTypes)[0].name;
+				});		
+		
+		});
 
-		axios
-			.get("api/manifestation-type")
-			.then(response => {
-				this.manifTypes = response.data;
-				this.manifData.manifestationType = Object.values(this.manifTypes)[0].name;
-			});
+
 	},
 	methods: {
 		removeSaveInfo(info) {

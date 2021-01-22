@@ -63,13 +63,17 @@ Vue.component("display-users", {
 	methods: {
 	},
 	mounted() {
-		axios
-			.get('api/users')
-			.then(response => {
-				this.users = response.data;
-				this.users.forEach(element => {
-					element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-				});
-			})
+		this.$nextTick(() => {
+			axios
+				.get('api/users')
+				.then(response => {
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
+				})
+		});
+
+
 	},
 });

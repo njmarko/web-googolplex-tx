@@ -67,12 +67,15 @@ Vue.component("salesman-users", {
 		}
 		console.log(localUserData);
 
-		axios
-			.get('api/users/' + localUserData.username + '/sold-to-users')
-			.then(response => {
-				this.users = response.data;
-				console.log(this.users);
-			});
+		this.$nextTick(() => {
+			axios
+				.get('api/users/' + localUserData.username + '/sold-to-users')
+				.then(response => {
+					this.users = response.data;
+					console.log(this.users);
+				});
+		});
+
 
 	},
 	methods: {
