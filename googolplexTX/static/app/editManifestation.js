@@ -129,24 +129,27 @@ Vue.component("edit-manif", {
 			console.log(this.manifData);	// DEBUG
 
 			var manifParams = {
+                id: this.manifData.id,
 				name: this.manifData.name,
 				availableSeats: this.manifData.availableSeats,
 				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
 				regularPrice: this.manifData.regularPrice, 
-				manifestationType: this.manifData.manifType, 
+                manifestationType: this.manifData.manifestationType, 
+                status: this.manifData.status,
+                salesman: this.manifData.salesman,
 				poster: 'poster',
 				location: {
-					longitude: this.manifData.longitude,
-					latitude: this.manifData.latitude,
-					number: this.manifData.number,
-					city: this.manifData.city,
-					zipCode: this.manifData.zipCode,
-					street: this.manifData.street,
+					longitude: this.manifData.location.longitude,
+					latitude: this.manifData.location.latitude,
+					number: this.manifData.location.number,
+					city: this.manifData.location.city,
+					zipCode: this.manifData.location.zipCode,
+					street: this.manifData.location.street,
 				}, 
 			};
 
 			axios
-				.post('api/manifestations', manifParams)
+				.patch('api/manifestations/'+this.manifData.id, manifParams)
 				.then(response => {
 					this.saveInfo.push("Manifestation information updated successfully")  ;
 				})

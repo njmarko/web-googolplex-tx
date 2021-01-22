@@ -50,7 +50,7 @@ Vue.component("salesman-add-manif", {
                     </div>
 
 					<div class="form-label-group">
-                    <select name="inputManifType" id="inputManifType" v-model="manifData.manifType" required>
+                    <select name="inputManifType" id="inputManifType" v-model="manifData.manifestationType" required>
                         <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
 					</select>
 					<label for="inputManifType">Manifestation Type</label>
@@ -127,7 +127,7 @@ Vue.component("salesman-add-manif", {
 				availableSeats: this.manifData.availableSeats,
 				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
 				regularPrice: this.manifData.regularPrice, 
-				manifestationType: this.manifData.manifType, 
+				manifestationType: this.manifData.manifestationType, 
 				poster: 'poster',
 				location: {
 					longitude: this.manifData.location.longitude,

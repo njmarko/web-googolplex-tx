@@ -191,8 +191,9 @@ public class ManifestationControler {
 			String body = req.body();
 			System.out.println(idm);
 
-			// TODO consider using adapters to awoid warnings
-			Manifestation newEntity = gManifAdapter.fromJson(body, Manifestation.class);
+			// TODO consider using adapters to avoid warnings
+			ManifestationDTO newEntity = gManifAdapter.fromJson(body, ManifestationDTO.class);
+			System.out.println(newEntity);
 			System.out.println(newEntity.getId());
 			if (idm == null || newEntity == null || !idm.equals(newEntity.getId())) {
 				halt(HttpStatus.BAD_REQUEST_400);
@@ -200,7 +201,7 @@ public class ManifestationControler {
 
 			Manifestation savedEntity = manifService.save(newEntity);
 
-			return gManifAdapter.toJson(savedEntity);
+			return gManifAdapter.toJson(ManifToManifDTO.convert(savedEntity));
 		}
 	};
 	
