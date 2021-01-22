@@ -123,20 +123,17 @@ public class ManifestationControler {
 		public Object handle(Request req, Response res) throws Exception {
 			userController.authenticateSalesman.handle(req, res);
 			res.type("application/json");
-			// TODO Add adapters so there are no warnings
 
 			// TODO check if admin or salesman
 			String body = req.body();
-			// TODO replace with DTO if needed and use adapters to awoid warnings
 			
-			ManifestationDTO manifestationData = gManifAdapter.fromJson(body, ManifestationDTO.class);
+			ManifestationDTO manifestationData = g.fromJson(body, ManifestationDTO.class);
 
 			User loggedInUser = userController.getAuthedUser(req);
 			if (loggedInUser.getUserRole() == UserRole.SALESMAN) {
 				manifestationData.setSalesman(loggedInUser.getUsername());
 				manifestationData.setStatus(ManifestationStatus.INACTIVE.name());
-			}
-			
+			}			
 			
 			String err = manifestationData.validate();
 			if (err != null) {

@@ -3,8 +3,10 @@ package repository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -19,8 +21,8 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 	
 	public String findNextId() {
 		if (manifestations != null && manifestations.size() > 0) {		
-			String highest = manifestations.keySet().stream().sorted().findFirst().get();
-			Long id = Long.parseLong(highest) + 1 ;
+			Long highest = manifestations.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
+			Long id = highest + 1 ;
 			return id.toString();
 		}else {
 			return "1";

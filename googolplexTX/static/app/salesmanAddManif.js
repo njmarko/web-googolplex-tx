@@ -1,10 +1,10 @@
 Vue.component("salesman-add-manif", {
-	data: function() {
+	data: function () {
 		return {
-			manifData: {location:{}},
+			manifData: { location: {} },
 			registerError: "",
-            saveInfo: [],
-            manifTypes: {}
+			saveInfo: [],
+			manifTypes: {}
 		}
 	},
 	template: ` 
@@ -45,13 +45,13 @@ Vue.component("salesman-add-manif", {
                     </div>
                     
 					<div class="form-label-group">
-					<input type="number" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
+					<input type="number" step="any"  id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
 					<label for="inputRegularPrice">Regular Price</label>
                     </div>
 
 					<div class="form-label-group">
                     <select name="inputManifType" id="inputManifType" v-model="manifData.manifestationType" required>
-                        <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
+                        <option v-for='(value, key) in manifTypes' :value='value.name'  > {{value.name}}</option>
 					</select>
 					<label for="inputManifType">Manifestation Type</label>
                     </div>
@@ -60,12 +60,12 @@ Vue.component("salesman-add-manif", {
                     
                     
 					<div class="form-label-group">
-					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
+					<input type="number" step="any" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
 					<label for="inputLongitude">Longitude</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
+					<input type="number" step="any" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
 					<label for="inputLatitude">Latitude</label>
                     </div>
 
@@ -101,48 +101,36 @@ Vue.component("salesman-add-manif", {
 `
 	,
 	mounted() {
-            this.$nextTick(() => this.$refs.focusMe.focus());		
-            
-            axios
-                .get("api/manifestation-type")
-                .then(response =>{
-                    console.log(response.data);
-                    this.manifTypes = response.data;
-                    console.log()
-                });
+		this.$nextTick(() => this.$refs.focusMe.focus());
+
+		axios
+			.get("api/manifestation-type")
+			.then(response => {
+				this.manifTypes = response.data;
+				this.manifData.manifestationType = Object.values(this.manifTypes)[0].name;
+			});
 	},
 	methods: {
-		removeSaveInfo(info){
+		removeSaveInfo(info) {
 			this.saveInfo.pop();
 		},
-		addManifestation : function(){
-			console.log(this.saveInfo)
+		addManifestation: function () {
 			this.registerError = "";
 			let component = this;
 
-			console.log(this.manifData);	// DEBUG
 
-			var manifParams = {
-				name: this.manifData.name,
-				availableSeats: this.manifData.availableSeats,
-				dateOfOccurence: new Date(this.manifData.dateOfOccurence).getTime(),
-				regularPrice: this.manifData.regularPrice, 
-				manifestationType: this.manifData.manifestationType, 
-				poster: 'poster',
-				location: {
-					longitude: this.manifData.location.longitude,
-					latitude: this.manifData.location.latitude,
-					number: this.manifData.location.number,
-					city: this.manifData.location.city,
-					zipCode: this.manifData.location.zipCode,
-					street: this.manifData.location.street,
-				}, 
-			};
+			// MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
+			// this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
+			var requestData = { ...this.manifData };
+			requestData.location = { ...this.manifData.location };
+			requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
+			// TODO: Add poster
+			requestData.poster = "pamela.jpg";
 
 			axios
-				.post('api/manifestations', manifParams)
+				.post('api/manifestations', requestData)
 				.then(response => {
-					this.saveInfo.push("Manifestation added successfully")  ;
+					this.saveInfo.push("Manifestation added successfully");
 				})
 				.catch(function (error) {
 					if (error.response) {

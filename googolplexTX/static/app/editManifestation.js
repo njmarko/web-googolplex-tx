@@ -1,13 +1,14 @@
 Vue.component("edit-manif", {
-	data: function() {
-		return {
-			manifData: {location:{}},
-			registerError: "",
+    data: function () {
+        return {
+            manifData: { location: {} },
+            registerError: "",
             saveInfo: [],
-            manifTypes: {}
-		}
-	},
-	template: ` 
+            manifTypes: {},
+            userData: {}
+        }
+    },
+    template: ` 
 	<div class="container">
 				<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 		
@@ -29,6 +30,14 @@ Vue.component("edit-manif", {
 				<h5 class="card-title text-center">Edit Manifestation</h5>
 				<form class="form-signin" v-on:submit.prevent="editManifestation">
 
+                    <div v-if="userData && userData.userRole == 'ADMIN'" class="form-label-group" >
+                    <select name="inputStatus" id="inputStatus" v-model="manifData.status" required>
+                        <option value='ACTIVE' >ACTIVE</option>
+                        <option value='INACTIVE' >INACTIVE</option>
+					</select>
+					<label for="inputManifType">Manifestation Type</label>
+
+                    </div>
 					<div class="form-label-group">
 					<input type="text" id="inputName" class="form-control" placeholder="Name" v-model="manifData.name" required ref='focusMe'>
 					<label for="inputName">Name</label>
@@ -45,7 +54,7 @@ Vue.component("edit-manif", {
                     </div>
                     
 					<div class="form-label-group">
-					<input type="number" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
+					<input type="number" step="any" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
 					<label for="inputRegularPrice">Regular Price</label>
                     </div>
 
@@ -60,12 +69,12 @@ Vue.component("edit-manif", {
                     
                     
 					<div class="form-label-group">
-					<input type="number" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
+					<input type="number" step="any" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
 					<label for="inputLongitude">Longitude</label>
                     </div>
 
 					<div class="form-label-group">
-					<input type="number" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
+					<input type="number" step="any" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
 					<label for="inputLatitude">Latitude</label>
                     </div>
 
@@ -99,63 +108,73 @@ Vue.component("edit-manif", {
 		</div>
 		</div>
 `
-	,
-	mounted() {
-            this.$nextTick(() => this.$refs.focusMe.focus());		
-            
-            axios
-                .get("api/manifestation-type")
-                .then(response =>{
-                    console.log(response.data);
-                    this.manifTypes = response.data;
-                    console.log()
-                });
-		axios
-			.get('api/manifestations/' + this.$route.params.id)
-			.then(response => {
+    ,
+    mounted() {
+        this.$nextTick(() => this.$refs.focusMe.focus());
+
+        let localUserData = JSON.parse(window.localStorage.getItem('user'));
+        axios
+            .get('api/users/' + localUserData.username)
+            .then(response => {
+                this.userData = response.data;
+                console.log(response.data.birthDate);
+                console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+                this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+                this.userData.gender = response.data.gender;
+            });
+        axios
+            .get("api/manifestation-type")
+            .then(response => {
+                console.log(response.data);
+                this.manifTypes = response.data;
+                console.log()
+            });
+        axios
+            .get('api/manifestations/' + this.$route.params.id)
+            .then(response => {
                 this.manifData = response.data;
                 this.manifData.dateOfOccurence = new Date(response.data.dateOfOccurence).toISOString().substring(0, 10);
-			});
-	},
-	methods: {
-		removeSaveInfo(info){
-			this.saveInfo.pop();
-		},
-		editManifestation : function(){
-			console.log(this.saveInfo)
-			this.registerError = "";
-			let component = this;
+            });
+    },
+    methods: {
+        removeSaveInfo(info) {
+            this.saveInfo.pop();
+        },
+        editManifestation: function () {
+            console.log(this.saveInfo)
+            this.registerError = "";
+            let component = this;
 
-			console.log(this.manifData);	// DEBUG
-            
+            console.log(this.manifData);	// DEBUG
+
             // MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
             // this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
-            var requestData = {...this.manifData};
-            requestData.location = {...this.manifData.location};
-            requestData.dateOfOccurence =  new Date(this.manifData.dateOfOccurence).getTime();
+            var requestData = { ...this.manifData };
+            requestData.location = { ...this.manifData.location };
+            requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
 
-			axios
-				.patch('api/manifestations/'+this.manifData.id, requestData)
-				.then(response => {
-					this.saveInfo.push("Manifestation information updated successfully")  ;
-				})
-				.catch(function (error) {
-					if (error.response) {
-						component.registerError = error.response.data;
-						console.log(error.response.data);
-					} else if (error.request) {
-						component.registerError = error.response.data;
-						console.log(error.request);
-					} else {
-						component.registerError = error.response.data;
-						console.log('Error', error.message);
-					}
-					component.registerError = error.response.data;
-					console.log("error.config");
-					console.log(error.config);
-				});
-		}
-	},
+            axios
+                .patch('api/manifestations/' + this.manifData.id, requestData)
+                .then(response => {
+                    this.saveInfo.push("Manifestation information updated successfully");
+                })
+                .catch(function (error) {
+                    if (error.response) {
+                        component.registerError = error.response.data;
+                        console.log(error.response.data);
+                    } else if (error.request) {
+                        component.registerError = error.response.data;
+                        console.log(error.request);
+                    } else {
+                        component.registerError = error.response.data;
+                        console.log('Error', error.message);
+                    }
+                    component.registerError = error.response.data;
+                    console.log("error.config");
+                    console.log(error.config);
+                });
+        }
+    },
 });
 
 
