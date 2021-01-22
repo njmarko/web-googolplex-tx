@@ -45,5 +45,5 @@ Vue.component("navbar", {
 
 `,
 	methods: {},
-	mounted() {},
+	mounted() { },
 });

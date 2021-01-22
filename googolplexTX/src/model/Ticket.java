@@ -21,6 +21,15 @@ public class Ticket {
 		super();
 	}
 
+	/**
+	 * @param id
+	 * @param dateOfManifestation
+	 * @param price
+	 * @param ticketType
+	 * @param ticketStatus
+	 * @param cancelationDate
+	 * @param deleted
+	 */
 	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
 			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted) {
 		super();
@@ -33,6 +42,17 @@ public class Ticket {
 		this.deleted = deleted;
 	}
 
+	/**
+	 * @param id
+	 * @param dateOfManifestation
+	 * @param price
+	 * @param ticketType
+	 * @param ticketStatus
+	 * @param cancelationDate
+	 * @param deleted
+	 * @param customer
+	 * @param manifestation
+	 */
 	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
 			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted,
 			Customer customer, Manifestation manifestation) {

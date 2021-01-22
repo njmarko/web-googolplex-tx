@@ -10,6 +10,12 @@ public class CustomerType {
 		super();
 	}
 
+	/**
+	 * @param name
+	 * @param discount
+	 * @param requiredPoints
+	 * @param deleted
+	 */
 	public CustomerType(String name, Double discount, Double requiredPoints, Boolean deleted) {
 		super();
 		this.name = name;

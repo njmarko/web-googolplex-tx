@@ -1,5 +1,5 @@
 Vue.component("web-shop", {
-	data: function() {
+	data: function () {
 		return {
 			manifestations: null
 		}

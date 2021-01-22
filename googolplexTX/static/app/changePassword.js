@@ -1,5 +1,5 @@
 Vue.component("change-password", {
-	data: function() {
+	data: function () {
 		return {
 			userData: {},
 			newPasswordData: {},
@@ -67,15 +67,16 @@ Vue.component("change-password", {
 `
 	,
 	methods: {
-		changePassword : function(){
+		changePassword: function () {
 			let localUserData = JSON.parse(window.localStorage.getItem('user'));
 			let component = this;
 
 			var userData = {
-				oldPassword: this.newPasswordData.oldPassword, 
-				newPassword: this.newPasswordData.password1}
+				oldPassword: this.newPasswordData.oldPassword,
+				newPassword: this.newPasswordData.password1
+			}
 			axios
-				.patch('api/users/' + localUserData.username + '/change-password' , userData)
+				.patch('api/users/' + localUserData.username + '/change-password', userData)
 				.then(response => (alert(response.data)))
 				.catch(function (error) {
 					if (error.response) {
@@ -88,7 +89,7 @@ Vue.component("change-password", {
 						component.formError = error.response.data;
 						console.log('Error', error.message);
 					}
-					
+
 					console.log("error.config");
 					console.log(error.config);
 				});

@@ -29,6 +29,16 @@ public class Manifestation {
 		super();
 	}
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param deleted
+	 */
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted) {
 		super();
@@ -61,6 +71,19 @@ public class Manifestation {
 		this(id, name, availableSeats, dateOfOccurence, regularPrice, ManifestationStatus.INACTIVE, poster, false);
 	}
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param deleted
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 */
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
 			ManifestationType manifestationType, Salesman salesman, Location location) {
@@ -94,6 +117,21 @@ public class Manifestation {
 				manifestationType, salesman, location);
 	}
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param deleted
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 * @param comments
+	 * @param tickets
+	 */
 	public Manifestation(String id, String name, Integer availableSeats, LocalDateTime dateOfOccurence,
 			Double regularPrice, ManifestationStatus status, String poster, Boolean deleted,
 			ManifestationType manifestationType, Salesman salesman, Location location, Collection<Comment> comments,

@@ -1,7 +1,7 @@
 Vue.component("admin-add-user", {
-	data: function() {
+	data: function () {
 		return {
-			registerData: {gender:'MALE', userRole: "SALESMAN"},
+			registerData: { gender: 'MALE', userRole: "SALESMAN" },
 			registerError: "",
 			saveInfo: []
 		}
@@ -88,13 +88,13 @@ Vue.component("admin-add-user", {
 `
 	,
 	mounted() {
-			this.$nextTick(() => this.$refs.focusMe.focus());		
+		this.$nextTick(() => this.$refs.focusMe.focus());
 	},
 	methods: {
-		removeSaveInfo(info){
+		removeSaveInfo(info) {
 			this.saveInfo.pop();
 		},
-		registerUser : function(){
+		registerUser: function () {
 			console.log(this.saveInfo)
 			this.registerError = "";
 			let component = this;
@@ -105,15 +105,16 @@ Vue.component("admin-add-user", {
 				username: this.registerData.username,
 				password1: this.registerData.password1,
 				password2: this.registerData.password2,
-				firstName: this.registerData.firstName, 
-				lastName: this.registerData.lastName, 
-				gender: this.registerData.gender, 
+				firstName: this.registerData.firstName,
+				lastName: this.registerData.lastName,
+				gender: this.registerData.gender,
 				userRole: this.registerData.userRole,
-				birthDate: new Date(this.registerData.birthDate).getTime()}
+				birthDate: new Date(this.registerData.birthDate).getTime()
+			}
 			axios
 				.post('api/register', userData)
 				.then(response => {
-					this.saveInfo.push("User Registered Successfully")  ;
+					this.saveInfo.push("User Registered Successfully");
 				})
 				.catch(function (error) {
 					if (error.response) {

@@ -1,5 +1,5 @@
 Vue.component("user-profile", {
-	data: function() {
+	data: function () {
 		return {
 			userData: {},
 			saveInfo: null
@@ -151,20 +151,21 @@ Vue.component("user-profile", {
 				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
 				this.userData.gender = response.data.gender;
 			});
-		
+
 	},
 	methods: {
 
-		updateUser : function(){
+		updateUser: function () {
 			let localUserData = JSON.parse(window.localStorage.getItem('user'));
 			var userData = {
-				username: this.userData.username, 
-				firstName: this.userData.firstName, 
-				lastName: this.userData.lastName, 
-				gender: this.userData.gender, 
-				birthDate: new Date(this.userData.birthDate).getTime()}
+				username: this.userData.username,
+				firstName: this.userData.firstName,
+				lastName: this.userData.lastName,
+				gender: this.userData.gender,
+				birthDate: new Date(this.userData.birthDate).getTime()
+			}
 			axios
-				.patch('api/users/' + localUserData.username  , userData)
+				.patch('api/users/' + localUserData.username, userData)
 				.then(response => {
 					this.saveInfo = "Changes successfully saved";
 				})
@@ -180,7 +181,7 @@ Vue.component("user-profile", {
 					console.log(error.config);
 				});
 		}
-		
+
 	},
 
 

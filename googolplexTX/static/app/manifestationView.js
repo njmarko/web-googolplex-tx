@@ -1,5 +1,5 @@
 Vue.component("manifestation-view", {
-	data: function() {
+	data: function () {
 		return {
 			manifestation: null,
 			tickets: null,
@@ -162,42 +162,42 @@ Vue.component("manifestation-view", {
 </div>		  
 `
 	,
-		mounted() {
+	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-        axios
-            .get('api/users/' + localUserData.username)
-            .then(response => {
-                this.userData = response.data;
-                console.log(response.data.birthDate);
-                console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-                this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-                this.userData.gender = response.data.gender;
-            });
+		axios
+			.get('api/users/' + localUserData.username)
+			.then(response => {
+				this.userData = response.data;
+				console.log(response.data.birthDate);
+				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+				this.userData.gender = response.data.gender;
+			});
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
 				this.manifestation = response.data;
 			});
 
-			axios
+		axios
 			.get('api/manifestations/' + this.$route.params.id + '/tickets')
 			.then(response => {
 
 				this.tickets = response.data;
 			});
 
-			axios
+		axios
 			.get('api/manifestations/' + this.$route.params.id + '/comments')
 			.then(response => {
 
 				this.comments = response.data;
 			});
-			
+
 	},
 	methods: {
 
 		// TODO: Make this global (store or smth)
-		dateFromInt: function(value) {
+		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);
 
 		}

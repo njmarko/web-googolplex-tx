@@ -48,7 +48,12 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public Ticket findOne(String key) {
-		return this.ticketDAO.findOne(key);
+		Ticket found = this.ticketDAO.findOne(key);
+		if (found != null && found.getDeleted()) {
+			return null;
+		}
+		return found;
+		
 	}
 
 	@Override

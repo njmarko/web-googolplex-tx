@@ -159,13 +159,16 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 	@Override
 	public Manifestation findOne(String key) {
-		return this.manifestationDAO.findOne(key);
+		Manifestation found = this.manifestationDAO.findOne(key);
+		if (found != null && found.getDeleted()) {
+			return null;
+		}
+		return found;
 	}
 
 	@Override
 	public Manifestation save(Manifestation entity) {
-		this.manifestationDAO.save(entity);
-		return entity;
+		return this.manifestationDAO.save(entity);
 	}
 
 	@Override

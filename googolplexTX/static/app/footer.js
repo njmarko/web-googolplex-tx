@@ -1,5 +1,5 @@
 Vue.component("footer-comp", {
-	data: function() {
+	data: function () {
 		return {
 			manifestations: null
 		}
@@ -16,5 +16,5 @@ Vue.component("footer-comp", {
 `
 	,
 	methods: {},
-	mounted() {},
+	mounted() { },
 });

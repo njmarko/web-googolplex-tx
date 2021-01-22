@@ -1,5 +1,5 @@
 Vue.component("salesman-manifestations", {
-	data: function() {
+	data: function () {
 		return {
 			error: {},
 			manifestations: {},
@@ -73,7 +73,7 @@ Vue.component("salesman-manifestations", {
 	,
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null){
+		if (localUserData == null) {
 			this.$router.push("/");
 		}
 		console.log(localUserData);
@@ -84,22 +84,23 @@ Vue.component("salesman-manifestations", {
 				this.manifestations = response.data;
 				console.log(this.manifestations);
 			});
-		
+
 	},
 	methods: {
 
-		updateUser : function(){
+		updateUser: function () {
 			let localUserData = JSON.parse(window.localStorage.getItem('user'));
 
 
 			var userData = {
-				username: this.userData.username, 
-				firstName: this.userData.firstName, 
-				lastName: this.userData.lastName, 
-				gender: this.userData.gender, 
-				birthDate: new Date(this.userData.birthDate).getTime()}
+				username: this.userData.username,
+				firstName: this.userData.firstName,
+				lastName: this.userData.lastName,
+				gender: this.userData.gender,
+				birthDate: new Date(this.userData.birthDate).getTime()
+			}
 			axios
-				.patch('api/users/' + localUserData.username  , userData)
+				.patch('api/users/' + localUserData.username, userData)
 				.then(response => {
 					this.saveInfo = "Changes successfully saved";
 				})
@@ -115,7 +116,7 @@ Vue.component("salesman-manifestations", {
 					console.log(error.config);
 				});
 		}
-		
+
 	},
 
 

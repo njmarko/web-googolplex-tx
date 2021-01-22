@@ -1,7 +1,7 @@
 Vue.component("register-form", {
-	data: function() {
+	data: function () {
 		return {
-			registerData: {gender:'MALE'},
+			registerData: { gender: 'MALE' },
 			registerError: ""
 		}
 	},
@@ -78,10 +78,10 @@ Vue.component("register-form", {
 `
 	,
 	mounted() {
-			this.$nextTick(() => this.$refs.focusMe.focus());		
+		this.$nextTick(() => this.$refs.focusMe.focus());
 	},
 	methods: {
-		registerUser : function(){
+		registerUser: function () {
 			let component = this;
 
 			console.log(this.registerData);	// DEBUG
@@ -90,10 +90,11 @@ Vue.component("register-form", {
 				username: this.registerData.username,
 				password1: this.registerData.password1,
 				password2: this.registerData.password2,
-				firstName: this.registerData.firstName, 
-				lastName: this.registerData.lastName, 
-				gender: this.registerData.gender, 
-				birthDate: new Date(this.registerData.birthDate).getTime()}
+				firstName: this.registerData.firstName,
+				lastName: this.registerData.lastName,
+				gender: this.registerData.gender,
+				birthDate: new Date(this.registerData.birthDate).getTime()
+			}
 			axios
 				.post('api/register', userData)
 				.then(response => {
