@@ -132,10 +132,9 @@ Vue.component("display-users", {
 	,
 	mounted() {
 		this.$nextTick(() => {
-			console.log(this.$route.query);
 			this.searchParams = this.$route.query;
 			axios
-				.get('api/users', {params:this.searchParams})
+				.get('api/users', { params: this.searchParams })
 				.then(response => {
 					this.users = response.data;
 					this.users.forEach(element => {
@@ -155,12 +154,13 @@ Vue.component("display-users", {
 
 	},
 	methods: {
-		searchUsers: function () {
-				console.log(this.searchParams)
-				let sp = this.searchParams;
-				this.$router.push({query: sp});
-				axios
-				.get('api/users', {params:sp})
+		searchUsers: function (event) {
+			event.preventDefault();
+			this.$router.push({ query: {} });
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
+			axios
+				.get('api/users', { params: sp })
 				.then(response => {
 					this.users = response.data;
 					this.users.forEach(element => {
@@ -169,13 +169,12 @@ Vue.component("display-users", {
 				})
 		},
 		clearParameters: function (event) {
-				event.preventDefault();
-				this.searchParams = {};
-				console.log(this.searchParams)
-				let sp = this.searchParams;
-				this.$router.push({query: sp});
-				axios
-				.get('api/users', {params:sp})
+			event.preventDefault();
+			this.searchParams = {};
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
+			axios
+				.get('api/users', { params: sp })
 				.then(response => {
 					this.users = response.data;
 					this.users.forEach(element => {
