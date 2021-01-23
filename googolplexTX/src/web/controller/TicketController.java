@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 
 import model.Manifestation;
 import model.Ticket;
+import model.User;
+import model.enumerations.UserRole;
 import service.TicketService;
 import spark.Request;
 import spark.Response;
@@ -90,13 +92,19 @@ public class TicketController {
 	public final Route findAllTicketsForUser = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
-			// TODO login needed for this request.
+		public Object handle(Request req, Response res) throws Exception {
 			// TODO add DTO for search and filter parameters. Call search or find all
 			// function depending on parameters
 			// TODO add pagination
 			res.type("application/json");
+			User loggedIn = userController.getAuthedUser(req);
+			System.out.println(loggedIn);
+			userController.authenticateUser.handle(req, res);
 
+			if (loggedIn.getUserRole() != UserRole.CUSTOMER && loggedIn.getUserRole() != UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "Only customer or admin can view customer tickets");
+			}
+			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
 				queryParams.put(k, v[0]);
@@ -106,19 +114,13 @@ public class TicketController {
 
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
 
-			// System.out.println("[DBG] searchParamsDTO" + searchParams);
-
 			Collection<Ticket> foundEntities = ticketService.searchByUser(user, searchParams);
-			// Collection<Ticket> foundEntities = ticketService.findAll();
 
 			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
 
-			// TODO consider using an adapter
-			// TODO use DTO objects
-
-			return JsonAdapter.ticketsSeraialization().toJson(foundEntities);
+			return gson.toJson(TicketToTicketDTO.convert(foundEntities));
 		}
 	};
 
@@ -151,7 +153,10 @@ public class TicketController {
 			res.type("application/json");
 			String idu = req.params("idu");
 		    
-			
+			User user = userController.getAuthedUser(req);
+			if (user.getUserRole() == UserRole.SALESMAN && user.getUsername().compareTo(idu)!= 0) {
+				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only view tickets for his own manifestations");
+			}
 		
 			Collection<Ticket> foundEntities = ticketService.findAllBySalesman(idu);
 			if (foundEntities==null || foundEntities.isEmpty()) {
@@ -160,7 +165,7 @@ public class TicketController {
 			
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			return gson.toJson(foundEntities);
+			return gson.toJson(TicketToTicketDTO.convert(foundEntities));
 		}
 	};
 
