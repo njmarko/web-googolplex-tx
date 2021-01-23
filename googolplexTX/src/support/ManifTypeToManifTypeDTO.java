@@ -2,6 +2,7 @@ package support;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.ManifestationType;
 import web.dto.ManifestationTypeDTO;
@@ -18,11 +19,7 @@ public class ManifTypeToManifTypeDTO {
 	}
 	
 	public static Collection<ManifestationTypeDTO> convert(Collection<ManifestationType> allManifsTypes){
-		Collection<ManifestationTypeDTO> retVal = new ArrayList<ManifestationTypeDTO>();
-		for (ManifestationType manifType : allManifsTypes) {
-			retVal.add(convert(manifType));
-		}	
-		return retVal;
+		return allManifsTypes.stream().map(ManifTypeToManifTypeDTO::convert).collect(Collectors.toList());	
 	}
 	
 	

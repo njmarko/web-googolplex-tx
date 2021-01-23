@@ -191,6 +191,10 @@ public class GoogolplexTXMain {
 				get("",manifestationControler.findAllManifestationTypes);
 			});
 			
+			path("/customer-type",()->{
+				get("",userController.findAllCustomerTypes);
+			});
+			
 			path("/tickets",()->{
 				get("",ticketController.findAllTickets); // TODO req admin
 			});

@@ -45,11 +45,7 @@ public class ManifToManifDTO {
 	}
 	
 	public static Collection<ManifestationDTO> convert(Collection<Manifestation> allManifs){
-		Collection<ManifestationDTO> retVal = new ArrayList<ManifestationDTO>();
-		for (Manifestation manif : allManifs) {
-			retVal.add(convert(manif));
-		}	
-		return retVal;
+		return allManifs.stream().map(ManifToManifDTO::convert).collect(Collectors.toList());	
 	}
 	
 	

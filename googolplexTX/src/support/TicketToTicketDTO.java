@@ -4,6 +4,7 @@ package support;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.Ticket;
 import web.dto.TicketDTO;
@@ -40,11 +41,7 @@ public class TicketToTicketDTO {
 	}
 	
 	public static Collection<TicketDTO> convert(Collection<Ticket> tickets){
-		Collection<TicketDTO> retVal = new ArrayList<TicketDTO>();
-		for (Ticket ticket : tickets) {
-			retVal.add(convert(ticket));
-		}	
-		return retVal;
+		return tickets.stream().map(TicketToTicketDTO::convert).collect(Collectors.toList());
 	}
 	
 	
