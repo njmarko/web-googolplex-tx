@@ -19,6 +19,15 @@ public class UserSearchDTO {
 		super();
 	}
 
+	/**
+	 * @param firstName
+	 * @param surname
+	 * @param username
+	 * @param ascending
+	 * @param sortCriteria
+	 * @param userRole
+	 * @param customerType
+	 */
 	public UserSearchDTO(String firstName, String surname, String username, Boolean ascending, String sortCriteria,
 			String userRole, String customerType) {
 		super();
