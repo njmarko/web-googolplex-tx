@@ -99,10 +99,10 @@ public class UserServiceImpl implements UserService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<User>> critMap = new HashMap<String, Comparator<User>>();
-			critMap.put("firstName", Comparator.comparing(User::getFirstName));
-			critMap.put("lastName", Comparator.comparing(User::getLastName));
-			critMap.put("username", Comparator.comparing(User::getUsername));
-			critMap.put("points", (o1, o2) -> {
+			critMap.put("FIRST_NAME", Comparator.comparing(User::getFirstName));
+			critMap.put("LAST_NAME", Comparator.comparing(User::getLastName));
+			critMap.put("USERNAME", Comparator.comparing(User::getUsername));
+			critMap.put("POINTS", (o1, o2) -> {
 				if (!(o1 instanceof Customer) && !(o2 instanceof Customer)) {
 					return 0;
 				} else if (!(o1 instanceof Customer)) {
