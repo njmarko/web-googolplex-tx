@@ -77,14 +77,12 @@ Vue.component("salesman-manifestations", {
 			this.$router.push("/");
 		}
 
-		this.$nextTick(() => {
-			axios
-				.get('api/users/' + localUserData.username + '/manifestations')
-				.then(response => {
-					this.manifestations = response.data;
-					console.log(this.manifestations);
-				});
-		});
+		axios
+			.get('api/users/' + localUserData.username + '/manifestations')
+			.then(response => {
+				this.manifestations = response.data;
+				console.log(this.manifestations);
+			});
 
 
 

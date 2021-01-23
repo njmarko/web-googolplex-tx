@@ -43,8 +43,7 @@ const router = new VueRouter({
 var app = new Vue({
   router,
   el: '#webShop',
-  mounted() {
-
+  beforeMount(){
     let userData = JSON.parse(window.localStorage.getItem('user'));
     if (userData != null && userData.jwt != null) {
       axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests
@@ -63,6 +62,10 @@ var app = new Vue({
       }
       return Promise.reject(error);
     });
+  },
+  mounted() {
+
+    
 
     /*this.$nextTick(() => {
       this.initParticleJS()	

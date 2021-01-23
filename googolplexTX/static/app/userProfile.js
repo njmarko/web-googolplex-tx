@@ -142,17 +142,16 @@ Vue.component("user-profile", {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
 		console.log(localUserData);
 
-		this.$nextTick(() => {
-			axios
-				.get('api/users/' + localUserData.username)
-				.then(response => {
-					this.userData = response.data;
-					console.log(response.data.birthDate);
-					console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-					this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-					this.userData.gender = response.data.gender;
-				});
-		});
+		axios
+			.get('api/users/' + localUserData.username)
+			.then(response => {
+				this.userData = response.data;
+				console.log(response.data.birthDate);
+				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+				this.userData.gender = response.data.gender;
+			});
+		
 
 
 	},

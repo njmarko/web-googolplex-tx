@@ -119,29 +119,30 @@ Vue.component("edit-manif", {
 
         this.$nextTick(() => {
             this.$refs.focusMe.focus();
-            axios
-                .get('api/users/' + localUserData.username)
-                .then(response => {
-                    this.userData = response.data;
-                    console.log(response.data.birthDate);
-                    console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-                    this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-                    this.userData.gender = response.data.gender;
-                });
-            axios
-                .get("api/manifestation-type")
-                .then(response => {
-                    console.log(response.data);
-                    this.manifTypes = response.data;
-                    console.log()
-                });
-            axios
-                .get('api/manifestations/' + this.$route.params.id)
-                .then(response => {
-                    this.manifData = response.data;
-                    this.manifData.dateOfOccurence = new Date(response.data.dateOfOccurence).toISOString().substring(0, 10);
-                });
         });
+
+        axios
+            .get('api/users/' + localUserData.username)
+            .then(response => {
+                this.userData = response.data;
+                console.log(response.data.birthDate);
+                console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+                this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+                this.userData.gender = response.data.gender;
+            });
+        axios
+            .get("api/manifestation-type")
+            .then(response => {
+                console.log(response.data);
+                this.manifTypes = response.data;
+                console.log()
+            });
+        axios
+            .get('api/manifestations/' + this.$route.params.id)
+            .then(response => {
+                this.manifData = response.data;
+                this.manifData.dateOfOccurence = new Date(response.data.dateOfOccurence).toISOString().substring(0, 10);
+            });
 
     },
     methods: {
