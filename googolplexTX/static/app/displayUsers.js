@@ -31,6 +31,7 @@ Vue.component("display-users", {
 	
 						<div class="form-label-group">
 						<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
+							<option :value="undefined"></option>
 							<option value="FIRST_NAME">First Name</option>
 							<option value="LAST_NAME">Last Name</option>
 							<option value="USERNAME">Username</option>
@@ -40,11 +41,17 @@ Vue.component("display-users", {
 						</div>
 						
 						<div class="form-label-group">
-							<button>Ascending/Descending</button>						
+						<select name="inputAscending" id="inputAscending"  v-model="searchParams.ascending"	>
+							<option :value="undefined"></option>
+							<option value="true">Ascending</option>
+							<option value="false">Descending</option>
+						</select>
+						<label for="inputAscending">Direction</label>
 						</div>
 
 						<div class="form-label-group">
 						<select name="inputUserRole" id="inputUserRole"  v-model="searchParams.userRole"	>
+							<option :value="undefined"></option>
 							<option value="CUSTOMER">Customer</option>
 							<option value="SALESMAN">Salesman</option>
 							<option value="ADMIN">Admin</option>
@@ -52,8 +59,9 @@ Vue.component("display-users", {
 						<label for="inputUserRole">User Role</label>
 						</div>
 
-						<div class="form-label-group">
+						<div class="form-label-group" v-if="searchParams.userRole == 'CUSTOMER'">
 						<select name="inputUserType" id="inputUserType"  v-model="searchParams.customerType">
+							<option :value="undefined"></option>
                         	<option v-for='(value, key) in customerType' :value='value.name' > {{value.name}}</option>
 						</select>
 						<label for="inputUserType">User Type</label>
@@ -66,7 +74,7 @@ Vue.component("display-users", {
 								<button class="btn btn-primary" type="submit">Search</button>
 						</div>
 						<div class="form-label-group">
-								<button class="btn btn-warning pull-right">Clear</button>
+								<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
 						</div>
 					</div>
 				</form>
@@ -159,6 +167,22 @@ Vue.component("display-users", {
 						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
 					});
 				})
+		},
+		clearParameters: function (event) {
+				event.preventDefault();
+				this.searchParams = {};
+				console.log(this.searchParams)
+				let sp = this.searchParams;
+				this.$router.push({query: sp});
+				axios
+				.get('api/users', {params:sp})
+				.then(response => {
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
+				})
 		}
+
 	},
 });

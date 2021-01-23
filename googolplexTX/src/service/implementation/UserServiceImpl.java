@@ -99,9 +99,9 @@ public class UserServiceImpl implements UserService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<User>> critMap = new HashMap<String, Comparator<User>>();
-			critMap.put("FIRST_NAME", Comparator.comparing(User::getFirstName));
-			critMap.put("LAST_NAME", Comparator.comparing(User::getLastName));
-			critMap.put("USERNAME", Comparator.comparing(User::getUsername));
+			critMap.put("FIRST_NAME", (o1,o2)->{return o1.getFirstName().trim().compareToIgnoreCase(o2.getFirstName().trim());});
+			critMap.put("LAST_NAME", (o1,o2)->{return o1.getLastName().trim().compareToIgnoreCase(o2.getLastName().trim());});
+			critMap.put("USERNAME", (o1,o2)->{return o1.getUsername().trim().compareToIgnoreCase(o2.getUsername().trim());});
 			critMap.put("POINTS", (o1, o2) -> {
 				if (!(o1 instanceof Customer) && !(o2 instanceof Customer)) {
 					return 0;
@@ -113,9 +113,9 @@ public class UserServiceImpl implements UserService {
 					Customer c1 = (Customer) o1;
 					Customer c2 = (Customer) o2;
 					if (c1.getPoints() > c2.getPoints()) {
-						return -1;
-					} else if (c1.getPoints() < c2.getPoints()) {
 						return 1;
+					} else if (c1.getPoints() < c2.getPoints()) {
+						return -1;
 					} else {
 						return 0;
 					}
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
 			});
 
 			// If sortCriteria is wrong it doesn't sort the collection
-			Comparator<User> comp = critMap.get(searchParams.getSortCriteria().toLowerCase().trim());
+			Comparator<User> comp = critMap.get(searchParams.getSortCriteria().toUpperCase().trim());
 			if (comp != null) {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
 			}
