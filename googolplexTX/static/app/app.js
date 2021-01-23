@@ -65,8 +65,6 @@ var app = new Vue({
   },
   mounted() {
 
-    
-
     /*this.$nextTick(() => {
       this.initParticleJS()	
     })*/
