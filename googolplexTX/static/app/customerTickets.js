@@ -61,8 +61,11 @@ Vue.component("customer-tickets", {
 	,
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		console.log(JSON.parse(window.localStorage.getItem('user')).username);
-		let path ='api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets'; 
+		//null check in case the local storage was deleted
+		if (localUserData == null) {
+			localUserData = { username: "" };
+		}
+		let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
 		console.log(path);
 		axios
 			.get(path)
