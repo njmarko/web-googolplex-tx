@@ -2,8 +2,8 @@ Vue.component("display-users", {
 	data: function () {
 		return {
 			users: null,
-			searchParams:{},
-			customerType:{}
+			searchParams: {},
+			customerType: {}
 		}
 	},
 	template: ` 
@@ -14,23 +14,23 @@ Vue.component("display-users", {
 		
 		<div class="row">
 			<div class="col-md-12">
-				<form>
+				<form v-on:submit.prevent="searchUsers">
 					<div class="form-inline">
 						<div class="form-label-group">
-								<input placeholder="Username" id="findUsername" class="form-control" ref="focusMe"	>
+								<input placeholder="Username" id="findUsername" class="form-control" ref="focusMe" v-model="searchParams.username"	>
 								<label for="findUsername">Username</label>
 						</div>
 						<div class="form-label-group">
-								<input placeholder="First Name" id="findFirstName" class="form-control"	>
+								<input placeholder="First Name" id="findFirstName" class="form-control" v-model="searchParams.firstName"	>
 								<label for="findFirstName">First Name</label>
 						</div>
 						<div class="form-label-group">
-								<input placeholder="Last Name" id="findLastName" class="form-control" >
+								<input placeholder="Last Name" id="findLastName" class="form-control" v-model="searchParams.lastName"	>
 								<label for="findLastName">Last Name</label> 
 						</div>
 	
 						<div class="form-label-group">
-						<select name="inputSortCriteria" id="inputSortCriteria"  >
+						<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
 							<option value="FIRST_NAME">First Name</option>
 							<option value="LAST_NAME">Last Name</option>
 							<option value="USERNAME">Username</option>
@@ -44,7 +44,7 @@ Vue.component("display-users", {
 						</div>
 
 						<div class="form-label-group">
-						<select name="inputUserRole" id="inputUserRole"  >
+						<select name="inputUserRole" id="inputUserRole"  v-model="searchParams.userRole"	>
 							<option value="CUSTOMER">Customer</option>
 							<option value="SALESMAN">Salesman</option>
 							<option value="ADMIN">Admin</option>
@@ -53,7 +53,7 @@ Vue.component("display-users", {
 						</div>
 
 						<div class="form-label-group">
-						<select name="inputUserType" id="inputUserType"  >
+						<select name="inputUserType" id="inputUserType"  v-model="searchParams.customerType">
                         	<option v-for='(value, key) in customerType' :value='value.name' > {{value.name}}</option>
 						</select>
 						<label for="inputUserType">User Type</label>
@@ -63,7 +63,7 @@ Vue.component("display-users", {
 						</div>
 
 						<div class="form-label-group">
-								<button class="btn btn-primary">Search</button>
+								<button class="btn btn-primary" type="submit">Search</button>
 						</div>
 						<div class="form-label-group">
 								<button class="btn btn-warning pull-right">Clear</button>
@@ -124,8 +124,10 @@ Vue.component("display-users", {
 	,
 	mounted() {
 		this.$nextTick(() => {
+			console.log(this.$route.query);
+			this.searchParams = this.$route.query;
 			axios
-				.get('api/users')
+				.get('api/users', {params:this.searchParams})
 				.then(response => {
 					this.users = response.data;
 					this.users.forEach(element => {
@@ -138,12 +140,25 @@ Vue.component("display-users", {
 				.then(response => {
 					this.customerType = response.data;
 					console.log(this.customerType);
-				});		
-		
+				});
+
 		});
 
 
 	},
 	methods: {
+		searchUsers: function () {
+				console.log(this.searchParams)
+				let sp = this.searchParams;
+				this.$router.push({query: sp});
+				axios
+				.get('api/users', {params:sp})
+				.then(response => {
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
+				})
+		}
 	},
 });
