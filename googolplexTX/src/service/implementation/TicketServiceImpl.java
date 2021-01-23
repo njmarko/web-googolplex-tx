@@ -170,9 +170,9 @@ public class TicketServiceImpl implements TicketService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<Ticket>> critMap = new HashMap<String, Comparator<Ticket>>();
-			critMap.put("name", Comparator.comparing( x -> ((Ticket) x).getManifestation().getName()));
-			critMap.put("price", Comparator.comparing(Ticket::getPrice));
-			critMap.put("date", Comparator.comparing(Ticket::getDateOfManifestation));
+			critMap.put("MANIF_NAME", Comparator.comparing( x -> ((Ticket) x).getManifestation().getName()));
+			critMap.put("TICKET_PRICE", Comparator.comparing(Ticket::getPrice));
+			critMap.put("MANIF_DATE", Comparator.comparing(Ticket::getDateOfManifestation));
 			// TODO add radius search for location
 
 			// If sortCriteria is wrong it doesn't sort the collection

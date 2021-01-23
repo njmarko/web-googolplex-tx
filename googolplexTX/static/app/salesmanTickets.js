@@ -4,6 +4,9 @@ Vue.component("salesman-tickets", {
 			error: {},
 			tickets: {},
 			userData: {},
+			customerType: {},
+			searchParams: {},
+			localUserData: {},
 			saveInfo: null
 		}
 	},
@@ -18,8 +21,73 @@ Vue.component("salesman-tickets", {
 			<strong>Success</strong> {{saveInfo}}
 		</div>
 
-		
-		<h1 class="text-center">User Profile <span class="badge badge-danger">{{userData.userRole}}</span></h1>
+		<div class="row">
+				<div class="col-md-12">
+					<form v-on:submit.prevent="searchTickets">
+						<div class="form-inline">
+							<div class="form-label-group">
+									<input placeholder="Manifestation" id="findManifestation" class="form-control" ref="focusMe" v-model="searchParams.manifestationName"	>
+									<label for="findManifestation">Manifestation Name</label>
+							</div>
+							<div class="form-label-group">
+									<input type="number" step="any" placeholder="MIN PRICE" id="findMinPrice" class="form-control" v-model="searchParams.minPrice"	>
+									<label for="findMinPrice">Min Price</label>
+							</div>	
+							<div class="form-label-group">
+									<input type="number" step="any" placeholder="MAX PRICE" id="findMaxPrice" class="form-control" v-model="searchParams.maxPrice"	>
+									<label for="findMaxPrice">Max Price</label> 
+							</div>
+							<div class="form-label-group">
+									<input type="date"  placeholder="FROM" id="findBeginDate" class="form-control" v-model="searchParams.endDate"	>
+									<label for="findBeginDate">Begin Date</label> 
+							</div>
+
+							<div class="form-label-group">
+									<input type="date"  placeholder="TO" id="findEndDate" class="form-control" v-model="searchParams.endDate"	>
+									<label for="findEndDate">End Date</label> 
+							</div>
+
+							<div class="form-label-group">
+							<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
+								<option :value="undefined"></option>
+								<option value="MANIF_NAME">Manifestation Name</option>
+								<option value="TICKET_PRICE">Ticket Price</option>
+								<option value="MANIF_DATE">Manifestation Date</option>
+							</select>
+							<label for="inputSortCriteria">Sort Criteria</label>
+							</div>
+
+							<div class="form-label-group">
+							<select name="inputAscending" id="inputAscending"  v-model="searchParams.ascending"	>
+								<option :value="undefined"></option>
+								<option value="true">Ascending</option>
+								<option value="false">Descending</option>
+							</select>
+							<label for="inputAscending">Direction</label>
+							</div>
+
+							<div class="form-label-group">
+							<select name="input" id="inputTicketType"  v-model="searchParams.ticketType">
+								<option :value="undefined"></option>
+								<option value="VIP">Vip</option>
+								<option value="REGULAR">Regular</option>
+								<option value="FAN_PIT">Fan Pit</option>
+							</select>
+							<label for="inputTicketType">Ticket Type</label>
+							</div>
+
+
+							<div class="form-label-group">
+									<button class="btn btn-primary" type="submit">Search</button>
+							</div>
+							<div class="form-label-group">
+									<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
 
 		
 		<div v-for="t in tickets">
@@ -61,51 +129,56 @@ Vue.component("salesman-tickets", {
 	,
 	mounted() {
 
-
-
-		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null) {
-			this.$router.push("/");
+		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
+		//null check in case the local storage was deleted
+		if (this.localUserData == null) {
+			this.localUserData = { username: "" };
 		}
-		axios
-			.get('api/users/' + localUserData.username + '/manif-tickets')
-			.then(response => {
-				this.tickets = response.data;
-				for (let index = 0; index < this.tickets.length; index++) {
-					this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
-				}
-				console.log(this.tickets);
-			});
 
+		this.$nextTick(() => {
+			this.searchParams = this.$route.query;
+			this.$refs.focusMe.focus();
+			axios
+				.get('api/users/' + this.localUserData.username + '/manif-tickets')
+				.then(response => {
+					this.tickets = response.data;
+					for (let index = 0; index < this.tickets.length; index++) {
+						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+					}
+				});
+
+		});
 
 	},
 	methods: {
-
-		/*updateUser : function(){
-			let localUserData = JSON.parse(window.localStorage.getItem('user'));
-			var userData = {
-				username: this.userData.username, 
-				firstName: this.userData.firstName, 
-				lastName: this.userData.lastName, 
-				gender: this.userData.gender, 
-				birthDate: new Date(this.userData.birthDate).getTime()}
+		loadData: function (response) {
+			this.tickets = response.data;
+			for (let index = 0; index < this.tickets.length; index++) {
+				this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+			}
+		},
+		searchTickets: function (event) {
+			event.preventDefault();
+			this.$router.push({ query: {} });
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
 			axios
-				.patch('api/users/' + localUserData.username  , userData)
+				.get('api/users/' + this.localUserData.username + '/manif-tickets', { params: sp })
 				.then(response => {
-					this.saveInfo = "Changes successfully saved";
+					this.loadData(response);
 				})
-				.catch(function (error) {
-					if (error.response) {
-						console.log(error.response.data);
-					} else if (error.request) {
-						console.log(error.request);
-					} else {
-						console.log('Error', error.message);
-					}
-					console.log("error.config");
-					console.log(error.config);
-				});
-		}*/
+		},
+		clearParameters: function (event) {
+			event.preventDefault();
+			this.searchParams = {};
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
+			axios
+				.get('api/users/' + this.localUserData.username + '/manif-tickets', { params: sp })
+				.then(response => {
+					this.loadData(response);
+				})
+		}
 
 	},
 

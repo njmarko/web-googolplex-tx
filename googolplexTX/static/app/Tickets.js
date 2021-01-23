@@ -4,6 +4,7 @@ Vue.component("tickets", {
 			error: {},
 			tickets: {},
 			userData: {},
+			searchParams: {},
 			saveInfo: null
 		}
 	},
@@ -17,6 +18,68 @@ Vue.component("tickets", {
 			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
 			<strong>Success</strong> {{saveInfo}}
 		</div>
+
+		<div class="row">
+				<div class="col-md-12">
+					<form v-on:submit.prevent="searchTickets">
+						<div class="form-inline">
+							<div class="form-label-group">
+									<input placeholder="Manifestation" id="findManifestation" class="form-control" ref="focusMe" v-model="searchParams.manifestationName"	>
+									<label for="findManifestation">Manifestation Name</label>
+							</div>
+							<div class="form-label-group">
+									<input type="number" step="any" placeholder="OD" id="findMinPrice" class="form-control" v-model="searchParams.minPrice"	>
+									<label for="findMinPrice">OD</label>
+							</div>
+							<div class="form-label-group">
+									<input placeholder="Last Name" id="findLastName" class="form-control" v-model="searchParams.lastName"	>
+									<label for="findLastName">Last Name</label> 
+							</div>
+
+							<div class="form-label-group">
+							<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
+								<option :value="undefined"></option>
+								<option value="FIRST_NAME">First Name</option>
+								<option value="LAST_NAME">Last Name</option>
+								<option value="USERNAME">Username</option>
+								<option value="POINTS">Points</option>
+							</select>
+							<label for="inputSortCriteria">Sort Criteria</label>
+							</div>
+
+							<div class="form-label-group">
+							<select name="inputAscending" id="inputAscending"  v-model="searchParams.ascending"	>
+								<option :value="undefined"></option>
+								<option value="true">Ascending</option>
+								<option value="false">Descending</option>
+							</select>
+							<label for="inputAscending">Direction</label>
+							</div>
+
+							<div class="form-label-group">
+							<select name="inputUserRole" id="inputUserRole"  v-model="searchParams.userRole"	>
+								<option :value="undefined"></option>
+								<option value="CUSTOMER">Customer</option>
+								<option value="SALESMAN">Salesman</option>
+								<option value="ADMIN">Admin</option>
+							</select>
+							<label for="inputUserRole">User Role</label>
+							</div>
+
+							<div class="form-label-group">
+							</div>
+
+							<div class="form-label-group">
+									<button class="btn btn-primary" type="submit">Search</button>
+							</div>
+							<div class="form-label-group">
+									<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
 
 		
 		<h1 class="text-center">Tickets</h1>
@@ -94,35 +157,53 @@ Vue.component("tickets", {
 					console.log(this.tickets);
 				});
 		}
+		this.$nextTick(() => {
+			this.searchParams = this.$route.query;
+			axios
+				.get('api/users', { params: this.searchParams })
+				.then(response => {
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
+				})
+			this.$refs.focusMe.focus();
+
+		});
+
 
 	},
 	methods: {
 
-		/*updateUser : function(){
-			let localUserData = JSON.parse(window.localStorage.getItem('user'));
-			var userData = {
-				username: this.userData.username, 
-				firstName: this.userData.firstName, 
-				lastName: this.userData.lastName, 
-				gender: this.userData.gender, 
-				birthDate: new Date(this.userData.birthDate).getTime()}
+		searchTickets: function (event) {
+			event.preventDefault();
+			this.$router.push({ query: {} });
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
 			axios
-				.patch('api/users/' + localUserData.username  , userData)
+				.get('api/users', { params: sp })
 				.then(response => {
-					this.saveInfo = "Changes successfully saved";
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
 				})
-				.catch(function (error) {
-					if (error.response) {
-						console.log(error.response.data);
-					} else if (error.request) {
-						console.log(error.request);
-					} else {
-						console.log('Error', error.message);
-					}
-					console.log("error.config");
-					console.log(error.config);
-				});
-		}*/
+		},
+		clearParameters: function (event) {
+			event.preventDefault();
+			this.searchParams = {};
+			let sp = this.searchParams;
+			this.$router.push({ query: sp });
+			axios
+				.get('api/users', { params: sp })
+				.then(response => {
+					this.users = response.data;
+					this.users.forEach(element => {
+						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+					});
+				})
+		}
+
 
 	},
 
