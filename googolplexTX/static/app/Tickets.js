@@ -1,4 +1,4 @@
-Vue.component("customer-tickets", {
+Vue.component("tickets", {
 	data: function () {
 		return {
 			error: {},
@@ -19,7 +19,7 @@ Vue.component("customer-tickets", {
 		</div>
 
 		
-		<h1 class="text-center">My Tickets<span class="badge badge-danger">{{userData.userRole}}</span></h1>
+		<h1 class="text-center">Tickets</h1>
 
 		
 		<div v-for="t in tickets">
@@ -43,7 +43,12 @@ Vue.component("customer-tickets", {
 					</tr>
 					<tr>
 						<td>Manifestation</td>
-						<td>{{t.manifestation}}</td>
+						<td>{{t.manifestationName}}</td>
+					</tr>
+
+					<tr>
+						<td>Customer</td>
+						<td>{{t.cutomerFullName}}</td>
 					</tr>
 					<tr>
 						<td>Ticket Type</td>
@@ -65,17 +70,30 @@ Vue.component("customer-tickets", {
 		if (localUserData == null) {
 			localUserData = { username: "" };
 		}
-		let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
-		console.log(path);
-		axios
-			.get(path)
-			.then(response => {
-				this.tickets = response.data;
-				for (let index = 0; index < this.tickets.length; index++) {
-					this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
-				}
-				console.log(this.tickets);
-			});
+		if (localUserData != null && localUserData.userRole == 'ADMIN') {
+			let path = 'api/tickets';
+			axios
+				.get(path)
+				.then(response => {
+					this.tickets = response.data;
+					for (let index = 0; index < this.tickets.length; index++) {
+						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+					}
+					console.log(this.tickets);
+				});
+		}
+		else {
+			let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
+			axios
+				.get(path)
+				.then(response => {
+					this.tickets = response.data;
+					for (let index = 0; index < this.tickets.length; index++) {
+						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+					}
+					console.log(this.tickets);
+				});
+		}
 
 	},
 	methods: {

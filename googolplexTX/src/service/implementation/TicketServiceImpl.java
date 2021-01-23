@@ -104,8 +104,14 @@ public class TicketServiceImpl implements TicketService {
 	}
 	
 	@Override
-	public Collection<Ticket> searchByUser(String key, TicketSearchDTO searchParams) {
-		Collection<Ticket> entities = this.findAllByUser(key);
+	public Collection<Ticket> search(String username, TicketSearchDTO searchParams) {
+		Collection<Ticket> entities;
+		if (username == null) {
+			entities = this.findAll();
+		}else {
+			entities = this.findAllByUser(username);
+		}
+		 
 
 		
 		

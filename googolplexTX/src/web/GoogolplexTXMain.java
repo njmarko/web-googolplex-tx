@@ -190,6 +190,10 @@ public class GoogolplexTXMain {
 			path("/manifestation-type",()->{
 				get("",manifestationControler.findAllManifestationTypes);
 			});
+			
+			path("/tickets",()->{
+				get("",ticketController.findAllTickets); // TODO req admin
+			});
 		});
 
 
