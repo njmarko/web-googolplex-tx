@@ -347,4 +347,11 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	@Override
+	public Collection<CustomerType> findAllCustomerTypes() {
+		return this.custTypeDAO.findAll().stream().filter((ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+	}
+
 }

@@ -1,7 +1,9 @@
 Vue.component("display-users", {
 	data: function () {
 		return {
-			users: null
+			users: null,
+			searchParams:{},
+			customerType:{}
 		}
 	},
 	template: ` 
@@ -10,6 +12,66 @@ Vue.component("display-users", {
 	<div id="top" class="container" >
 		<br>
 		
+		<div class="row">
+			<div class="col-md-12">
+				<form>
+					<div class="form-inline">
+						<div class="form-label-group">
+								<input placeholder="Username" id="findUsername" class="form-control" ref="focusMe"	>
+								<label for="findUsername">Username</label>
+						</div>
+						<div class="form-label-group">
+								<input placeholder="First Name" id="findFirstName" class="form-control"	>
+								<label for="findFirstName">First Name</label>
+						</div>
+						<div class="form-label-group">
+								<input placeholder="Last Name" id="findLastName" class="form-control" >
+								<label for="findLastName">Last Name</label> 
+						</div>
+	
+						<div class="form-label-group">
+						<select name="inputSortCriteria" id="inputSortCriteria"  >
+							<option value="FIRST_NAME">First Name</option>
+							<option value="LAST_NAME">Last Name</option>
+							<option value="USERNAME">Username</option>
+							<option value="POINTS">Points</option>
+						</select>
+						<label for="inputSortCriteria">Sort Criteria</label>
+						</div>
+						
+						<div class="form-label-group">
+							<button>Ascending/Descending</button>						
+						</div>
+
+						<div class="form-label-group">
+						<select name="inputUserRole" id="inputUserRole"  >
+							<option value="CUSTOMER">Customer</option>
+							<option value="SALESMAN">Salesman</option>
+							<option value="ADMIN">Admin</option>
+						</select>
+						<label for="inputUserRole">User Role</label>
+						</div>
+
+						<div class="form-label-group">
+						<select name="inputUserType" id="inputUserType"  >
+                        	<option v-for='(value, key) in customerType' :value='value.name' > {{value.name}}</option>
+						</select>
+						<label for="inputUserType">User Type</label>
+						</div>
+	
+						<div class="form-label-group">
+						</div>
+
+						<div class="form-label-group">
+								<button class="btn btn-primary">Search</button>
+						</div>
+						<div class="form-label-group">
+								<button class="btn btn-warning pull-right">Clear</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 
 		
 		<h1 class="text-center">Registered users</h1>
@@ -60,8 +122,6 @@ Vue.component("display-users", {
 </div>		  
 `
 	,
-	methods: {
-	},
 	mounted() {
 		this.$nextTick(() => {
 			axios
@@ -72,8 +132,18 @@ Vue.component("display-users", {
 						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
 					});
 				})
+			this.$refs.focusMe.focus();
+			axios
+				.get("api/customer-type")
+				.then(response => {
+					this.customerType = response.data;
+					console.log(this.customerType);
+				});		
+		
 		});
 
 
+	},
+	methods: {
 	},
 });

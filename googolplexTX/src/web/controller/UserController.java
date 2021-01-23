@@ -7,6 +7,7 @@ import spark.Response;
 import spark.Route;
 import spark.Session;
 import spark.utils.StringUtils;
+import support.CustTypeToCustTypeDTO;
 import support.JsonAdapter;
 import support.UserToUserDTO;
 import spark.Filter;
@@ -21,6 +22,7 @@ import static spark.Spark.*;
 
 import java.net.HttpURLConnection;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import model.CustomerType;
 import model.Manifestation;
 import model.User;
 import model.enumerations.UserRole;
@@ -48,7 +51,7 @@ public class UserController {
 	public UserController(UserService uService) {
 		super();
 		this.userService = uService;
-		this.g = JsonAdapter.userSerializationToFile();
+		this.g = new Gson();
 		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	}
 
@@ -296,27 +299,42 @@ public class UserController {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// No login needed for this request.
 			// TODO add pagination
 			
 			authenticateSalesmanOrAdmin.handle(req, res);
 			
 			res.type("application/json");
 			String idu = req.params("idu");
-		    
-			
-			// TODO remove debug print message
+		
 		
 			Collection<User> foundEntities = userService.findUsersThatBoughtFromSalesman(idu);
-			if (foundEntities==null || foundEntities.isEmpty()) {
-				halt(HttpStatus.NOT_FOUND_404,"No users found");
+			if (foundEntities==null) {
+				foundEntities = new ArrayList<User>();
+			}
+			
+			return g.toJson(UserToUserDTO.convert(foundEntities));
+		}
+	};
+	
+	public final Route findAllCustomerTypes = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");	
+			authenticateUser.handle(req, res);
+		
+			Collection<CustomerType> foundEntities = userService.findAllCustomerTypes();
+			if (foundEntities==null) {
+				foundEntities = new ArrayList<CustomerType>();
 			}
 			
 			// TODO consider using an adapter
 			// TODO use DTO objects
-			return g.toJson(foundEntities);
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
 		}
 	};
+	
 	
 	
 
