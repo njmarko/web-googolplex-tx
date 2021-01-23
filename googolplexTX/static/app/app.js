@@ -45,7 +45,6 @@ var app = new Vue({
   el: '#webShop',
   mounted() {
 
-    alert("my burer");
     let userData = JSON.parse(window.localStorage.getItem('user'));
     if (userData != null && userData.jwt != null) {
       axios.defaults.headers.common['Authorization'] = "Bearer " + JSON.parse(window.localStorage.getItem('user')).jwt; // for all requests
