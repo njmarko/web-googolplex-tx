@@ -110,10 +110,7 @@ public class TicketServiceImpl implements TicketService {
 			entities = this.findAll();
 		}else {
 			entities = this.findAllByUser(username);
-		}
-		 
-
-		
+		}	
 		
 		if (searchParams.getManifestationName() != null) {
 			entities = entities.stream().filter((ent) -> {
