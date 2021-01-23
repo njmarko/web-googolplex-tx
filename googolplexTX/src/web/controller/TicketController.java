@@ -114,7 +114,39 @@ public class TicketController {
 
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
 
-			Collection<Ticket> foundEntities = ticketService.searchByUser(user, searchParams);
+			Collection<Ticket> foundEntities = ticketService.search(user, searchParams);
+
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return gson.toJson(TicketToTicketDTO.convert(foundEntities));
+		}
+	};
+	
+	
+	public final Route findAllTickets = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// TODO add DTO for search and filter parameters. Call search or find all
+			// function depending on parameters
+			// TODO add pagination
+			res.type("application/json");
+			User loggedIn = userController.getAuthedUser(req);
+			System.out.println(loggedIn);
+			userController.authenticateAdmin.handle(req, res);
+			
+			final Map<String, String> queryParams = new HashMap<>();
+			req.queryMap().toMap().forEach((k, v) -> {
+				queryParams.put(k, v[0]);
+			});
+			String user = req.params("idu");
+			System.out.println("User: " + user);
+
+			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
+
+			Collection<Ticket> foundEntities = ticketService.search(null, searchParams);
 
 			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404);
