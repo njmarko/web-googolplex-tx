@@ -4,6 +4,7 @@ Vue.component("manifestation-view", {
 			manifestation: null,
 			tickets: null,
 			comments: null,
+			locationString: "",
 			userData: {}
 		}
 	},
@@ -56,8 +57,13 @@ Vue.component("manifestation-view", {
 						<td>Location</td>
 						<td>{{manifestation.location.city}}</td>
 					</tr>
-					<tr v-if="userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username))">
+					<tr>
 						<td colspan="2">
+							<map-component :inpLongitude="manifestation.location.longitude" :inpLatitude="manifestation.location.latitude" :readonly=true :locString="locationString" ></map-component>
+						</td>
+					</tr>
+					<tr v-if="userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username))">
+						<td colspan="2" >
 							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
 						</td>
 					</tr>
@@ -164,6 +170,7 @@ Vue.component("manifestation-view", {
 
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
+		var self = this;
 
 		axios
 			.get('api/users/' + localUserData.username)
@@ -178,6 +185,11 @@ Vue.component("manifestation-view", {
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
 				this.manifestation = response.data;
+				this.locationString = response.data.location.city + ", " + response.data.location.street + ", " + response.data.location.number + ", " + response.data.location.zipCode;
+
+				this.$nextTick(() => {
+					self.sendMapCallback();
+                });
 			});
 
 		axios
@@ -202,7 +214,15 @@ Vue.component("manifestation-view", {
 		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);
 
-		}
+		},
+
+		sendMapCallback() {
+            var current_location = {}
+            current_location.longitude = this.manifestation.location.longitude;
+			current_location.latitude = this.manifestation.location.latitude;
+            this.$root.$emit('mapCallback', current_location);
+        },
+
 
 	},
 

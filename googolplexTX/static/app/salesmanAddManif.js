@@ -64,6 +64,7 @@ Vue.component("salesman-add-manif", {
 						<br class="my-4">
 						
 						
+						
 						<div class="form-label-group">
 						<input type="number" step="any" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
 						<label for="inputLongitude">Longitude</label>
@@ -74,12 +75,6 @@ Vue.component("salesman-add-manif", {
 						<label for="inputLatitude">Latitude</label>
 						</div>
 
-
-						<div class="form-label-group">
-						<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
-						<label for="inputNumber">Number</label>
-						</div>
-
 						<div class="form-label-group">
 						<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.location.city" required >
 						<label for="inputCity">City</label>
@@ -88,6 +83,11 @@ Vue.component("salesman-add-manif", {
 						<div class="form-label-group">
 						<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.location.street" required >
 						<label for="inputStreet">Street</label>
+						</div>
+
+						<div class="form-label-group">
+							<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
+							<label for="inputNumber">Number</label>
 						</div>
 
 						<div class="form-label-group">
@@ -102,8 +102,8 @@ Vue.component("salesman-add-manif", {
 
 				</div>
 			</div>
-			<div class="col-md-6">
-				<div class="card my-5">
+			<div class="col-md-5 col-lg-7 mx-auto">
+				<div class="card my-5 sticky-map">
 					<map-component></map-component>
 
 				</div>
@@ -143,11 +143,16 @@ Vue.component("salesman-add-manif", {
 		},
 
 		updateAddress(address) {
+			var isEmpty = address.address == undefined
+			if (!isEmpty){
 
-			this.manifData.location.city = address.address.city;
-			this.manifData.location.street = address.address.road;
-			this.manifData.location.zipCode = address.address.postcode;
-			this.$forceUpdate();
+				this.manifData.location.number = address.address.house_number;
+				this.manifData.location.city = address.address.city;
+				this.manifData.location.street = address.address.road;
+				this.manifData.location.zipCode = address.address.postcode;
+				this.$forceUpdate();
+			}
+
 		},
 
 		removeSaveInfo(info) {

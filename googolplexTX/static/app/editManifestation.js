@@ -25,96 +25,104 @@ Vue.component("edit-manif", {
 		<br />	
 		<div class="row">
 			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-			<div class="card card-signin my-5">
-				<div class="card-body">
-				<h5 class="card-title text-center">Edit Manifestation</h5>
-				<form class="form-signin" v-on:submit.prevent="editManifestation">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">Edit Manifestation</h5>
+                    <form class="form-signin" v-on:submit.prevent="editManifestation">
 
-                    <div v-if="userData && userData.userRole == 'ADMIN'" class="form-label-group" >
-                    <select name="inputStatus" id="inputStatus" v-model="manifData.status" required>
-                        <option value='ACTIVE' >ACTIVE</option>
-                        <option value='INACTIVE' >INACTIVE</option>
-					</select>
-					<label for="inputManifType">Manifestation Type</label>
+                        <div v-if="userData && userData.userRole == 'ADMIN'" class="form-label-group" >
+                        <select name="inputStatus" id="inputStatus" v-model="manifData.status" required>
+                            <option value='ACTIVE' >ACTIVE</option>
+                            <option value='INACTIVE' >INACTIVE</option>
+                        </select>
+                        <label for="inputManifType">Manifestation Type</label>
 
+                        </div>
+                        <div class="form-label-group">
+                        <input type="text" id="inputName" class="form-control" placeholder="Name" v-model="manifData.name" required ref='focusMe'>
+                        <label for="inputName">Name</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="number" step='1' id="inputAvailableSeats" class="form-control" placeholder="Available Seats" v-model="manifData.availableSeats" required>
+                        <label for="inputAvailableSeats">Available Seats</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="date" id="inputDateOfOccurence" class="form-control" placeholder="Date of Occurence" v-model="manifData.dateOfOccurence" required autofocus>
+                        <label for="inputDateOfOccurence">Date of Occurence</label>
+                        </div>
+                        
+                        <div class="form-label-group">
+                        <input type="number" step="any" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
+                        <label for="inputRegularPrice">Regular Price</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <select name="inputManifType" id="inputManifType" v-model="manifData.manifestationType" required>
+                            <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
+                        </select>
+                        <label for="inputManifType">Manifestation Type</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="file" id="inputPoster" class="form-control" accept="image/*">
+                        <label for="inputPoster">Poster</label>
+                        </div>
+
+                        <br class="my-4">
+                        
+                        
+                        <div class="form-label-group">
+                        <input type="number" v-on:change="sendMapCallback" step="any" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
+                        <label for="inputLongitude">Longitude</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="number" v-on:change="sendMapCallback" step="any" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
+                        <label for="inputLatitude">Latitude</label>
+                        </div>
+
+
+                        <div class="form-label-group">
+                        <input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
+                        <label for="inputNumber">Number</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.location.city" required >
+                        <label for="inputCity">City</label>
+                        </div>
+                        
+                        <div class="form-label-group">
+                        <input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.location.street" required >
+                        <label for="inputStreet">Street</label>
+                        </div>
+
+                        <div class="form-label-group">
+                        <input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.location.zipCode" required>
+                        <label for="inputZipCode">Zip Code</label>
+                        </div>
+
+                        <input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="SAVE MANIFESTATION" />
+
+                    </form>
                     </div>
-					<div class="form-label-group">
-					<input type="text" id="inputName" class="form-control" placeholder="Name" v-model="manifData.name" required ref='focusMe'>
-					<label for="inputName">Name</label>
-					</div>
+                </div>
+            </div>
+            <div class="col-md-5 col-lg-7 mx-auto">
+                <div class="card my-5 sticky-map">
+                    <map-component></map-component>
 
-					<div class="form-label-group">
-					<input type="number" step='1' id="inputAvailableSeats" class="form-control" placeholder="Available Seats" v-model="manifData.availableSeats" required>
-					<label for="inputAvailableSeats">Available Seats</label>
-					</div>
-
-					<div class="form-label-group">
-					<input type="date" id="inputDateOfOccurence" class="form-control" placeholder="Date of Occurence" v-model="manifData.dateOfOccurence" required autofocus>
-                    <label for="inputDateOfOccurence">Date of Occurence</label>
-                    </div>
-                    
-					<div class="form-label-group">
-					<input type="number" step="any" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
-					<label for="inputRegularPrice">Regular Price</label>
-                    </div>
-
-					<div class="form-label-group">
-                    <select name="inputManifType" id="inputManifType" v-model="manifData.manifestationType" required>
-                        <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
-					</select>
-					<label for="inputManifType">Manifestation Type</label>
-                    </div>
-
-					<div class="form-label-group">
-					<input type="file" id="inputPoster" class="form-control" accept="image/*">
-					<label for="inputPoster">Poster</label>
-                    </div>
-
-                    <br class="my-4">
-                    
-                    
-					<div class="form-label-group">
-					<input type="number" step="any" id="inputLongitude" class="form-control" placeholder="Longitude" v-model="manifData.location.longitude" required>
-					<label for="inputLongitude">Longitude</label>
-                    </div>
-
-					<div class="form-label-group">
-					<input type="number" step="any" id="inputLatitude" class="form-control" placeholder="Latitude" v-model="manifData.location.latitude" required>
-					<label for="inputLatitude">Latitude</label>
-                    </div>
-
-
-					<div class="form-label-group">
-					<input type="text" id="inputNumber" class="form-control" placeholder="Number" v-model="manifData.location.number" required >
-					<label for="inputNumber">Number</label>
-					</div>
-
-					<div class="form-label-group">
-					<input type="text" id="inputCity" class="form-control" placeholder="City" v-model="manifData.location.city" required >
-					<label for="inputCity">City</label>
-                    </div>
-                    
-					<div class="form-label-group">
-					<input type="text" id="inputStreet" class="form-control" placeholder="Street" v-model="manifData.location.street" required >
-					<label for="inputStreet">Street</label>
-                    </div>
-
-					<div class="form-label-group">
-					<input type="number" id="inputZipCode" class="form-control" placeholder="Zip Code" v-model="manifData.location.zipCode" required>
-					<label for="inputZipCode">Zip Code</label>
-                    </div>
-
-					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="SAVE MANIFESTATION" />
-
-				</form>
-				</div>
-			</div>
-			</div>
+                </div>
+            </div>
+            
 		</div>
-		</div>
+	</div>
 `
     ,
     mounted() {
+        var self = this;
         let localUserData = JSON.parse(window.localStorage.getItem('user'));
 
         this.$nextTick(() => {
@@ -142,10 +150,53 @@ Vue.component("edit-manif", {
             .then(response => {
                 this.manifData = response.data;
                 this.manifData.dateOfOccurence = new Date(response.data.dateOfOccurence).toISOString().substring(0, 10);
+                this.$nextTick(() => {
+                    self.sendMapCallback();
+                });
+                
             });
 
+        this.$root.$on('mapLocation', (text) => {
+            this.updateLocation(text);
+        });
+
+        this.$root.$on('mapAddress', (text) => {
+            this.updateAddress(text);
+        });
+
+
     },
+
+
+        
     methods: {
+
+        sendMapCallback() {
+            var current_location = {}
+            current_location.longitude = this.manifData.location.longitude;
+            current_location.latitude = this.manifData.location.latitude;
+            this.$root.$emit('mapCallback', current_location);
+        },
+
+        updateLocation(location) {
+			this.manifData.location.longitude = location.longitude;
+			this.manifData.location.latitude = location.latitude;
+			this.$forceUpdate();
+		},
+
+		updateAddress(address) {
+			var isEmpty = address.address == undefined
+			if (!isEmpty){
+
+				this.manifData.location.number = address.address.house_number;
+				this.manifData.location.city = address.address.city;
+				this.manifData.location.street = address.address.road;
+				this.manifData.location.zipCode = address.address.postcode;
+				this.$forceUpdate();
+			}
+
+		},
+
         removeSaveInfo(info) {
             this.saveInfo.pop();
         },
