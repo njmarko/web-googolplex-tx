@@ -145,7 +145,13 @@ Vue.component("salesman-tickets", {
 					for (let index = 0; index < this.tickets.length; index++) {
 						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
 					}
-				});
+
+				})
+				.catch(function (error) {
+					if (error.response) {
+						console.log(error.response.data);
+						
+				}});
 
 		});
 
