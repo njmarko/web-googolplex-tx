@@ -143,8 +143,6 @@ public class TicketController {
 			req.queryMap().toMap().forEach((k, v) -> {
 				queryParams.put(k, v[0]);
 			});
-			String user = req.params("idu");
-			System.out.println("User: " + user);
 
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
 

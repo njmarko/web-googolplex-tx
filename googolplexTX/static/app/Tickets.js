@@ -5,6 +5,7 @@ Vue.component("tickets", {
 			tickets: {},
 			userData: {},
 			searchParams: {},
+			localUserData: {},
 			saveInfo: null
 		}
 	},
@@ -18,7 +19,6 @@ Vue.component("tickets", {
 			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
 			<strong>Success</strong> {{saveInfo}}
 		</div>
-
 		<div class="row">
 				<div class="col-md-12">
 					<form v-on:submit.prevent="searchTickets">
@@ -28,21 +28,29 @@ Vue.component("tickets", {
 									<label for="findManifestation">Manifestation Name</label>
 							</div>
 							<div class="form-label-group">
-									<input type="number" step="any" placeholder="OD" id="findMinPrice" class="form-control" v-model="searchParams.minPrice"	>
-									<label for="findMinPrice">OD</label>
+									<input type="number" step="any" placeholder="MIN PRICE" id="findMinPrice" class="form-control" v-model="searchParams.minPrice"	>
+									<label for="findMinPrice">Min Price</label>
+							</div>	
+							<div class="form-label-group">
+									<input type="number" step="any" placeholder="MAX PRICE" id="findMaxPrice" class="form-control" v-model="searchParams.maxPrice"	>
+									<label for="findMaxPrice">Max Price</label> 
 							</div>
 							<div class="form-label-group">
-									<input placeholder="Last Name" id="findLastName" class="form-control" v-model="searchParams.lastName"	>
-									<label for="findLastName">Last Name</label> 
+									<input type="date"  placeholder="FROM" id="findBeginDate" class="form-control" v-model="searchParams.beginDate"	>
+									<label for="findBeginDate">Begin Date</label> 
+							</div>
+
+							<div class="form-label-group">
+									<input type="date"  placeholder="TO" id="findEndDate" class="form-control" v-model="searchParams.endDate"	>
+									<label for="findEndDate">End Date</label> 
 							</div>
 
 							<div class="form-label-group">
 							<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
 								<option :value="undefined"></option>
-								<option value="FIRST_NAME">First Name</option>
-								<option value="LAST_NAME">Last Name</option>
-								<option value="USERNAME">Username</option>
-								<option value="POINTS">Points</option>
+								<option value="MANIF_NAME">Manifestation Name</option>
+								<option value="TICKET_PRICE">Ticket Price</option>
+								<option value="MANIF_DATE">Manifestation Date</option>
 							</select>
 							<label for="inputSortCriteria">Sort Criteria</label>
 							</div>
@@ -57,17 +65,15 @@ Vue.component("tickets", {
 							</div>
 
 							<div class="form-label-group">
-							<select name="inputUserRole" id="inputUserRole"  v-model="searchParams.userRole"	>
+							<select name="input" id="inputTicketType"  v-model="searchParams.ticketType">
 								<option :value="undefined"></option>
-								<option value="CUSTOMER">Customer</option>
-								<option value="SALESMAN">Salesman</option>
-								<option value="ADMIN">Admin</option>
+								<option value="VIP">Vip</option>
+								<option value="REGULAR">Regular</option>
+								<option value="FAN_PIT">Fan Pit</option>
 							</select>
-							<label for="inputUserRole">User Role</label>
+							<label for="inputTicketType">Ticket Type</label>
 							</div>
 
-							<div class="form-label-group">
-							</div>
 
 							<div class="form-label-group">
 									<button class="btn btn-primary" type="submit">Search</button>
@@ -128,15 +134,38 @@ Vue.component("tickets", {
 `
 	,
 	mounted() {
-		let localUserData = JSON.parse(window.localStorage.getItem('user'));
+		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
 		//null check in case the local storage was deleted
-		if (localUserData == null) {
-			localUserData = { username: "" };
+		if (this.localUserData == null) {
+			this.localUserData = { username: "" };
 		}
-		if (localUserData != null && localUserData.userRole == 'ADMIN') {
+
+		// load params from the address line
+		this.searchParams = this.$route.query;
+		if (this.$route.query.beginDate != null) {
+			this.searchParams.beginDate = new Date(new Number(this.$route.query.beginDate)).toISOString().substring(0, 10);
+		}
+		if (this.$route.query.endDate != null) {
+			this.searchParams.endDate = new Date(new Number(this.$route.query.endDate)).toISOString().substring(0, 10);
+		}
+		this.$router.push({ query: {} });
+		let sp = Object.assign({}, this.searchParams);
+		if (sp.beginDate != null) {
+			sp.beginDate = new Date(sp.beginDate).getTime()
+		}
+		if (sp.endDate != null) {
+			sp.endDate = new Date(sp.endDate).getTime()
+		}
+
+		this.$router.push({ query: sp });
+
+		this.$refs.focusMe.focus();
+
+
+		if (this.localUserData != null && this.localUserData.userRole == 'ADMIN') {
 			let path = 'api/tickets';
 			axios
-				.get(path)
+				.get(path, { params: sp })
 				.then(response => {
 					this.tickets = response.data;
 					for (let index = 0; index < this.tickets.length; index++) {
@@ -148,7 +177,7 @@ Vue.component("tickets", {
 		else {
 			let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
 			axios
-				.get(path)
+				.get(path, { params: sp })
 				.then(response => {
 					this.tickets = response.data;
 					for (let index = 0; index < this.tickets.length; index++) {
@@ -158,15 +187,15 @@ Vue.component("tickets", {
 				});
 		}
 		this.$nextTick(() => {
-			this.searchParams = this.$route.query;
-			axios
-				.get('api/users', { params: this.searchParams })
-				.then(response => {
-					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-					});
-				})
+			// // this.searchParams = this.$route.query;
+			// axios .get('api/users')
+			// 	// .get('api/users', { params: this.searchParams })
+			// 	.then(response => {
+			// 		this.users = response.data;
+			// 		this.users.forEach(element => {
+			// 			element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+			// 		});
+			// 	})
 			this.$refs.focusMe.focus();
 
 		});
@@ -175,35 +204,75 @@ Vue.component("tickets", {
 	},
 	methods: {
 
+		loadData: function (response) {
+			this.tickets = response.data;
+			for (let index = 0; index < this.tickets.length; index++) {
+				this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+			}
+		},
 		searchTickets: function (event) {
 			event.preventDefault();
+
 			this.$router.push({ query: {} });
-			let sp = this.searchParams;
+			let sp = Object.assign({}, this.searchParams);
+			if (sp.beginDate != null) {
+				sp.beginDate = new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate != null) {
+				sp.endDate = new Date(sp.endDate).getTime()
+			}
+
 			this.$router.push({ query: sp });
-			axios
-				.get('api/users', { params: sp })
-				.then(response => {
-					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
+
+			if (this.localUserData != null && this.localUserData.userRole == 'ADMIN') {
+				let path = 'api/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.loadData(response);
+					})
+			} else {
+				let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.tickets = response.data;
+						for (let index = 0; index < this.tickets.length; index++) {
+							this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+						}
+						console.log(this.tickets);
 					});
-				})
+			}
 		},
 		clearParameters: function (event) {
 			event.preventDefault();
-			this.searchParams = {};
-			let sp = this.searchParams;
-			this.$router.push({ query: sp });
-			axios
-				.get('api/users', { params: sp })
-				.then(response => {
-					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-					});
-				})
-		}
 
+			this.searchParams = {};
+			let sp = Object.assign({}, this.searchParams);
+			if (sp.beginDate != null) {
+				sp.beginDate = new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate != null) {
+				sp.endDate = new Date(sp.endDate).getTime()
+			}
+			this.$router.push({ query: sp });
+
+			if (this.localUserData != null && this.localUserData.userRole == 'ADMIN') {
+				let path = 'api/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.loadData(response);
+					})
+			} else {
+				let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.loadData(response);
+					});
+			}
+		},
 
 	},
 

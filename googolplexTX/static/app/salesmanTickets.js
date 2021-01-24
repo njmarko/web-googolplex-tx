@@ -206,7 +206,7 @@ Vue.component("salesman-tickets", {
 		clearParameters: function (event) {
 			event.preventDefault();
 			this.searchParams = {};
-			let sp =Object.assign({}, this.searchTickets); 
+			let sp =Object.assign({}, this.searchParams); 
 			if (sp.beginDate != null) {
 				sp.beginDate =  new Date(sp.beginDate).getTime()
 			}
