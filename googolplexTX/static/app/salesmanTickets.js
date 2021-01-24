@@ -38,7 +38,7 @@ Vue.component("salesman-tickets", {
 									<label for="findMaxPrice">Max Price</label> 
 							</div>
 							<div class="form-label-group">
-									<input type="date"  placeholder="FROM" id="findBeginDate" class="form-control" v-model="searchParams.endDate"	>
+									<input type="date"  placeholder="FROM" id="findBeginDate" class="form-control" v-model="searchParams.beginDate"	>
 									<label for="findBeginDate">Begin Date</label> 
 							</div>
 
@@ -88,40 +88,45 @@ Vue.component("salesman-tickets", {
 				</div>
 			</div>
 
+			<div v-for="t in tickets">
+				<table class="table table-hover table-bordered table-striped text-center">
+					<tbody >
+						<tr>
+							<td>Id</td>
+							<td>{{t.id }}</td>
+						</tr>
+						<tr>
+							<td>Date of Occurence</td>
+							<td>{{t.dateOfManifestation}}</td>
+						</tr>
+						<tr>
+							<td>Price</td>
+							<td>{{t.price}}</td>
+						</tr>
+						<tr>
+							<td>Status</td>
+							<td>{{t.ticketStatus}}</td>
+						</tr>
+						<tr>
+							<td>Manifestation</td>
+							<td>{{t.manifestationName}}</td>
+						</tr>
+
+						<tr>
+							<td>Customer</td>
+							<td>{{t.cutomerFullName}}</td>
+						</tr>
+						<tr>
+							<td>Ticket Type</td>
+							<td>{{t.ticketType}}</td>
+						</tr>
+					</tbody>
+				</table>		
+				<hr/>	
+			</div>
+
 
 		
-		<div v-for="t in tickets">
-			<table class="table table-hover table-bordered table-striped text-center">
-				<tbody >
-					<tr>
-						<td>Id</td>
-						<td>{{t.id }}</td>
-					</tr>
-					<tr>
-						<td>Date of Occurence</td>
-						<td>{{t.dateOfManifestation}}</td>
-					</tr>
-					<tr>
-						<td>Price</td>
-						<td>{{t.price}}</td>
-					</tr>
-					<tr>
-						<td>Status</td>
-						<td>{{t.ticketStatus}}</td>
-					</tr>
-					<tr>
-						<td>Manifestation</td>
-						<td>{{t.manifestation}}</td>
-					</tr>
-					<tr>
-						<td>Ticket Type</td>
-						<td>{{t.ticketType}}</td>
-					</tr>
-				</tbody>
-			</table>		
-			<hr/>	
-		</div>
-
 		<br>
 	</div>	
 </div>		  
@@ -137,9 +142,26 @@ Vue.component("salesman-tickets", {
 
 		this.$nextTick(() => {
 			this.searchParams = this.$route.query;
+			if (this.$route.query.beginDate != null) {
+				this.searchParams.beginDate = new Date(new Number(this.$route.query.beginDate)).toISOString().substring(0,10);
+			}
+			if (this.$route.query.endDate != null) {
+				this.searchParams.endDate = new Date(new Number(this.$route.query.endDate)).toISOString().substring(0,10);
+			}
+			this.$router.push({ query: {} });
+			let sp =Object.assign({}, this.searchParams); 
+			if (sp.beginDate != null) {
+				sp.beginDate =  new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate != null) {
+				sp.endDate =  new Date(sp.endDate).getTime()
+			}
+
+			this.$router.push({ query: sp });
+			
 			this.$refs.focusMe.focus();
 			axios
-				.get('api/users/' + this.localUserData.username + '/manif-tickets')
+				.get('api/users/' + this.localUserData.username + '/manif-tickets',{ params: sp} )
 				.then(response => {
 					this.tickets = response.data;
 					for (let index = 0; index < this.tickets.length; index++) {
@@ -166,7 +188,14 @@ Vue.component("salesman-tickets", {
 		searchTickets: function (event) {
 			event.preventDefault();
 			this.$router.push({ query: {} });
-			let sp = this.searchParams;
+			let sp =Object.assign({}, this.searchParams); 
+			if (sp.beginDate != null) {
+				sp.beginDate =  new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate != null) {
+				sp.endDate =  new Date(sp.endDate).getTime()
+			}
+
 			this.$router.push({ query: sp });
 			axios
 				.get('api/users/' + this.localUserData.username + '/manif-tickets', { params: sp })
@@ -177,7 +206,13 @@ Vue.component("salesman-tickets", {
 		clearParameters: function (event) {
 			event.preventDefault();
 			this.searchParams = {};
-			let sp = this.searchParams;
+			let sp =Object.assign({}, this.searchTickets); 
+			if (sp.beginDate != null) {
+				sp.beginDate =  new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate != null) {
+				sp.endDate =  new Date(sp.endDate).getTime()
+			}
 			this.$router.push({ query: sp });
 			axios
 				.get('api/users/' + this.localUserData.username + '/manif-tickets', { params: sp })

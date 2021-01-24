@@ -83,7 +83,7 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public Collection<Ticket> findAllBySalesman(String key) {
+	public Collection<Ticket> findAllBySalesman(String key, TicketSearchDTO searchParams) {
 		// TODO: TEST
 		User user = userDAO.findOne(key);
 		if (user.getUserRole() != UserRole.SALESMAN) {
@@ -97,8 +97,12 @@ public class TicketServiceImpl implements TicketService {
 			entities.addAll(manifestation.getTickets().stream().filter((Ticket ticket) -> {
 				return ticket.getTicketStatus() == TicketStatus.RESERVED;
 			}).collect(Collectors.toList()));
-			
+						
 		}
+		
+		searchParams.setTicketStatus(TicketStatus.RESERVED.name());
+		
+		entities = searchTicketCollection(entities, searchParams);
 		
 		return entities;
 	}
@@ -111,6 +115,13 @@ public class TicketServiceImpl implements TicketService {
 		}else {
 			entities = this.findAllByUser(username);
 		}	
+		
+		entities = searchTicketCollection(entities, searchParams);
+				
+		return entities;
+	}
+	
+	private Collection<Ticket> searchTicketCollection(Collection<Ticket> entities, TicketSearchDTO searchParams){
 		
 		if (searchParams.getManifestationName() != null) {
 			entities = entities.stream().filter((ent) -> {
@@ -170,22 +181,21 @@ public class TicketServiceImpl implements TicketService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<Ticket>> critMap = new HashMap<String, Comparator<Ticket>>();
-			critMap.put("MANIF_NAME", Comparator.comparing( x -> ((Ticket) x).getManifestation().getName()));
+			critMap.put("MANIF_NAME", (o1,o2)->{return o1.getManifestation().getName().trim().compareToIgnoreCase(o2.getManifestation().getName().trim());});
 			critMap.put("TICKET_PRICE", Comparator.comparing(Ticket::getPrice));
 			critMap.put("MANIF_DATE", Comparator.comparing(Ticket::getDateOfManifestation));
 			// TODO add radius search for location
 
 			// If sortCriteria is wrong it doesn't sort the collection
-			Comparator<Ticket> comp = critMap.get(searchParams.getSortCriteria().toLowerCase().trim());
+			Comparator<Ticket> comp = critMap.get(searchParams.getSortCriteria().toUpperCase().trim());
 			if (comp != null) {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
 			}
 		}
-
-		
 		
 		return entities;
 	}
+	
 
 	@Override
 	public Collection<Ticket> findAllByManifestation(String key) {

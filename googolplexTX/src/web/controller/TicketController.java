@@ -22,6 +22,7 @@ import support.TicketToTicketDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.TicketDTO;
 import web.dto.TicketSearchDTO;
+import web.dto.UserSearchDTO;
 
 import static spark.Spark.*;
 
@@ -34,7 +35,8 @@ public class TicketController {
 	public TicketController(TicketService ticketService, UserController uCtrl) {
 		super();
 		this.ticketService = ticketService;
-		this.gson = JsonAdapter.ticketsSeraialization();
+//		this.gson = JsonAdapter.ticketsSeraialization();
+		this.gson = new Gson();
 		this.userController = uCtrl;
 	}
 
@@ -182,6 +184,15 @@ public class TicketController {
 			
 			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			
+			final Map<String, String> queryParams = new HashMap<>();
+			req.queryMap().toMap().forEach((k, v) -> {
+				queryParams.put(k, v[0]);
+			});
+			System.out.println(gson.toJson(queryParams));
+			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
+			
+			System.err.println(searchParams);
+			
 			res.type("application/json");
 			String idu = req.params("idu");
 		    
@@ -190,8 +201,8 @@ public class TicketController {
 				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only view tickets for his own manifestations");
 			}
 		
-			Collection<Ticket> foundEntities = ticketService.findAllBySalesman(idu);
-			if (foundEntities==null || foundEntities.isEmpty()) {
+			Collection<Ticket> foundEntities = ticketService.findAllBySalesman(idu, searchParams);
+			if (foundEntities==null) {
 				halt(HttpStatus.NOT_FOUND_404,"No tickets found");
 			}
 			
