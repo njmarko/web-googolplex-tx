@@ -112,7 +112,7 @@ Vue.component("edit-manif", {
             </div>
             <div class="col-md-5 col-lg-7 mx-auto">
                 <div class="card my-5 sticky-map">
-                    <map-component></map-component>
+                    <map-component :inpLongitude="manifData.location.longitude" :inpLatitude="manifData.location.latitude" :readonly=false :locString="manifData.location.city"></map-component>
 
                 </div>
             </div>

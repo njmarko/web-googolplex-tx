@@ -9,6 +9,7 @@ Vue.component("map-component", {
                 'readonly': this.readonly,
                 'locationString': this.locString,
             },
+            firstLoading: true,
         }
     },
     template: ` 
@@ -110,7 +111,13 @@ Vue.component("map-component", {
         };
         map.on('singleclick', function (evt) {
             if (!self.readonly){
+
+
                 var rawLocation = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                
+                rawLocation[0] = self.fixLongitude(rawLocation[0]);
+                rawLocation[1] = self.fixLatitude(rawLocation[1]);
+
                 var location = {
                     longitude: rawLocation[0],
                     latitude: rawLocation[1]
@@ -132,19 +139,7 @@ Vue.component("map-component", {
         this.$root.$on('mapCallback', (location) => {
             // TODO: stacking events??
             //alert("on callback");
-            locationArray = [location.longitude, location.latitude];
-
-            var rawCordinates = ol.proj.transform(locationArray, 'EPSG:4326', 'EPSG:3857');
-
-            if (overlay.getPosition() == undefined){
-                map.getView().setCenter(ol.proj.fromLonLat(locationArray));
-                map.getView().setZoom(16);
-            }
-
-            console.log(overlay.getPosition());
-
-            content.innerHTML = '<p>' + this.locString + '</p>';
-            overlay.setPosition(rawCordinates);
+            self.setPoint(location, overlay, map);
 
         });
 
@@ -155,18 +150,24 @@ Vue.component("map-component", {
     },
     methods: {
 
-        setPoint(location) {
-            locationArray = [location.longitude, location.latitude];
-            var rawCordinates = ol.proj.transform(locationArray, 'EPSG:4326', 'EPSG:3857');
-            alert("set pos " + locationArray[0]);
+        setPoint(location, overlay, map) {
+            var content = document.getElementById('popup-content');
 
-            if (overlay.getPosition() == undefined){
+            locationArray = [this.fixLongitude(location.longitude), this.fixLatitude(location.latitude)];
+
+            var rawCordinates = ol.proj.transform(locationArray, 'EPSG:4326', 'EPSG:3857');
+
+            var oldOverlayLocation = overlay.getPosition()
+
+
+            overlay.setPosition(rawCordinates);
+            if (oldOverlayLocation == undefined){
                 map.getView().setCenter(ol.proj.fromLonLat(locationArray));
                 map.getView().setZoom(16);
             }
 
-            content.innerHTML = '<p>You clicked here:</p>';
-            this.overlay.setPosition(rawCordinates);
+            this.emitReverseGeocode(locationArray);
+
         },
 
         emitParams: function () {
@@ -180,8 +181,14 @@ Vue.component("map-component", {
         },
 
         fixMissingJsonAddress(json){
-            if (json.address == undefined)
+            if (json.address == undefined){
+                json.address = {};
+                json.address.city = "";
+                json.address.road = "";
+                json.address.house_number = "";
                 return json;
+
+            }
 
             if (json.address.city == undefined)
                 json.address.city = json.address.village;
@@ -189,12 +196,15 @@ Vue.component("map-component", {
                 json.address.city = json.address.county;
             if (json.address.city == undefined)
                 json.address.city = json.address.county;
-        
+            if (json.address.city == undefined)
+                json.address.city = json.address.country;
+
             if (json.address.road == undefined)
                 json.address.road = "";
             if (json.address.house_number == undefined)
                 json.address.house_number = "";  
-
+            if (json.address.city == undefined)
+                json.address.city = "";  
 
             return json;
         },
@@ -211,12 +221,38 @@ Vue.component("map-component", {
                     return response.json();
                 }).then(function (json) {
                     json = self.fixMissingJsonAddress(json);
+                    if (self.firstLoading == false){
+                        emitAddr(json);
+                    } else {
+                        self.firstLoading = false;
+                    }
+
+
                     content.innerHTML = json.address.city + ", " + json.address.road + ", " + json.address.house_number;
-                    emitAddr(json);
+
+
                 });
         },
 
+        fixLongitude(lon){
+            while(lon < -180){
+                lon +=360;
+            }
+            while (lon > 180){
+                lon -= 360;
+            }
+            return lon;
+        },
 
+        fixLatitude(lon){
+            while(lon < -90){
+                lon +=180;
+            }
+            while (lon > 90){
+                lon -= 180;
+            }
+            return lon;
+        },
 
     },
 });
