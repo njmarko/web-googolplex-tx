@@ -65,7 +65,7 @@ Vue.component("tickets", {
 							</div>
 
 							<div class="form-label-group">
-							<select name="input" id="inputTicketType"  v-model="searchParams.ticketType">
+							<select name="inputTicketType" id="inputTicketType"  v-model="searchParams.ticketType">
 								<option :value="undefined"></option>
 								<option value="VIP">Vip</option>
 								<option value="REGULAR">Regular</option>
@@ -74,6 +74,14 @@ Vue.component("tickets", {
 							<label for="inputTicketType">Ticket Type</label>
 							</div>
 
+							<div class="form-label-group">
+							<select name="inputTicketStatus" id="inputTicketStatus"  v-model="searchParams.ticketStatus">
+								<option :value="undefined"></option>
+								<option value="RESERVED">Reserved</option>
+								<option value="CANCELED">Canceled</option>
+							</select>
+							<label for="inputTicketStatus">Ticket Status</label>
+							</div>
 
 							<div class="form-label-group">
 									<button class="btn btn-primary" type="submit">Search</button>
