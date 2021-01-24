@@ -169,18 +169,25 @@ Vue.component("manifestation-view", {
 `,
 
 	mounted() {
-		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		var self = this;
+		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
+		//null check in case the local storage was deleted
+		if (this.localUserData == null) {
+			this.localUserData = { username: "" };
+		} else {
+			axios
+				.get('api/users/' + this.localUserData.username)
+				.then(response => {
+					this.userData = response.data;
+					console.log(response.data.birthDate);
+					console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
+					this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+					this.userData.gender = response.data.gender;
+				})
+				.catch(error => {
+					console.log("User not logged in");
+				});
 
-		axios
-			.get('api/users/' + localUserData.username)
-			.then(response => {
-				this.userData = response.data;
-				console.log(response.data.birthDate);
-				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-				this.userData.gender = response.data.gender;
-			});
+		}
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
@@ -204,7 +211,7 @@ Vue.component("manifestation-view", {
 			.then(response => {
 
 				this.comments = response.data;
-			});		
+			});
 
 
 	},

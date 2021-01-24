@@ -234,6 +234,12 @@ public class TestData {
 
 		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, null, false,
 				cust4, man5);
+		
+		Ticket t20 = new Ticket("20", LocalDateTime.of(2001, 12, 22, 5, 13), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust4, man1);
+		
+		Ticket t21 = new Ticket("21", LocalDateTime.of(1992, 3, 13, 4, 22), 415d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust4, man2);
 
 		// saving
 		userDAO.save(admin1);
@@ -313,6 +319,8 @@ public class TestData {
 		ticketDAO.save(t17);
 		ticketDAO.save(t18);
 		ticketDAO.save(t19);
+		ticketDAO.save(t20);
+		ticketDAO.save(t21);
 
 		commentDAO.save(c1);
 		commentDAO.save(c2);
