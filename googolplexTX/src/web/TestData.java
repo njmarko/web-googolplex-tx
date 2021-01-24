@@ -183,13 +183,13 @@ public class TestData {
 		Ticket t3 = new Ticket("3", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust1, man1);
 
-		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null, false,
+		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.parse("2020-01-10T00:00:00"), false,
 				cust1, man1);
 
 		Ticket t5 = new Ticket("5", LocalDateTime.now(), 969.68d, TicketType.VIP, TicketStatus.RESERVED, null, true,
 				cust1, man1); // deleted reserved ticket
 
-		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust1, man4); // references a deleted manifestation and is also
 								// canceled
 
@@ -206,7 +206,7 @@ public class TestData {
 		Ticket t10 = new Ticket("10", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust2, man1);
 
-		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(6),
 				false, cust2, man1);
 
 		// for customer 3 same as first 4 tickets for cust 1 and 2
@@ -219,7 +219,7 @@ public class TestData {
 		Ticket t14 = new Ticket("14", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust3, man1);
 
-		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(8),
 				false, cust3, man1);
 
 		// for customer 4 different event from cust 1,2 and 3
@@ -232,7 +232,7 @@ public class TestData {
 		Ticket t18 = new Ticket("18", LocalDateTime.now(), 200d, TicketType.FAN_PIT, TicketStatus.RESERVED, null, false,
 				cust4, man5);
 
-		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust4, man5);
 
 		// saving

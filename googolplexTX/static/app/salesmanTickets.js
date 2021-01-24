@@ -64,7 +64,7 @@ Vue.component("salesman-tickets", {
 
 
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null) {
+		if (localUserData == null || (localUserData.userRole != "SALESMAN" )) {
 			this.$router.push("/");
 		}
 		axios

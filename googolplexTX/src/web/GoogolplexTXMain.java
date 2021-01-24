@@ -156,6 +156,11 @@ public class GoogolplexTXMain {
 			path("/users",()->{
 				get("", userController.findAllUsers); // req admin
 //				post("", userController.saveOneUser); // TODO this one is basically like register and should be removed
+				
+				path("/suspicious",()->{
+					get("", userController.findAllSuspiciousCustomers);
+				});
+				
 				path("/:idu",()->{
 					get("", userController.findOneUser); // req admin
 					delete("", userController.deleteOneUser); // req admin
@@ -170,6 +175,7 @@ public class GoogolplexTXMain {
 						});
 					});
 					
+
 					path("/manifestations",()->{
 						get("", manifestationControler.findAllManifestationsForSalesman);
 					});
@@ -184,7 +190,8 @@ public class GoogolplexTXMain {
 						patch("", userController.changePassword);				
 					});
 					
-				});				
+				});	
+				
 			});
 			
 			path("/manifestation-type",()->{
