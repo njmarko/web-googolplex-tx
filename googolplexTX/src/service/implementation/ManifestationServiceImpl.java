@@ -28,6 +28,7 @@ import repository.UserDAO;
 import service.ManifestationService;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.TicketSearchDTO;
 
 public class ManifestationServiceImpl implements ManifestationService {
 
@@ -56,6 +57,56 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public Collection<Manifestation> search(ManifestationSearchDTO searchParams) {
 		Collection<Manifestation> entities = this.findAll();
 
+		entities = searchManifCollection(entities, searchParams);
+
+		return entities;
+
+	}
+
+	public static int ascending(Manifestation o1, Manifestation o2) {
+
+		return 0;
+	}
+
+	@Override
+	public Manifestation findOne(String key) {
+		Manifestation found = this.manifestationDAO.findOne(key);
+		if (found != null && found.getDeleted()) {
+			return null;
+		}
+		return found;
+	}
+
+	@Override
+	public Manifestation save(Manifestation entity) {
+		Manifestation manif = this.manifestationDAO.save(entity);
+		this.manifestationDAO.saveFile();
+		return manif;
+	}
+
+	@Override
+	public Manifestation delete(String key) {
+		return this.manifestationDAO.delete(key);
+	}
+
+	@Override
+	public Manifestation update(Manifestation entity) {
+		return this.manifestationDAO.save(entity);
+	}
+
+	@Override
+	public Collection<Manifestation> findBySalesman(String salesman, ManifestationSearchDTO searchParams) {
+		Collection<Manifestation> entities = this.findAll();
+		entities = entities.stream().filter((Manifestation ent) -> {
+			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
+		}).collect(Collectors.toList());
+		
+		entities = searchManifCollection(entities, searchParams);
+		
+		return entities;
+	}
+
+	private Collection<Manifestation> searchManifCollection(Collection<Manifestation> entities, ManifestationSearchDTO searchParams){
 		if (searchParams.getStatus() != null) {	
 			entities = entities.stream().filter((ent) -> {
 				return ent.getStatus().name().equalsIgnoreCase(searchParams.getStatus());
@@ -161,51 +212,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}else {
 			entities = entities.stream().sorted(critMap.get("MANIF_DATE").reversed()).collect(Collectors.toList());
 		}
-
-		return entities;
-
-	}
-
-	public static int ascending(Manifestation o1, Manifestation o2) {
-
-		return 0;
-	}
-
-	@Override
-	public Manifestation findOne(String key) {
-		Manifestation found = this.manifestationDAO.findOne(key);
-		if (found != null && found.getDeleted()) {
-			return null;
-		}
-		return found;
-	}
-
-	@Override
-	public Manifestation save(Manifestation entity) {
-		Manifestation manif = this.manifestationDAO.save(entity);
-		this.manifestationDAO.saveFile();
-		return manif;
-	}
-
-	@Override
-	public Manifestation delete(String key) {
-		return this.manifestationDAO.delete(key);
-	}
-
-	@Override
-	public Manifestation update(Manifestation entity) {
-		return this.manifestationDAO.save(entity);
-	}
-
-	@Override
-	public Collection<Manifestation> findBySalesman(String salesman) {
-		Collection<Manifestation> entities = this.findAll();
-		entities = entities.stream().filter((Manifestation ent) -> {
-			return ent.getSalesman().getUsername().equalsIgnoreCase(salesman);
-		}).collect(Collectors.toList());
+		
 		return entities;
 	}
-
+	
 	@Override
 	public Collection<ManifestationType> findAllManifestationTypes() {
 		return manifestationTypeDAO.findAll().stream().filter((ManifestationType ent) -> {
