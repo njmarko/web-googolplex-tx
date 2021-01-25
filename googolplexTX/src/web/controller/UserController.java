@@ -8,6 +8,7 @@ import spark.Route;
 import spark.Session;
 import spark.utils.StringUtils;
 import support.CustTypeToCustTypeDTO;
+import support.DateConverter;
 import support.JsonAdapter;
 import support.UserToUserDTO;
 import spark.Filter;
@@ -15,6 +16,7 @@ import web.dto.LoginDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
+import web.dto.SuspiciousSearchDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
 
@@ -22,6 +24,7 @@ import static spark.Spark.*;
 
 import java.net.HttpURLConnection;
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -216,6 +219,7 @@ public class UserController {
 			req.queryMap().toMap().forEach((k, v) -> {
 				queryParams.put(k, v[0]);
 			});
+			System.out.println(g.toJson(queryParams));
 			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
 
 			// TODO remove debug print message
@@ -431,5 +435,33 @@ public class UserController {
 		return null;
 
 	}
+	
+	
+	public final Route findAllSuspiciousCustomers = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			res.type("application/json");
+			
+			authenticateAdmin.handle(req, res);
+			
+			final Map<String, String> queryParams = new HashMap<>();
+			req.queryMap().toMap().forEach((k, v) -> {
+				queryParams.put(k, v[0]);
+			});
+			
+			System.out.println(queryParams.get("frequiency"));
+			
+			SuspiciousSearchDTO suspiciousDTO = g.fromJson(new  Gson().toJson(queryParams), SuspiciousSearchDTO.class);
+		
+			Collection<User> users = userService.findAllSuspiciousCustomers(suspiciousDTO);
+			if (users == null) {
+				halt(HttpStatus.NOT_FOUND_404, "No users found");
+			}
+
+
+			return g.toJson(UserToUserDTO.convert(users));
+		}
+	};
 
 }

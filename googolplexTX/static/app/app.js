@@ -13,6 +13,7 @@ const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif>
 const ManifestationView = { template: '<div><navbar></navbar><manifestation-view></manifestation-view><footer-comp></footer-comp></div>' }
 const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><footer-comp></footer-comp></div>' }
 const CustomerTickets = { template: '<div><navbar></navbar><tickets></tickets><footer-comp></footer-comp></div>' }
+const SuspiciousUsers = { template: '<div><navbar></navbar><suspicious-users></suspicious-users><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
   mode: 'hash',
@@ -35,6 +36,7 @@ const router = new VueRouter({
     { path: '/sold-to-users', component: SalesmanUsers },
     { path: '/salesman-add-manif', component: SalesmanAddManif },
     { path: '/tickets', component: CustomerTickets },
+    { path: '/suspicious-users', component: SuspiciousUsers },
 
   ]
 });
@@ -61,6 +63,12 @@ var app = new Vue({
         router.push('/logout');
       }
       return Promise.reject(error);
+    });
+
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
     });
   },
   mounted() {

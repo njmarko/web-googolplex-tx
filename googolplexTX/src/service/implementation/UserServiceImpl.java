@@ -24,9 +24,11 @@ import model.enumerations.UserRole;
 import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
+import support.DateConverter;
 import web.dto.LoginDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
+import web.dto.SuspiciousSearchDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
 
@@ -352,6 +354,50 @@ public class UserServiceImpl implements UserService {
 		return this.custTypeDAO.findAll().stream().filter((ent) -> {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
+	}
+
+	private int countCancelations (Customer customer,  LocalDateTime begin, LocalDateTime end) {
+		Collection<Ticket> tickets = customer.getTickets();
+		int count = 0;
+		for (Ticket ticket : tickets) {
+			LocalDateTime cancelDate = ticket.getCancelationDate();
+			if (cancelDate == null)
+				continue;
+			if (cancelDate.isBefore(begin))
+				continue;
+			if (cancelDate.isAfter(end))
+				continue;
+			count++;
+				
+		}
+		return count;
+	}
+	
+	@Override
+	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto) {
+		Collection<User> allUsers = this.findAll();
+
+		if (dto.getFrequency() == null) 
+			dto.setFrequency(5);
+
+		if (dto.getStartDate() == null)
+			dto.setStartDate( DateConverter.dateToInt(LocalDateTime.now().minusDays(30)));;
+	
+		if (dto.getEndDate() == null)
+			dto.setEndDate( DateConverter.dateToInt(LocalDateTime.now()));;
+		
+		
+		LocalDateTime startDate = DateConverter.dateFromInt(dto.getStartDate());
+		LocalDateTime endDate = DateConverter.dateFromInt(dto.getEndDate());
+		Integer frequency = dto.getFrequency();
+		
+		allUsers = allUsers.stream().filter((User u) -> {
+			return (u.getUserRole() == UserRole.CUSTOMER && this.countCancelations((Customer) u, startDate, endDate) >= frequency);
+		}).collect(Collectors.toList());
+		
+		
+		
+		return allUsers;
 	}
 
 }
