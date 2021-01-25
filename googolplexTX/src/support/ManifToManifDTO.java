@@ -26,6 +26,7 @@ public class ManifToManifDTO {
 		retVal.setRegularPrice(manif.getRegularPrice());
 		retVal.setStatus(manif.getStatus().name());
 		// TODO ADD POSTER
+		retVal.setPoster(manif.getPoster());
 		retVal.setManifestationType(manif.getManifestationType().getName());
 		retVal.setSalesman(manif.getSalesman().getUsername());
 		retVal.setLocation(manif.getLocation());

@@ -93,20 +93,28 @@ public class ManifestationControler {
 				queryParams.put(k, v[0]);
 			});
 
-			ManifestationSearchDTO searchParams = gManifAdapter.fromJson(gManifAdapter.toJson(queryParams),
+			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams),
 					ManifestationSearchDTO.class);
 
 			// TODO remove debug print message
 			System.out.println("[DBG] searchParamsDTO" + searchParams);
 
-			Collection<Manifestation> foundEntities = manifService.search(searchParams);
-			if (foundEntities == null || foundEntities.isEmpty()) {
+			// TODO if admin return tickets of all statuses
+			
+			User loggedInUser = userController.getAuthedUser(req);
+			System.out.println(loggedInUser);
+			Collection<Manifestation> foundEntities = null;
+			if (loggedInUser == null || loggedInUser.getUserRole() != UserRole.ADMIN) {
+				// only admin can view manifestations of all statuses
+				searchParams.setStatus("ACTIVE");
+			}
+			foundEntities = manifService.search(searchParams);
+			
+			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestations found");
 			}
 
-			// TODO consider using an adapter
-			// TODO use DTO objects
-			return gManifAdapter.toJson(foundEntities);
+			return g.toJson(ManifToManifDTO.convert(foundEntities));
 		}
 	};
 

@@ -34,9 +34,9 @@ public class ManifestationServiceImpl implements ManifestationService {
 	private ManifestationDAO manifestationDAO;
 	private ManifestationTypeDAO manifestationTypeDAO;
 	private UserDAO userDAO;
-	// TODO: Add required DAOs
 
-	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO, UserDAO userDao) {
+	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO,
+			UserDAO userDao) {
 		super();
 		this.manifestationDAO = manifestationDAO;
 		this.manifestationTypeDAO = manifestationTypeDAO;
@@ -56,6 +56,12 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public Collection<Manifestation> search(ManifestationSearchDTO searchParams) {
 		Collection<Manifestation> entities = this.findAll();
 
+		if (searchParams.getStatus() != null) {	
+			entities = entities.stream().filter((ent) -> {
+				return ent.getStatus().name().equalsIgnoreCase(searchParams.getStatus());
+			}).collect(Collectors.toList());
+		}
+		
 		// Search
 		if (searchParams.getName() != null) {
 			entities = entities.stream().filter((ent) -> {
@@ -107,7 +113,6 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}).collect(Collectors.toList());
 		}
 
-
 		if (searchParams.getManifestationType() != null) {
 			entities = entities.stream().filter((ent) -> {
 				return ent.getManifestationType().getName().equalsIgnoreCase(searchParams.getManifestationType());
@@ -125,10 +130,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<Manifestation>> critMap = new HashMap<String, Comparator<Manifestation>>();
-			critMap.put("name", Comparator.comparing(Manifestation::getName));
-			critMap.put("date", Comparator.comparing(Manifestation::getDateOfOccurence));
-			critMap.put("price", Comparator.comparing(Manifestation::getRegularPrice));
-			critMap.put("location", (o1, o2)->{ 
+			critMap.put("MANIF_NAME", Comparator.comparing(Manifestation::getName));
+			critMap.put("MANIF_DATE", Comparator.comparing(Manifestation::getDateOfOccurence));
+			critMap.put("TICKET_PRICE", Comparator.comparing(Manifestation::getRegularPrice));
+			critMap.put("LOCATION", (o1, o2) -> {
 				// first check city, then street then number
 				int cmp = o1.getLocation().getCity().compareTo(o2.getLocation().getCity());
 				if (cmp == 0) {
@@ -137,14 +142,18 @@ public class ManifestationServiceImpl implements ManifestationService {
 						cmp = o1.getLocation().getNumber().compareTo(o2.getLocation().getNumber());
 					}
 				}
-				return cmp;}); // everything except lattitude and
-																					// lognitude for now
+				return cmp;
+			}); // everything except lattitude and
+				// lognitude for now
 			// TODO add radius search for location
 
 			// If sortCriteria is wrong it doesn't sort the collection
-			Comparator<Manifestation> comp = critMap.get(searchParams.getSortCriteria().toLowerCase().trim());
+			Comparator<Manifestation> comp = critMap.get(searchParams.getSortCriteria().toUpperCase().trim());
 			if (comp != null) {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
+			} else {
+				// if sort criteria is not set, sort manifestations by most recent date
+				entities = entities.stream().sorted(critMap.get("MANIF_DATE")).collect(Collectors.toList());
 			}
 		}
 
@@ -202,17 +211,16 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Collection<Comment> findAllCommentsFromManifestation(String key) {
 		Manifestation manifestation = this.findOne(key);
-		
+
 		// TODO: Consider Creating using function to filter deleted like this.findAll
 		return manifestation.getComments().stream().filter((Comment ent) -> {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
 	}
 
-
 	@Override
 	public Manifestation save(ManifestationDTO dto) {
-		
+
 		Manifestation found = null;
 		if (dto.getId() != null) {
 			found = manifestationDAO.findOne(dto.getId());
@@ -222,19 +230,18 @@ public class ManifestationServiceImpl implements ManifestationService {
 			found.setId(manifestationDAO.findNextId());
 			found.setDeleted(false);
 		}
-		
+
 		// TODO: should i check for null and then add, is this save/edit or just save
 		found.setName(dto.getName());
 		found.setAvailableSeats(dto.getAvailableSeats());
 		found.setPoster(dto.getPoster());
-		
+
 		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
 		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
 		found.setDateOfOccurence(dateOfOccurence);
-		
+
 		found.setRegularPrice(dto.getRegularPrice());
-		
-		
+
 		ManifestationStatus status = null;
 		if (dto.getStatus().trim().equalsIgnoreCase(ManifestationStatus.ACTIVE.name())) {
 			status = ManifestationStatus.ACTIVE;
@@ -244,39 +251,39 @@ public class ManifestationServiceImpl implements ManifestationService {
 			return null;
 		}
 		found.setStatus(status);
-		
 
 		ManifestationType mType = manifestationTypeDAO.findOne(dto.getManifestationType());
 		if (mType == null)
 			return null;
 		found.setManifestationType(mType);
-		
+
 		// TODO add poster
-		
-		
+
 		User foundUser = userDAO.findOne(dto.getSalesman());
 		if (foundUser == null || foundUser.getUserRole() != UserRole.SALESMAN) {
 			return null;
 		}
-		
+
 		found.setSalesman((Salesman) foundUser);
-		
+
 		found.setLocation(dto.getLocation());
-		
+
 		// Tickets and comments are added with other methods and are not assigned here.
-		
+
 		if (found.getComments() == null) {
 			found.setComments(new ArrayList<Comment>());
 		}
-		
+
 		if (found.getTickets() == null) {
 			found.setTickets(new ArrayList<Ticket>());
 		}
-		
+
 		manifestationDAO.save(found);
 		manifestationDAO.saveFile();
-		
+
 		return found;
 	}
+
+
 
 }

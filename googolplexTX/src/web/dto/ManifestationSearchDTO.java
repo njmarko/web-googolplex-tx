@@ -1,9 +1,5 @@
 package web.dto;
 
-/**
- * @author Marko
- *
- */
 public class ManifestationSearchDTO {
 
 	// Search
@@ -24,13 +20,29 @@ public class ManifestationSearchDTO {
 	// Manifestation is not sold out
 	private Boolean hasAvailableTickets;
 
+	// active or inactive
+	private String status;
+
 	public ManifestationSearchDTO() {
 		super();
 	}
 
+	/**
+	 * @param name
+	 * @param beginDate
+	 * @param endDate
+	 * @param location
+	 * @param minPrice
+	 * @param maxPrice
+	 * @param ascending
+	 * @param sortCriteria
+	 * @param manifestationType
+	 * @param hasAvailableTickets
+	 * @param status
+	 */
 	public ManifestationSearchDTO(String name, Long beginDate, Long endDate, String location, Double minPrice,
 			Double maxPrice, Boolean ascending, String sortCriteria, String manifestationType,
-			Boolean hasAvailableTickets) {
+			Boolean hasAvailableTickets, String status) {
 		super();
 		this.name = name;
 		this.beginDate = beginDate;
@@ -42,6 +54,15 @@ public class ManifestationSearchDTO {
 		this.sortCriteria = sortCriteria;
 		this.manifestationType = manifestationType;
 		this.hasAvailableTickets = hasAvailableTickets;
+		this.status = status;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getName() {
@@ -129,7 +150,7 @@ public class ManifestationSearchDTO {
 		return "ManifestationSearchDTO [name=" + name + ", beginDate=" + beginDate + ", endDate=" + endDate
 				+ ", location=" + location + ", minPrice=" + minPrice + ", maxPrice=" + maxPrice + ", ascending="
 				+ ascending + ", sortCriteria=" + sortCriteria + ", manifestationType=" + manifestationType
-				+ ", hasAvailableTickets=" + hasAvailableTickets + "]";
+				+ ", hasAvailableTickets=" + hasAvailableTickets + ", status=" + status + "]";
 	}
 
 }
