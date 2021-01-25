@@ -191,6 +191,9 @@ public class GoogolplexTXMain {
 					path("/block", ()->{
 						patch("", userController.blockUser);
 					});
+					path("/unblock", ()->{
+						patch("", userController.unblockUser);
+					});
 					
 				});	
 				

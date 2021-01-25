@@ -124,8 +124,8 @@ Vue.component("display-users", {
 					</tr>
 					
 					<tr>
-						<td colspan="2" >
-							<button v-on:click="blockUser(p)" class="btn btn-danger btn-block text-uppercase">Block {{p.username}}</button>
+						<td colspan="2">
+							<button v-bind:disabled="p.userRole == 'ADMIN'" v-on:click="blockUser(p, p.blocked)" class="btn btn-danger btn-block text-uppercase">{{p.blocked ? 'UNBLOCK' : 'BLOCK' }} {{p.username}}</button>
 						</td>
 					</tr>
 				</tbody>
@@ -194,10 +194,18 @@ Vue.component("display-users", {
 					});
 				})
 		},
-		blockUser : function(obj) {
+		blockUser : function(obj, block) {
+			console.log(block);
 
+			action = "";
+			if (block == true){
+				action = "/unblock";
+			} else {
+				action = "/block";
+			}
+			console.log(action);
 			axios
-				.patch('api/users/' + obj.username + '/block')
+				.patch('api/users/' + obj.username + action)
 				.then(response => {
 					Object.assign(obj, response.data)
 			});

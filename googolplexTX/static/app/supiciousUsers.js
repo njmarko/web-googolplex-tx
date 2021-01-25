@@ -82,9 +82,9 @@ Vue.component("suspicious-users", {
 						<td>gender</td>
 						<td>{{u.gender}}</td>
 					</tr>
-					<tr>
-						<td colspan="2" >
-							<button v-on:click="blockUser(u)" class="btn btn-danger btn-block text-uppercase">Block {{u.username}}</button>
+					<tr v-if="p.userRole != 'ADMIN'">
+						<td colspan="2">
+							<button v-on:click="blockUser(u, u.blocked)" class="btn btn-danger btn-block text-uppercase">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>
 						</td>
 					</tr>
 				</tbody>
@@ -167,10 +167,18 @@ Vue.component("suspicious-users", {
 			}
 		},
 
-		blockUser : function(obj) {
+		blockUser : function(obj, block) {
+			console.log(block);
 
+			action = "";
+			if (block == true){
+				action = "/unblock";
+			} else {
+				action = "/block";
+			}
+			console.log(action);
 			axios
-				.patch('api/users/' + obj.username + '/block')
+				.patch('api/users/' + obj.username + action)
 				.then(response => {
 					Object.assign(obj, response.data)
 			});

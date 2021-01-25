@@ -467,15 +467,45 @@ public class UserController {
 	public final Route blockUser = new Route() {
 
 		@Override
-		public Object handle(Request req, Response res) {
+		public Object handle(Request req, Response res) throws Exception {
 
+			authenticateAdmin.handle(req, res);
+
+			
 			res.type("application/json");
 			String idu = req.params("idu");
 			User foundEntity = userService.blockUser(idu);
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No users found");
 			}
+			if (foundEntity.getUserRole() == UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
+			}
 			
+
+			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
+		}
+	};
+	
+
+	
+	public final Route unblockUser = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			authenticateAdmin.handle(req, res);
+
+			
+			res.type("application/json");
+			String idu = req.params("idu");
+			User foundEntity = userService.unblockUser(idu);
+			if (foundEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "No users found");
+			}
+			if (foundEntity.getUserRole() == UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
+			}
 
 			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
 		}

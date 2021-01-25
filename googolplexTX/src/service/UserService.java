@@ -31,4 +31,5 @@ public interface UserService extends GenericService<User, String> {
 	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto);
 	
 	public User blockUser(String key);
+	public User unblockUser(String key);
 }

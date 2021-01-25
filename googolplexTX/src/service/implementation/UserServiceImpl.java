@@ -405,8 +405,23 @@ public class UserServiceImpl implements UserService {
 		User user = this.findOne(key);
 		if (user == null)
 			return null;
-		user.setBlocked(true);
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(true);
+		
 		return user;
 	}
 
+	@Override
+	public User unblockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null || user.getUserRole() == UserRole.ADMIN)
+			return null;
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(false);
+		
+		return user;
+	}
+	
 }
