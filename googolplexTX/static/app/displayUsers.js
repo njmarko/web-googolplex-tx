@@ -122,6 +122,12 @@ Vue.component("display-users", {
 						<td>Customer type</td>
 						<td>{{p.customerType}}</td>
 					</tr>
+					
+					<tr>
+						<td colspan="2" >
+							<button v-on:click="blockUser(p)" class="btn btn-danger btn-block text-uppercase">Block {{p.username}}</button>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<br>
@@ -131,6 +137,12 @@ Vue.component("display-users", {
 `
 	,
 	mounted() {
+		let localUserData = JSON.parse(window.localStorage.getItem('user'));
+		if (localUserData == null || (localUserData.userRole != "ADMIN" )) {
+			this.$router.push("/");
+		}
+
+
 		this.$nextTick(() => {
 			this.searchParams = this.$route.query;
 			axios
@@ -181,7 +193,16 @@ Vue.component("display-users", {
 						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
 					});
 				})
+		},
+		blockUser : function(obj) {
+
+			axios
+				.patch('api/users/' + obj.username + '/block')
+				.then(response => {
+					Object.assign(obj, response.data)
+			});
 		}
+
 
 	},
 });

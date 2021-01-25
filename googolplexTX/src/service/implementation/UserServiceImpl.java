@@ -400,4 +400,13 @@ public class UserServiceImpl implements UserService {
 		return allUsers;
 	}
 
+	@Override
+	public User blockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null)
+			return null;
+		user.setBlocked(true);
+		return user;
+	}
+
 }

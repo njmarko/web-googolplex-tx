@@ -1,6 +1,5 @@
 package service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 import model.CustomerType;
@@ -30,4 +29,6 @@ public interface UserService extends GenericService<User, String> {
 	public Collection<CustomerType> findAllCustomerTypes();
 	
 	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto);
+	
+	public User blockUser(String key);
 }

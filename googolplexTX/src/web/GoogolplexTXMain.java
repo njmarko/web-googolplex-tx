@@ -173,8 +173,7 @@ public class GoogolplexTXMain {
 //							delete("", ticketController.deleteOneTicket); // TODO req admin
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
-					});
-					
+					});		
 
 					path("/manifestations",()->{
 						get("", manifestationControler.findAllManifestationsForSalesman);
@@ -188,6 +187,9 @@ public class GoogolplexTXMain {
 					
 					path("/change-password",()->{
 						patch("", userController.changePassword);				
+					});
+					path("/block", ()->{
+						patch("", userController.blockUser);
 					});
 					
 				});	

@@ -59,7 +59,7 @@ Vue.component("suspicious-users", {
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
-						<td>Username</td>
+						<td>Username <span v-if="u.blocked" class="badge badge-danger">Blocked</span></td>
 						<td>{{u.username }}</td>
 					</tr>
 					<tr>
@@ -76,15 +76,21 @@ Vue.component("suspicious-users", {
 					</tr>
 					<tr>
 						<td>Birthday</td>
-						<td>{{u.birthDate.month + "/" + u.birthDate.day + "/" + u.birthDate.year + "." }}</td>
+						<td>{{u.birthDate}}</td>
 					</tr>
 					<tr>
 						<td>gender</td>
 						<td>{{u.gender}}</td>
 					</tr>
-					<hr/>
+					<tr>
+						<td colspan="2" >
+							<button v-on:click="blockUser(u)" class="btn btn-danger btn-block text-uppercase">Block {{u.username}}</button>
+						</td>
+					</tr>
 				</tbody>
-			</table>		
+			</table>
+			<hr/>
+		
 		
 		</div>
 
@@ -160,6 +166,15 @@ Vue.component("suspicious-users", {
 
 			}
 		},
+
+		blockUser : function(obj) {
+
+			axios
+				.patch('api/users/' + obj.username + '/block')
+				.then(response => {
+					Object.assign(obj, response.data)
+			});
+		}
 
 
 	},

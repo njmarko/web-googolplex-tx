@@ -463,5 +463,22 @@ public class UserController {
 			return g.toJson(UserToUserDTO.convert(users));
 		}
 	};
+	
+	public final Route blockUser = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) {
+
+			res.type("application/json");
+			String idu = req.params("idu");
+			User foundEntity = userService.blockUser(idu);
+			if (foundEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "No users found");
+			}
+			
+
+			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
+		}
+	};
 
 }
