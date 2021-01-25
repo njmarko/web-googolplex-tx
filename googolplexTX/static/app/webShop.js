@@ -3,7 +3,8 @@ Vue.component("web-shop", {
 		return {
 			manifestations: null,
 			searchParams: {},
-			manifTypes: {}
+			manifTypes: {},
+			userData: {}
 		}
 	},
 	template: ` 
@@ -65,6 +66,7 @@ Vue.component("web-shop", {
 
 								 <div class="form-label-group">
        			                 <select name="inputManifType" id="inputManifType" v-model="searchParams.manifestationType" >
+									<option :value="undefined"></option>
        			                     <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
        			                 </select>
        			                 <label for="inputManifType">Manifestation Type</label>
@@ -94,7 +96,6 @@ Vue.component("web-shop", {
 						</form>
 					</div>
 				</div>
-
 
 
 		
@@ -205,7 +206,7 @@ Vue.component("web-shop", {
 
 
 		axios
-			.get('api/manifestations')
+			.get('api/manifestations', { params: sp })
 			.then(response => {
 				this.manifestations = response.data;
 				for (let index = 0; index < this.manifestations.length; index++) {

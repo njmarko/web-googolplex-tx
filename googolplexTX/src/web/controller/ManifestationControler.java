@@ -93,14 +93,13 @@ public class ManifestationControler {
 				queryParams.put(k, v[0]);
 			});
 
-			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams),
-					ManifestationSearchDTO.class);
+			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
 
 			// TODO remove debug print message
 			System.out.println("[DBG] searchParamsDTO" + searchParams);
 
 			// TODO if admin return tickets of all statuses
-			
+
 			User loggedInUser = userController.getAuthedUser(req);
 			System.out.println(loggedInUser);
 			Collection<Manifestation> foundEntities = null;
@@ -109,7 +108,7 @@ public class ManifestationControler {
 				searchParams.setStatus("ACTIVE");
 			}
 			foundEntities = manifService.search(searchParams);
-			
+
 			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestations found");
 			}
@@ -146,14 +145,13 @@ public class ManifestationControler {
 
 			ManifestationDTO manifestationData = g.fromJson(body, ManifestationDTO.class);
 
-			
 			User loggedInUser = userController.getAuthedUser(req);
 			if (loggedInUser.getUserRole() == UserRole.SALESMAN) {
 				manifestationData.setSalesman(loggedInUser.getUsername());
 				manifestationData.setStatus(ManifestationStatus.INACTIVE.name());
 			}
-			
-			//if (manifestationData.getPoster() == null)
+
+			// if (manifestationData.getPoster() == null)
 			manifestationData.setPoster("default-manif.png");
 
 			String err = manifestationData.validate();
@@ -165,7 +163,7 @@ public class ManifestationControler {
 			if (savedEntity == null) {
 				halt(HttpStatus.BAD_REQUEST_400);
 			}
-			return gManifAdapter.toJson(ManifToManifDTO.convert(savedEntity));
+			return g.toJson(ManifToManifDTO.convert(savedEntity));
 
 ////			Example with adapter
 //			String body = req.body();
@@ -222,7 +220,7 @@ public class ManifestationControler {
 			if (err != null) {
 				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
-			
+
 			// Set old poster
 			if (newEntity.getPoster() == null)
 				newEntity.setPoster(existingManif.getPoster());
@@ -244,20 +242,25 @@ public class ManifestationControler {
 		public Object handle(Request req, Response res) throws Exception {
 			// No login needed for this request.
 			// TODO add pagination
+			res.type("application/json");
 
 			userController.authenticateSalesmanOrAdmin.handle(req, res);
 
-			res.type("application/json");
 			String idu = req.params("idu");
 
-			Collection<Manifestation> foundEntities = manifService.findBySalesman(idu);
-			if (foundEntities == null || foundEntities.isEmpty()) {
+			final Map<String, String> queryParams = new HashMap<>();
+			req.queryMap().toMap().forEach((k, v) -> {
+				queryParams.put(k, v[0]);
+			});
+
+			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+
+			Collection<Manifestation> foundEntities = manifService.findBySalesman(idu, searchParams);
+			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestations found");
 			}
 
-			// TODO consider using an adapter
-			// TODO use DTO objects
-			return gManifAdapter.toJson(foundEntities);
+			return g.toJson(ManifToManifDTO.convert(foundEntities));
 		}
 	};
 
@@ -350,8 +353,8 @@ public class ManifestationControler {
 				extension = "jpg";
 			}
 
-			//TODO: Check if folder exist othervise create
-			
+			// TODO: Check if folder exist othervise create
+
 			try (InputStream inputSteram = filePart.getInputStream()) {
 				OutputStream outputStream = new FileOutputStream(
 						Paths.get("static", "uploads", fileName + "." + extension).toAbsolutePath().toString());
