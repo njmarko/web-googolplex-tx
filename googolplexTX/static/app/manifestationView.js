@@ -171,6 +171,7 @@ Vue.component("manifestation-view", {
 	mounted() {
 		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
 		//null check in case the local storage was deleted
+		var self = this;
 		if (this.localUserData == null) {
 			this.localUserData = { username: "" };
 		} else {
@@ -223,8 +224,8 @@ Vue.component("manifestation-view", {
 
 		},
 
-		sendMapCallback() {
-            var current_location = {}
+		sendMapCallback : function() {
+            var current_location = {};
             current_location.longitude = this.manifestation.location.longitude;
 			current_location.latitude = this.manifestation.location.latitude;
             this.$root.$emit('mapCallback', current_location);

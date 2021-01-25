@@ -26,6 +26,9 @@ Vue.component("map-component", {
 
     </div>
 `,
+    beforeDestroy() {
+        this.$root.$off("mapCallback", this.setPointCallback);
+    },
     mounted() {
         var self = this;
     
@@ -136,12 +139,11 @@ Vue.component("map-component", {
 
 
         // MAP CALL BACK
-        this.$root.$on('mapCallback', (location) => {
-            // TODO: stacking events??
-            //alert("on callback");
+        this.setPointCallback = (location) => {
             self.setPoint(location, overlay, map);
+        }
 
-        });
+        this.$root.$on('mapCallback', this.setPointCallback);
 
 
 
@@ -149,6 +151,7 @@ Vue.component("map-component", {
 
     },
     methods: {
+
 
         setPoint(location, overlay, map) {
             var content = document.getElementById('popup-content');

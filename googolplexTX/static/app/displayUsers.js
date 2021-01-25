@@ -70,25 +70,45 @@ Vue.component("display-users", {
 						<div class="form-label-group">
 						</div>
 
-						<div class="form-label-group">
-								<button class="btn btn-primary" type="submit">Search</button>
-						</div>
-						<div class="form-label-group">
-								<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
-						</div>
+						<button class="btn btn-primary" type="submit">Search</button>
+						<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
 					</div>
 				</form>
 			</div>
 		</div>
 
 		
+
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+			</div>
+		</div>
+		</div>
+
+
 		<h1 class="text-center">Registered users</h1>
-		<div  v-for="p in users">
-			<table class="table table-hover table-bordered table-striped text-center">
+		<div  v-for="p in users" >
+			<table v-bind:style="{ background: p.deleted ? '#aaa' : ''}" class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
-						<td>Username</td>
-						<td>{{p.username }}</td>
+						<td>Username {{p.deleted ? 'deleted' : 'ziv'}}</td>
+						<td>{{p.username}} <span v-if="p.blocked" class="badge badge-danger">Blocked</span></td>
 					</tr>
 					<tr>
 						<td>First name</td>
@@ -125,7 +145,8 @@ Vue.component("display-users", {
 					
 					<tr>
 						<td colspan="2">
-							<button v-bind:disabled="p.userRole == 'ADMIN'" v-on:click="blockUser(p, p.blocked)" class="btn btn-danger btn-block text-uppercase">{{p.blocked ? 'UNBLOCK' : 'BLOCK' }} {{p.username}}</button>
+							<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="blockUser(p, p.blocked)" v-bind:class="[p.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{p.blocked ? 'UNBLOCK' : 'BLOCK' }} {{p.username}}</button>
+							<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="deleteUser(p)" class="btn btn-danger text-uppercase">DELETE {{p.username}}</button>
 						</td>
 					</tr>
 				</tbody>
@@ -158,7 +179,6 @@ Vue.component("display-users", {
 				.get("api/customer-type")
 				.then(response => {
 					this.customerType = response.data;
-					console.log(this.customerType);
 				});
 
 		});
@@ -208,6 +228,24 @@ Vue.component("display-users", {
 				.patch('api/users/' + obj.username + action)
 				.then(response => {
 					Object.assign(obj, response.data)
+			});
+		},
+
+		deleteUser : function(obj) {
+			var confirmed = confirm("Are your sure that you want to remove user: " + obj.username);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
+
+			axios
+				.delete('api/users/' + obj.username)
+				.then(response => {
+					obj.deleted = true;
+
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
 			});
 		}
 

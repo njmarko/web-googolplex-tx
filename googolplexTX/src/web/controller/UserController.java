@@ -284,11 +284,16 @@ public class UserController {
 			authenticateAdmin.handle(req, res);
 
 			// res.type("application/json");
-			String id = req.params("idm");
+			String id = req.params("idu");
 			User deletedEntity = userService.delete(id);
 			if (deletedEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
+			
+			if (deletedEntity.getUserRole() == UserRole.ADMIN) {
+				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
+			}
+			
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};

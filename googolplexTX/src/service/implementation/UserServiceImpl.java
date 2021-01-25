@@ -159,7 +159,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User delete(String key) {
-		return this.userDAO.delete(key);
+		User user = findOne(key);
+		if (user == null) {
+			return null;
+		}
+		if (user.getUserRole() == UserRole.ADMIN)
+			return user;
+		
+		user.setDeleted(true);
+		return user;
 	}
 
 	/**
