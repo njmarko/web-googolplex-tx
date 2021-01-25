@@ -124,27 +124,30 @@ public class ManifestationServiceImpl implements ManifestationService {
 				return ent.getTickets().size() < ent.getAvailableSeats();
 			}).collect(Collectors.toList());
 		}
+		
+		// Map of comparators used for sorting
+		final Map<String, Comparator<Manifestation>> critMap = new HashMap<String, Comparator<Manifestation>>();
+		critMap.put("MANIF_NAME", Comparator.comparing(Manifestation::getName));
+		critMap.put("MANIF_DATE", Comparator.comparing(Manifestation::getDateOfOccurence));
+		critMap.put("TICKET_PRICE", Comparator.comparing(Manifestation::getRegularPrice));
+		critMap.put("LOCATION", (o1, o2) -> {
+			// first check city, then street then number
+			int cmp = o1.getLocation().getCity().compareTo(o2.getLocation().getCity());
+			if (cmp == 0) {
+				cmp = o1.getLocation().getStreet().compareTo(o2.getLocation().getStreet());
+				if (cmp == 0) {
+					cmp = o1.getLocation().getNumber().compareTo(o2.getLocation().getNumber());
+				}
+			}
+			return cmp;
+		});
 
 		// It sorts by ascending by default
 		if (searchParams.getSortCriteria() != null) {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
-			final Map<String, Comparator<Manifestation>> critMap = new HashMap<String, Comparator<Manifestation>>();
-			critMap.put("MANIF_NAME", Comparator.comparing(Manifestation::getName));
-			critMap.put("MANIF_DATE", Comparator.comparing(Manifestation::getDateOfOccurence));
-			critMap.put("TICKET_PRICE", Comparator.comparing(Manifestation::getRegularPrice));
-			critMap.put("LOCATION", (o1, o2) -> {
-				// first check city, then street then number
-				int cmp = o1.getLocation().getCity().compareTo(o2.getLocation().getCity());
-				if (cmp == 0) {
-					cmp = o1.getLocation().getStreet().compareTo(o2.getLocation().getStreet());
-					if (cmp == 0) {
-						cmp = o1.getLocation().getNumber().compareTo(o2.getLocation().getNumber());
-					}
-				}
-				return cmp;
-			}); // everything except lattitude and
-				// lognitude for now
+			// everything except lattitude and
+			// lognitude for now
 			// TODO add radius search for location
 
 			// If sortCriteria is wrong it doesn't sort the collection
@@ -153,8 +156,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
 			} else {
 				// if sort criteria is not set, sort manifestations by most recent date
-				entities = entities.stream().sorted(critMap.get("MANIF_DATE")).collect(Collectors.toList());
+				
 			}
+		}else {
+			entities = entities.stream().sorted(critMap.get("MANIF_DATE").reversed()).collect(Collectors.toList());
 		}
 
 		return entities;

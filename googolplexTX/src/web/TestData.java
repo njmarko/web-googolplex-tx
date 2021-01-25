@@ -121,14 +121,14 @@ public class TestData {
 
 		Location loc2 = new Location(222.3, 2222.3, "2", "Novi Sad", 21000, "Cika Perina"); // different number compared
 																							// to adrs1
-		Manifestation man2 = new Manifestation("2222", "Man2NegativeValsInactive", -3, LocalDateTime.now(), -1d, // Intentionally
+		Manifestation man2 = new Manifestation("2222", "Man2NegativeValsInactive", -3, LocalDateTime.of(2001, 12, 22, 5, 13), -1d, // Intentionally
 																													// set
 																													// this
 				// to negative values
 				ManifestationStatus.INACTIVE, "poster", false, mt2, sal1, loc2);
 
 		Location loc3 = new Location(333.3, 3333.3, "33", "Novi Sad", 21000, "Bulevar Oslobodjenja");
-		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.now(), 11d,
+		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.of(2011, 3, 22, 3, 54), 11d,
 				ManifestationStatus.INACTIVE, "poster", false, mt1, sal1, loc3);
 
 		Location loc4 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
@@ -136,7 +136,7 @@ public class TestData {
 				ManifestationStatus.ACTIVE, "poster", true, mt1, sal2, loc4); // deleted
 
 		Location loc5 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
-		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.now(),
+		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.of(2012, 12, 3, 13, 22),
 				33.3d, ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
 																						// manifestation
 
