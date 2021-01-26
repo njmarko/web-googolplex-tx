@@ -6,8 +6,10 @@ Vue.component("manifestation-view", {
 			comments: null,
 			locationString: "",
 			userData: {},
-			finished: null,
+			manifFinished: null,
+			userHasReservedTicket: null,
 			canComment: null,
+			customerComment: {}
 
 		}
 	},
@@ -70,8 +72,6 @@ Vue.component("manifestation-view", {
 							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
 						</td>
 					</tr>
-
-
 
 				</tbody>
 			</table>
@@ -209,37 +209,57 @@ Vue.component("manifestation-view", {
 				this.locationString = response.data.location.city + ", " + response.data.location.street + ", " + response.data.location.number + ", " + response.data.location.zipCode;
 				this.manifestation.dateOfOccurence = new Date(response.data.dateOfOccurence);
 
-				let isActive = self.manifestation.status == "ACTIVE";
-				// check if the manifestation is finished
-				let manifDate = moment(self.manifestation.dateOfOccurence).format('YYYY-MM-DD');
-				let curDate = moment(Date.now()).format('YYYY-MM-DD');
-				// When this format is used i can compare two date strings to determine if one date is after another
-				let isInThePast = curDate > manifDate;
-				self.finished = isActive && isInThePast;
+				this.isManiffinished(self.manifestation);
+
+				this.getManifTickets();
 
 				this.$nextTick(() => {
 					self.sendMapCallback();
 				});
 			});
 
-		axios
-			.get('api/manifestations/' + this.$route.params.id + '/tickets')
-			.then(response => {
-
-				this.tickets = response.data;
-			});
-
-		axios
-			.get('api/manifestations/' + this.$route.params.id + '/comments')
-			.then(response => {
-
-				this.comments = response.data;
-			});
-
 
 	},
 	methods: {
 
+
+		getManifTickets: function () {
+			axios
+				.get('api/manifestations/' + this.$route.params.id + '/tickets')
+				.then(response => {
+					this.tickets = response.data;
+
+					this.checkIfUserHasManifTicket(this.tickets);
+
+
+					this.getManifComments();
+				});
+		},
+		checkIfUserHasManifTicket: function (tickets) {
+			if (this.localUserData != null) {
+				let username = this.localUserData.username;
+				for (const t of tickets) {
+					if (t.status == "RESERVED" && t.customer == username) {
+						this.userHasReservedTicket = true;
+						break;
+					}
+				}
+			}
+		},
+
+
+		getManifComments: function () {
+
+			axios
+				.get('api/manifestations/' + this.$route.params.id + '/comments')
+				.then(response => {
+
+					this.comments = response.data;
+
+
+					this.customerComment;
+				});
+		},
 		// TODO: Make this global (store or smth)
 		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);
@@ -257,7 +277,16 @@ Vue.component("manifestation-view", {
 			this.$root.$emit('mapCallback', current_location);
 		},
 
-
+		isManiffinished: function (manif) {
+			let isActive = manif.status == "ACTIVE";
+			// check if the manifestation is finished
+			let manifDate = moment(manif.dateOfOccurence).format('YYYY-MM-DD');
+			let curDate = moment(Date.now()).format('YYYY-MM-DD');
+			// When this format is used i can compare two date strings to determine if one date is after another
+			let isInThePast = curDate > manifDate;
+			this.manifFinished = isActive && isInThePast;
+			return this.manifFinished;
+		}
 
 
 	},
