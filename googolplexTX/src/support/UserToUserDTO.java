@@ -60,11 +60,7 @@ public class UserToUserDTO {
 	}
 	
 	public static Collection<UserDTO> convert(Collection<User> users){
-		Collection<UserDTO> retVal = new ArrayList<UserDTO>();
-		for (User user : users) {
-			retVal.add(convert(user));
-		}	
-		return retVal;
+		return users.stream().map(UserToUserDTO::convert).collect(Collectors.toList());
 	}
 	
 	

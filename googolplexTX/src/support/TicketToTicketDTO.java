@@ -4,6 +4,7 @@ package support;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.Ticket;
 import web.dto.TicketDTO;
@@ -19,7 +20,6 @@ public class TicketToTicketDTO {
 		retVal.setPrice(t.getPrice());
 		retVal.setTicketType(t.getTicketType().name());
 		retVal.setTicketStatus(t.getTicketStatus().name());
-		retVal.setDeleted(t.getDeleted());
 		retVal.setCustomer(t.getCustomer().getUsername());
 		retVal.setManifestation(t.getManifestation().getId());
 		
@@ -32,15 +32,15 @@ public class TicketToTicketDTO {
 			retVal.setCancelationDate(cancelationDate);
 		}
 		
+		retVal.setCutomerFullName(t.getCustomer().getFirstName() + " " + t.getCustomer().getLastName());
+		retVal.setManifestationName(t.getManifestation().getName());
+		
+		
 		return retVal;
 	}
 	
 	public static Collection<TicketDTO> convert(Collection<Ticket> tickets){
-		Collection<TicketDTO> retVal = new ArrayList<TicketDTO>();
-		for (Ticket ticket : tickets) {
-			retVal.add(convert(ticket));
-		}	
-		return retVal;
+		return tickets.stream().map(TicketToTicketDTO::convert).collect(Collectors.toList());
 	}
 	
 	

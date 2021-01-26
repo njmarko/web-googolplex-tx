@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.enumerations.ManifestationStatus;
 
@@ -259,6 +260,12 @@ public class Manifestation {
 	}
 
 	public Collection<Comment> getComments() {
+		if (comments.isEmpty()) {
+			return comments;
+		}
+		comments = comments.stream().filter((Comment ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 		return comments;
 	}
 
@@ -267,6 +274,12 @@ public class Manifestation {
 	}
 
 	public Collection<Ticket> getTickets() {
+		if (tickets.isEmpty()) {
+			return tickets;
+		}
+		tickets = tickets.stream().filter((Ticket ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 		return tickets;
 	}
 

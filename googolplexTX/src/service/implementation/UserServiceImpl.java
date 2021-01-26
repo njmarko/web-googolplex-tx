@@ -24,9 +24,11 @@ import model.enumerations.UserRole;
 import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
+import support.DateConverter;
 import web.dto.LoginDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
+import web.dto.SuspiciousSearchDTO;
 import web.dto.UserDTO;
 import web.dto.UserSearchDTO;
 
@@ -99,10 +101,10 @@ public class UserServiceImpl implements UserService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<User>> critMap = new HashMap<String, Comparator<User>>();
-			critMap.put("firstName", Comparator.comparing(User::getFirstName));
-			critMap.put("lastName", Comparator.comparing(User::getLastName));
-			critMap.put("username", Comparator.comparing(User::getUsername));
-			critMap.put("points", (o1, o2) -> {
+			critMap.put("FIRST_NAME", (o1,o2)->{return o1.getFirstName().trim().compareToIgnoreCase(o2.getFirstName().trim());});
+			critMap.put("LAST_NAME", (o1,o2)->{return o1.getLastName().trim().compareToIgnoreCase(o2.getLastName().trim());});
+			critMap.put("USERNAME", (o1,o2)->{return o1.getUsername().trim().compareToIgnoreCase(o2.getUsername().trim());});
+			critMap.put("POINTS", (o1, o2) -> {
 				if (!(o1 instanceof Customer) && !(o2 instanceof Customer)) {
 					return 0;
 				} else if (!(o1 instanceof Customer)) {
@@ -113,9 +115,9 @@ public class UserServiceImpl implements UserService {
 					Customer c1 = (Customer) o1;
 					Customer c2 = (Customer) o2;
 					if (c1.getPoints() > c2.getPoints()) {
-						return -1;
-					} else if (c1.getPoints() < c2.getPoints()) {
 						return 1;
+					} else if (c1.getPoints() < c2.getPoints()) {
+						return -1;
 					} else {
 						return 0;
 					}
@@ -123,7 +125,7 @@ public class UserServiceImpl implements UserService {
 			});
 
 			// If sortCriteria is wrong it doesn't sort the collection
-			Comparator<User> comp = critMap.get(searchParams.getSortCriteria().toLowerCase().trim());
+			Comparator<User> comp = critMap.get(searchParams.getSortCriteria().toUpperCase().trim());
 			if (comp != null) {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
 			}
@@ -157,7 +159,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User delete(String key) {
-		return this.userDAO.delete(key);
+		User user = findOne(key);
+		if (user == null) {
+			return null;
+		}
+		if (user.getUserRole() == UserRole.ADMIN)
+			return user;
+		
+		user.setDeleted(true);
+		return user;
 	}
 
 	/**
@@ -347,4 +357,91 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	@Override
+	public Collection<CustomerType> findAllCustomerTypes() {
+		return this.custTypeDAO.findAll().stream().filter((ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+	}
+	
+	@Override
+	public CustomerType findOneCustomerType(String key) {
+		return this.custTypeDAO.findOne(key);
+	}
+
+
+	private int countCancelations (Customer customer,  LocalDateTime begin, LocalDateTime end) {
+		Collection<Ticket> tickets = customer.getTickets();
+		int count = 0;
+		for (Ticket ticket : tickets) {
+			LocalDateTime cancelDate = ticket.getCancelationDate();
+			if (cancelDate == null)
+				continue;
+			if (cancelDate.isBefore(begin))
+				continue;
+			if (cancelDate.isAfter(end))
+				continue;
+			count++;
+				
+		}
+		return count;
+	}
+	
+	@Override
+	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto) {
+		Collection<User> allUsers = this.findAll();
+
+		if (dto.getFrequency() == null) 
+			dto.setFrequency(5);
+
+		if (dto.getStartDate() == null)
+			dto.setStartDate( DateConverter.dateToInt(LocalDateTime.now().minusDays(30)));;
+	
+		if (dto.getEndDate() == null)
+			dto.setEndDate( DateConverter.dateToInt(LocalDateTime.now()));;
+		
+		
+		LocalDateTime startDate = DateConverter.dateFromInt(dto.getStartDate());
+		LocalDateTime endDate = DateConverter.dateFromInt(dto.getEndDate());
+		Integer frequency = dto.getFrequency();
+		
+		allUsers = allUsers.stream().filter((User u) -> {
+			return (u.getUserRole() == UserRole.CUSTOMER && this.countCancelations((Customer) u, startDate, endDate) >= frequency);
+		}).collect(Collectors.toList());
+		
+		
+		
+		return allUsers;
+	}
+
+	@Override
+	public User blockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null)
+			return null;
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(true);
+		
+		return user;
+	}
+
+	@Override
+	public User unblockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null || user.getUserRole() == UserRole.ADMIN)
+			return null;
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(false);
+		
+		return user;
+	}
+
+	@Override
+	public CustomerType deleteOneCustomerType(String key) {
+		// TODO: save to file
+		return custTypeDAO.delete(key);
+	}
+	
 }

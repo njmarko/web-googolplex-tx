@@ -21,19 +21,17 @@ public class ManifestationDTO {
 	private String manifestationType;
 	private String salesman;
 	private Location location;
+	private Double averageRating;
 	private Collection<String> comments;
 	private Collection<String> tickets;
 
-	
 	public String validate() {
-		String err = null;		
-		
+		String err = null;
+
 		if (StringUtils.isEmpty(name)) {
 			err = "You have to enter name";
 		} else if (StringUtils.isEmpty(status)) {
 			err = "You have to enter status";
-		} else if (StringUtils.isEmpty(poster)) {
-			err = "You have to enter poster";
 		} else if (StringUtils.isEmpty(manifestationType)) {
 			err = "You have to enter manifestationType";
 		} else if (StringUtils.isEmpty(salesman)) {
@@ -54,36 +52,35 @@ public class ManifestationDTO {
 			err = "You have to enter zipCode";
 		} else if (availableSeats == null) {
 			err = "You have to enter availableSeats";
-		} else if (dateOfOccurence == null){
+		} else if (dateOfOccurence == null) {
 			err = "You have to enter dateOfOccurence";
-		} else if (regularPrice == null){
+		} else if (regularPrice == null) {
 			err = "You have to enter regularPrice";
 		} else if (availableSeats <= 0) {
 			err = "Manifestation mush have at least one available seat";
 		} else if (regularPrice < 0) {
 			err = "Manifestation mush have at least one available seat";
-		}		
+		}
 		return err;
 	}
-	
+
 	public String validate(User loggedIn, Manifestation existingManif) {
 		String err = this.validate();
 		if (err == null) {
 			if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
 				err = "Customer can not edit manifestations";
-			}else if (loggedIn.getUserRole() == UserRole.SALESMAN &&  status.trim().compareToIgnoreCase(existingManif.getStatus().name()) != 0) {
+			} else if (loggedIn.getUserRole() == UserRole.SALESMAN
+					&& status.trim().compareToIgnoreCase(existingManif.getStatus().name()) != 0) {
 				err = "Salesman can only create inactive manifestations and cannot edit their status!";
 			}
 		}
 		return err;
 	}
-	
-	
+
 	public ManifestationDTO() {
 		super();
 	}
 
-	
 	/**
 	 * @param id
 	 * @param name
@@ -95,12 +92,13 @@ public class ManifestationDTO {
 	 * @param manifestationType
 	 * @param salesman
 	 * @param location
+	 * @param averageRating
 	 * @param comments
 	 * @param tickets
 	 */
 	public ManifestationDTO(String id, String name, Integer availableSeats, Long dateOfOccurence, Double regularPrice,
 			String status, String poster, String manifestationType, String salesman, Location location,
-			Collection<String> comments, Collection<String> tickets) {
+			Double averageRating, Collection<String> comments, Collection<String> tickets) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -112,6 +110,7 @@ public class ManifestationDTO {
 		this.manifestationType = manifestationType;
 		this.salesman = salesman;
 		this.location = location;
+		this.averageRating = averageRating;
 		this.comments = comments;
 		this.tickets = tickets;
 	}
@@ -212,12 +211,21 @@ public class ManifestationDTO {
 		this.location = location;
 	}
 
+	public Double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(Double averageRating) {
+		this.averageRating = averageRating;
+	}
+
 	@Override
 	public String toString() {
 		return "ManifestationDTO [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
 				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
 				+ ", poster=" + poster + ", manifestationType=" + manifestationType + ", salesman=" + salesman
-				+ ", location=" + location + ", comments=" + comments + ", tickets=" + tickets + "]";
+				+ ", location=" + location + ", averageRating=" + averageRating + ", comments=" + comments
+				+ ", tickets=" + tickets + "]";
 	}
 
 }

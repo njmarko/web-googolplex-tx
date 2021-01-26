@@ -62,7 +62,7 @@ Vue.component("salesman-users", {
 	,
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null) {
+		if (localUserData == null || (localUserData.userRole != "SALESMAN" )) {
 			this.$router.push("/");
 		}
 		console.log(localUserData);
@@ -73,6 +73,7 @@ Vue.component("salesman-users", {
 				this.users = response.data;
 				console.log(this.users);
 			});
+
 
 	},
 	methods: {

@@ -4,17 +4,24 @@ public class CustomerTypeDTO {
 	private String name;
 	private Double discount;
 	private Double requiredPoints;
-	private Boolean deleted;
+
 	
 	public CustomerTypeDTO() {
 		super();
 	}
-	public CustomerTypeDTO(String name, Double discount, Double requiredPoints, Boolean deleted) {
+	
+	
+	/**
+	 * @param name
+	 * @param discount
+	 * @param requiredPoints
+	 */
+	public CustomerTypeDTO(String name, Double discount, Double requiredPoints) {
 		super();
 		this.name = name;
 		this.discount = discount;
 		this.requiredPoints = requiredPoints;
-		this.deleted = deleted;
+
 	}
 	public String getName() {
 		return name;
@@ -34,13 +41,13 @@ public class CustomerTypeDTO {
 	public void setRequiredPoints(Double requiredPoints) {
 		this.requiredPoints = requiredPoints;
 	}
-	public Boolean getDeleted() {
-		return deleted;
-	}
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
 
+
+	@Override
+	public String toString() {
+		return "CustomerTypeDTO [name=" + name + ", discount=" + discount + ", requiredPoints=" + requiredPoints + "]";
+	}
+	
 	
 
 }

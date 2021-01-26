@@ -24,6 +24,17 @@ public class TicketSearchDTO {
 		super();
 	}
 
+	/**
+	 * @param manifestationName
+	 * @param minPrice
+	 * @param maxPrice
+	 * @param beginDate
+	 * @param endDate
+	 * @param ascending
+	 * @param sortCriteria
+	 * @param ticketType
+	 * @param ticketStatus
+	 */
 	public TicketSearchDTO(String manifestationName, Double minPrice, Double maxPrice, Long beginDate, Long endDate,
 			Boolean ascending, String sortCriteria, String ticketType, String ticketStatus) {
 		super();

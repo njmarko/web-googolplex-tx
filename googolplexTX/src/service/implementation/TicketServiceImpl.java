@@ -1,27 +1,32 @@
 package service.implementation;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import model.Customer;
+import model.CustomerType;
 import model.Manifestation;
 import model.Salesman;
 import model.Ticket;
 import model.User;
+import model.enumerations.ManifestationStatus;
 import model.enumerations.TicketStatus;
 import model.enumerations.TicketType;
 import model.enumerations.UserRole;
+import repository.CustomerTypeDAO;
 import repository.ManifestationDAO;
 import repository.TicketDAO;
 import repository.UserDAO;
 import service.TicketService;
+import web.dto.ReservationDTO;
 import web.dto.TicketSearchDTO;
 
 public class TicketServiceImpl implements TicketService {
@@ -29,12 +34,24 @@ public class TicketServiceImpl implements TicketService {
 	private TicketDAO ticketDAO;
 	private UserDAO userDAO;
 	private ManifestationDAO manifestationDAO;
+	private CustomerTypeDAO custTypeDAO;
 
-	public TicketServiceImpl(TicketDAO ticketDAO, UserDAO userDAO, ManifestationDAO manifestationDAO) {
+	private static final Map<TicketType, Double> typePrices;
+    static {
+        Map<TicketType, Double> tmpMap = new HashMap<TicketType, Double>();
+        tmpMap.put(TicketType.REGULAR, 1.0);
+        tmpMap.put(TicketType.FAN_PIT, 2.0);
+        tmpMap.put(TicketType.VIP, 4.0);
+        typePrices = Collections.unmodifiableMap(tmpMap);
+    }
+	
+	public TicketServiceImpl(TicketDAO ticketDAO, UserDAO userDAO, ManifestationDAO manifestationDAO,  CustomerTypeDAO custTypeDAO) {
 		super();
 		this.ticketDAO = ticketDAO;
 		this.userDAO = userDAO;
 		this.manifestationDAO = manifestationDAO;
+		this.custTypeDAO = custTypeDAO;
+
 	}
 
 	@Override
@@ -83,7 +100,7 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public Collection<Ticket> findAllBySalesman(String key) {
+	public Collection<Ticket> findAllBySalesman(String key, TicketSearchDTO searchParams) {
 		// TODO: TEST
 		User user = userDAO.findOne(key);
 		if (user.getUserRole() != UserRole.SALESMAN) {
@@ -97,17 +114,31 @@ public class TicketServiceImpl implements TicketService {
 			entities.addAll(manifestation.getTickets().stream().filter((Ticket ticket) -> {
 				return ticket.getTicketStatus() == TicketStatus.RESERVED;
 			}).collect(Collectors.toList()));
-			
+						
 		}
+		
+		searchParams.setTicketStatus(TicketStatus.RESERVED.name());
+		
+		entities = searchTicketCollection(entities, searchParams);
 		
 		return entities;
 	}
 	
 	@Override
-	public Collection<Ticket> searchByUser(String key, TicketSearchDTO searchParams) {
-		Collection<Ticket> entities = this.findAllByUser(key);
-
+	public Collection<Ticket> search(String username, TicketSearchDTO searchParams) {
+		Collection<Ticket> entities;
+		if (username == null) {
+			entities = this.findAll();
+		}else {
+			entities = this.findAllByUser(username);
+		}	
 		
+		entities = searchTicketCollection(entities, searchParams);
+				
+		return entities;
+	}
+	
+	private Collection<Ticket> searchTicketCollection(Collection<Ticket> entities, TicketSearchDTO searchParams){
 		
 		if (searchParams.getManifestationName() != null) {
 			entities = entities.stream().filter((ent) -> {
@@ -167,27 +198,135 @@ public class TicketServiceImpl implements TicketService {
 			Boolean ascending = searchParams.getAscending() != null ? searchParams.getAscending() : true;
 
 			final Map<String, Comparator<Ticket>> critMap = new HashMap<String, Comparator<Ticket>>();
-			critMap.put("name", Comparator.comparing( x -> ((Ticket) x).getManifestation().getName()));
-			critMap.put("price", Comparator.comparing(Ticket::getPrice));
-			critMap.put("date", Comparator.comparing(Ticket::getDateOfManifestation));
+			critMap.put("MANIF_NAME", (o1,o2)->{return o1.getManifestation().getName().trim().compareToIgnoreCase(o2.getManifestation().getName().trim());});
+			critMap.put("TICKET_PRICE", Comparator.comparing(Ticket::getPrice));
+			critMap.put("MANIF_DATE", Comparator.comparing(Ticket::getDateOfManifestation));
 			// TODO add radius search for location
 
 			// If sortCriteria is wrong it doesn't sort the collection
-			Comparator<Ticket> comp = critMap.get(searchParams.getSortCriteria().toLowerCase().trim());
+			Comparator<Ticket> comp = critMap.get(searchParams.getSortCriteria().toUpperCase().trim());
 			if (comp != null) {
 				entities = entities.stream().sorted(ascending ? comp : comp.reversed()).collect(Collectors.toList());
 			}
 		}
-
-		
 		
 		return entities;
 	}
+	
 
 	@Override
 	public Collection<Ticket> findAllByManifestation(String key) {
 		Manifestation manifestation = manifestationDAO.findOne(key);
 		return manifestation.tickets;
+	}
+
+	@Override
+	public Collection<Ticket> reserve(ReservationDTO reservation) {
+		// CUSTOMER
+		
+		User user = userDAO.findOne(reservation.getCustomer());
+		if (user.getUserRole() != UserRole.CUSTOMER) {
+			throw new IllegalArgumentException("Only users can reserve ticket");
+		}
+		Customer customer = (Customer) user;
+		
+		// MANIFESTATION
+		Manifestation manifestation = manifestationDAO.findOne(reservation.getManifestation());
+		
+		if (manifestation.getStatus() == ManifestationStatus.INACTIVE) {
+			throw new IllegalArgumentException("You can reserver ticket only from ACTIVE manifestations");
+		}
+		
+		
+		int currentSeats = manifestation.getAvailableSeats();
+		if (currentSeats - reservation.getQuantity() < 0) {
+			throw new IllegalArgumentException("No seats available");
+		}
+		manifestation.setAvailableSeats(currentSeats - reservation.getQuantity());
+		
+		
+		
+		Double total = calculatePrice(reservation.getTicketType(), reservation.getQuantity(), manifestation.getRegularPrice());
+		Double points = calculatePoints(total);
+		
+		double customerPoints = customer.getPoints() + points;
+		customer.setPoints(customerPoints);
+		customer.setCustomerType(this.determineCustomerType(customerPoints));
+		
+		
+		Collection<Ticket> tickets = new ArrayList<Ticket>();
+		
+		for (int i = 0; i < reservation.getQuantity() ; ++i) {
+			Ticket ticket = new Ticket(ticketDAO.findNextId(), manifestation.getDateOfOccurence(), total, reservation.getTicketType(), TicketStatus.RESERVED, null, false, customer, manifestation);
+			customer.getTickets().add(ticket);
+			manifestation.getTickets().add(ticket);
+			
+			tickets.add(ticket);
+			ticketDAO.save(ticket);
+		}
+
+		
+		// TODO: should I save
+		ticketDAO.saveFile();
+		userDAO.saveFile();
+		manifestationDAO.saveFile();
+		return tickets;
+	}
+
+	@Override
+	public CustomerType determineCustomerType(Double points) {
+
+		Collection<CustomerType> custTypes = custTypeDAO.findAll();
+
+		if (custTypes == null) {
+			return null;
+		}
+
+		// sort customer types based on required points
+		custTypes = custTypes.stream().sorted(Comparator.comparing(CustomerType::getRequiredPoints))
+				.collect(Collectors.toList());
+
+		// set the first customer type
+		CustomerType adequateType = custTypes.iterator().next();
+
+		// iterate to see if there are higher tiers that customer qualifies for
+
+		for (CustomerType customerType : custTypes) {
+			if (customerType.getRequiredPoints() <= points) {
+				adequateType = customerType;
+			}
+		}
+
+		return adequateType;
+	}
+	
+	public static double calculatePrice(TicketType ticketType, int quantity, double regularPrice) {
+		double multiplier = typePrices.get(ticketType);
+		double total = regularPrice * multiplier * quantity;
+		return ((double) Math.round(total * 10)) / 10;
+
+	}
+	
+	public static double calculatePoints(double total) {
+		double points = total / 1000 * 133;
+		return ((double) Math.round(points * 10)) / 10;
+	}
+
+	@Override
+	public Ticket cancelTicket(String key) {
+		Ticket ticket = findOne(key);
+		if (ticket == null)
+			return null;
+		
+		LocalDateTime weekAgoManif = ticket.getDateOfManifestation().minusDays(7);
+		if (weekAgoManif.isBefore(LocalDateTime.now())) {
+			throw new IllegalArgumentException("You cannot cancel manifestation in 7 days before beginning");
+		}
+		
+		ticket.setCancelationDate(LocalDateTime.now());
+		ticket.setTicketStatus(TicketStatus.CANCELED);
+		ticketDAO.saveFile();
+		return ticket;
 	}
 
 }

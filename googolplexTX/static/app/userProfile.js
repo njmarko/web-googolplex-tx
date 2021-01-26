@@ -130,6 +130,18 @@ Vue.component("user-profile", {
 						<td>Role</td>
 						<td>{{userData.userRole}}</td>
 					</tr>
+					<tr>
+						<td>Role</td>
+						<td>{{userData.userRole}}</td>
+					</tr>
+					<tr v-if="userData.points">
+						<td>Points</td>
+						<td>{{userData.points}}</td>
+					</tr>
+					<tr v-if="userData.customerType">
+						<td>Customer Type</td>
+						<td>{{userData.customerType}}</td>
+					</tr>
 				</tbody>
 			</table>
 			<br>
@@ -151,6 +163,8 @@ Vue.component("user-profile", {
 				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
 				this.userData.gender = response.data.gender;
 			});
+		
+
 
 	},
 	methods: {
@@ -179,7 +193,7 @@ Vue.component("user-profile", {
 					}
 					console.log("error.config");
 					console.log(error.config);
-				});
+			});
 		}
 
 	},

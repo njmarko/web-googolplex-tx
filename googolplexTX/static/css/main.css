@@ -1,78 +1,80 @@
-#top,#navbar{
-	background-color:white;
-	z-index:100;
+#top,
+#navbar {
+	background-color: white;
+	z-index: 100;
 }
 
 :root {
 	--input-padding-x: 1.5rem;
 	--input-padding-y: .75rem;
-  }
-  
-  body {
+}
+
+body {
 	background: #007bff;
 	background: linear-gradient(to right, #0062E6, #33AEFF);
-  }
-  
-  .card-signin {
+}
+
+.card-signin {
 	border: 0;
 	border-radius: 1rem;
 	box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
-  }
-  
-  .card-signin .card-title {
+}
+
+.card-signin .card-title {
 	margin-bottom: 2rem;
 	font-weight: 300;
 	font-size: 1.5rem;
-  }
-  
-  .card-signin .card-body {
-	padding: 2rem;
-  }
-
-  .form-signin {
-	width: 100%;
-  }
-  
-  .form-control:disabled, .form-control[readonly] {
-    z-index: 0 !important;
 }
 
-  .form-signin .btn {
+.card-signin .card-body {
+	padding: 2rem;
+}
+
+.form-signin {
+	width: 100%;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+	z-index: 0 !important;
+}
+
+.form-signin .btn {
 	font-size: 80%;
 	border-radius: 5rem;
 	letter-spacing: .1rem;
 	font-weight: bold;
 	padding: 1rem;
 	transition: all 0.2s;
-  }
-  
-  .form-label-group {
+}
+
+.form-label-group {
 	position: relative;
 	display: flex;
 	margin-bottom: 1rem;
-  }
-  
-  .form-label-group input,
-  .form-label-group select {
+}
+
+.form-label-group input,
+.form-label-group select {
 	width: 100%;
 	height: auto;
 	border-radius: 2rem;
 	z-index: 10;
 	background: transparent;
-  }
+}
 
-  .form-label-group input:focus,
-  .form-label-group select:focus {
+.form-label-group input:focus,
+.form-label-group select:focus {
 	background: transparent !important;
-  }
-  
-  .form-label-group>input,
-  .form-label-group>select,
-  .form-label-group>label {
+}
+
+.form-label-group>input,
+.form-label-group>select,
+.form-label-group>label {
 	padding: var(--input-padding-y) var(--input-padding-x);
-  }
-  
-  .form-label-group>label {
+}
+
+.form-label-group>label {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -85,109 +87,199 @@
 	border: 1px solid transparent;
 	border-radius: .25rem;
 	transition: all .1s ease-in-out;
-  }
-  
-  .form-label-group input::-webkit-input-placeholder, .form-label-group select::-webkit-select-placeholder {
-	color: transparent;
-  }
-  
-  .form-label-group input:-ms-input-placeholder, .form-label-group select:-ms-select-placeholder {
-	color: transparent;
-  }
-  
-  .form-label-group input::-ms-input-placeholder, .form-label-group select::-ms-select-placeholder {
-	color: transparent;
-  }
-  
-  .form-label-group input::-moz-placeholder,   .form-label-group select::-moz-placeholder {
-	color: transparent;
-  }
-  
-  .form-label-group input::placeholder, .form-label-group select::placeholder {
-	color: transparent;
-  }
-   
-  .form-label-group input:not(:placeholder-shown) {
-	padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
-	padding-bottom: calc(var(--input-padding-y) / 3);
-  }
-  
-  .form-label-group input:not(:placeholder-shown)~label {
-	padding-top: calc(var(--input-padding-y) / 3);
-	padding-bottom: calc(var(--input-padding-y) / 3);
-	font-size: 12px;
-	color: #777;
-  }   
+}
 
-  .form-label-group select:not(:placeholder-shown) {
+.form-label-group input::-webkit-input-placeholder,
+.form-label-group select::-webkit-select-placeholder {
+	color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder,
+.form-label-group select:-ms-select-placeholder {
+	color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder,
+.form-label-group select::-ms-select-placeholder {
+	color: transparent;
+}
+
+.form-label-group input::-moz-placeholder,
+.form-label-group select::-moz-placeholder {
+	color: transparent;
+}
+
+.form-label-group input::placeholder,
+.form-label-group select::placeholder {
+	color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
 	padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
 	padding-bottom: calc(var(--input-padding-y) / 3);
-  }
-  
-  .form-label-group select:not(:placeholder-shown)~label {
+}
+
+.form-label-group input:not(:placeholder-shown)~label {
 	padding-top: calc(var(--input-padding-y) / 3);
 	padding-bottom: calc(var(--input-padding-y) / 3);
 	font-size: 12px;
 	color: #777;
-  }
-  
-  .btn-google {
+}
+
+.form-label-group select:not(:placeholder-shown) {
+	padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+	padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group select:not(:placeholder-shown)~label {
+	padding-top: calc(var(--input-padding-y) / 3);
+	padding-bottom: calc(var(--input-padding-y) / 3);
+	font-size: 12px;
+	color: #777;
+}
+
+.btn-google {
 	color: white;
 	background-color: #ea4335;
-  }
-  
-  .btn-facebook {
+}
+
+.btn-facebook {
 	color: white;
 	background-color: #3b5998;
-  }
-  
-  /* Fallback for Edge
+}
+
+textarea{
+	width:100%;
+}
+/* Star rating css from  https://codepen.io/hesguru/pen/BaybqXv*/
+.rate {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.rate:not(:checked) > input {
+    display: none;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
+/* Fallback for Edge
   -------------------------------------------------- */
-  
-  @supports (-ms-ime-align: auto) {
+
+@supports (-ms-ime-align: auto) {
 	.form-label-group>label {
-	  display: none;
+		display: none;
 	}
+
 	.form-label-group input::-ms-input-placeholder,
 	.form-label-group select::-ms-select-placeholder {
-	  color: #777;
+		color: #777;
 	}
-  }
-  
-  /* Fallback for IE
+}
+
+/* Fallback for IE
   -------------------------------------------------- */
-  
-  @media all and (-ms-high-contrast: none),
-  (-ms-high-contrast: active) {
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
 	.form-label-group>label {
-	  display: none;
+		display: none;
 	}
+
 	.form-label-group input:-ms-input-placeholder,
 	.form-label-group select:-ms-select-placeholder {
-	  color: #777;
+		color: #777;
 	}
-  }
+}
 
 
-  /* Footer */
+/* Footer */
 
-  html { height: 100%; }
-  body {
-	  min-height:100%; 
-	  position:relative; 
-	  padding-bottom:[footer-height] 
-  }
+html {
+	height: 100%;
+}
 
-  .sticky-footer {
+body {
+	min-height: 100%;
+	position: relative;
+	padding-bottom: [footer-height]
+}
+
+.sticky-footer {
 	position: absolute;
-    bottom: 0;
-    width: 100%;
+	bottom: 0;
+	width: 100%;
 	height: 60px;
 }
 
-  .footer-gap {
+.footer-gap {
 	display: block;
 	width: 100%;
 	height: 60px;
-  }
-  
+}
+
+
+.poster-img {
+	max-width: 100%;
+	height: 500px;
+}
+
+
+/* Map */
+.map {
+	height: 400px;
+	width: 100%;
+}
+
+.map-point {
+	width: 200px;
+	margin-left: -100px;
+}
+
+.map-point a {
+	background: #eee;
+	padding: 10px;
+}
+
+.map-icon {
+	width: 50px;
+	margin-left: 75px;
+	margin-top: -70px;
+}
+
+.map-content {
+	background: #eee;
+}
+
+.sticky-map {
+	position: sticky;
+	top: 20%;
+}
+
+.hidden {
+	display: none;
+}

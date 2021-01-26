@@ -116,19 +116,19 @@ public class TestData {
 		// MANIFESTATIONS WITH LOCATIONS AND ADDRESSES---------------------------
 
 		Location loc1 = new Location(111.3, 1111.3, "1", "Novi Sad", 21000, "Cika Perina");
-		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.now(), 123.3,
+		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.of(2018, 12, 22, 5, 13), 123.3,
 				ManifestationStatus.ACTIVE, "poster", false, mt1, sal1, loc1);
 
 		Location loc2 = new Location(222.3, 2222.3, "2", "Novi Sad", 21000, "Cika Perina"); // different number compared
 																							// to adrs1
-		Manifestation man2 = new Manifestation("2222", "Man2NegativeValsInactive", -3, LocalDateTime.now(), -1d, // Intentionally
+		Manifestation man2 = new Manifestation("2222", "Man2NegativeValsInactive", -3, LocalDateTime.of(2001, 12, 22, 5, 13), -1d, // Intentionally
 																													// set
 																													// this
 				// to negative values
 				ManifestationStatus.INACTIVE, "poster", false, mt2, sal1, loc2);
 
 		Location loc3 = new Location(333.3, 3333.3, "33", "Novi Sad", 21000, "Bulevar Oslobodjenja");
-		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.now(), 11d,
+		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.of(2011, 3, 22, 3, 54), 11d,
 				ManifestationStatus.INACTIVE, "poster", false, mt1, sal1, loc3);
 
 		Location loc4 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
@@ -136,7 +136,7 @@ public class TestData {
 				ManifestationStatus.ACTIVE, "poster", true, mt1, sal2, loc4); // deleted
 
 		Location loc5 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
-		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.now(),
+		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.of(2012, 12, 3, 13, 22),
 				33.3d, ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
 																						// manifestation
 
@@ -183,13 +183,13 @@ public class TestData {
 		Ticket t3 = new Ticket("3", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust1, man1);
 
-		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null, false,
+		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.parse("2020-01-10T00:00:00"), false,
 				cust1, man1);
 
 		Ticket t5 = new Ticket("5", LocalDateTime.now(), 969.68d, TicketType.VIP, TicketStatus.RESERVED, null, true,
 				cust1, man1); // deleted reserved ticket
 
-		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust1, man4); // references a deleted manifestation and is also
 								// canceled
 
@@ -206,7 +206,7 @@ public class TestData {
 		Ticket t10 = new Ticket("10", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust2, man1);
 
-		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(6),
 				false, cust2, man1);
 
 		// for customer 3 same as first 4 tickets for cust 1 and 2
@@ -219,7 +219,7 @@ public class TestData {
 		Ticket t14 = new Ticket("14", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust3, man1);
 
-		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, null,
+		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(8),
 				false, cust3, man1);
 
 		// for customer 4 different event from cust 1,2 and 3
@@ -232,17 +232,29 @@ public class TestData {
 		Ticket t18 = new Ticket("18", LocalDateTime.now(), 200d, TicketType.FAN_PIT, TicketStatus.RESERVED, null, false,
 				cust4, man5);
 
-		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, null, false,
+		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust4, man5);
+		
+		Ticket t20 = new Ticket("20", LocalDateTime.of(2001, 12, 22, 5, 13), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust4, man1);
+		
+		Ticket t21 = new Ticket("21", LocalDateTime.of(1992, 3, 13, 4, 22), 415d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+				cust4, man2);
 
 		// saving
 		userDAO.save(admin1);
 		userDAO.save(admin2);
 
-		
+		// Comments
 		Comment c1 = new Comment("1", "Predobarr film", 5, CommentStatus.ACCEPTED, false, man1, cust1);
 		Comment c2 = new Comment("2", "Jadnooo", 2, CommentStatus.ACCEPTED, false, man5, cust4);
 		Comment c3 = new Comment("3", "Okej", 3, CommentStatus.ACCEPTED, false, man1, cust3);
+		Comment c4 = new Comment("4", "Nije jos prihvacen (vidi ga samo admin i customer prodavac1)", 3, CommentStatus.PENDING, false, man1, cust1);
+		Comment c5 = new Comment("5", "Obrisan", 3, CommentStatus.ACCEPTED, true, man1, cust1);
+		Comment c6 = new Comment("6", "Odbijen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.REJECTED, false, man1, cust1);
+		Comment c7 = new Comment("7", "Nije jos prihvacen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.PENDING, false, man1, cust3);
+		Comment c8 = new Comment("8", "Odbijen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.REJECTED, false, man1, cust3);
+		Comment c9 = new Comment("7", "Nije jos prihvacen (vidi ga samo admin i salesman prodavac2)", 3, CommentStatus.PENDING, false, man5, cust3);
 		
 		
 		// CustomerTypes
@@ -313,10 +325,19 @@ public class TestData {
 		ticketDAO.save(t17);
 		ticketDAO.save(t18);
 		ticketDAO.save(t19);
+		ticketDAO.save(t20);
+		ticketDAO.save(t21);
 
 		commentDAO.save(c1);
 		commentDAO.save(c2);
 		commentDAO.save(c3);
+		commentDAO.save(c4);
+		commentDAO.save(c5);
+		commentDAO.save(c6);
+		commentDAO.save(c7);
+		commentDAO.save(c8);
+		commentDAO.save(c9);
+		
 		
 		
 		for (Manifestation m : manifestationDAO.getManifestations().values()) {
