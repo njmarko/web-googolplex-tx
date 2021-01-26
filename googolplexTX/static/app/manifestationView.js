@@ -79,7 +79,8 @@ Vue.component("manifestation-view", {
 			<hr>
 
 			<div v-if="userData && manifestation && this.canComment">
-				<h1> Prosla provera za komentar</h1>
+				<textarea id="userComment" name="text" rows="5" cols="50" placeholder="Insert comment here">
+				</textarea>	
 
 			</div>
 
@@ -115,7 +116,11 @@ Vue.component("manifestation-view", {
 								</tr>
 								<tr>
 									<td>Manifestation</td>
-									<td>{{t.manifestation}}</td>
+									<td>{{t.manifestationName}}</td>
+								</tr>
+								<tr>
+									<td>Customer</td>
+									<td>{{t.cutomerFullName}}</td>
 								</tr>
 								<tr>
 									<td>Ticket Type</td>
@@ -158,12 +163,16 @@ Vue.component("manifestation-view", {
 									<td>{{c.rating}}</td>
 								</tr>
 								<tr>
-									<td>Price</td>
+									<td>Text</td>
 									<td>{{c.text}}</td>
 								</tr>
 								<tr>
 									<td>Status</td>
 									<td>{{c.approved}}</td>
+								</tr>
+								<tr>
+									<td>User</td>
+									<td>{{c.customer}}</td>
 								</tr>
 							</tbody>
 						</table>		
@@ -253,13 +262,23 @@ Vue.component("manifestation-view", {
 			axios
 				.get('api/manifestations/' + this.$route.params.id + '/comments')
 				.then(response => {
-
 					this.comments = response.data;
-
-
-					this.customerComment;
+					this.checkIfUserCommented(this.comments);
+					if (this.manifFinished && this.userHasReservedTicket) {
+						this.canComment = true;
+					}
 				});
 		},
+		checkIfUserCommented: function(comments){
+					let username = this.localUserData.username;
+					for (const c of comments) {
+						if (c.customer == username) {
+							this.customerComment = c;
+							break;
+						}	
+					}
+					return this.customerComment;
+		}
 		// TODO: Make this global (store or smth)
 		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);
