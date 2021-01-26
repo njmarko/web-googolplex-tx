@@ -130,6 +130,18 @@ Vue.component("user-profile", {
 						<td>Role</td>
 						<td>{{userData.userRole}}</td>
 					</tr>
+					<tr>
+						<td>Role</td>
+						<td>{{userData.userRole}}</td>
+					</tr>
+					<tr v-if="userData.points">
+						<td>Points</td>
+						<td>{{userData.points}}</td>
+					</tr>
+					<tr v-if="userData.customerType">
+						<td>Customer Type</td>
+						<td>{{userData.customerType}}</td>
+					</tr>
 				</tbody>
 			</table>
 			<br>

@@ -2,7 +2,9 @@ package service;
 
 import java.util.Collection;
 
+import model.CustomerType;
 import model.Ticket;
+import web.dto.ReservationDTO;
 import web.dto.TicketSearchDTO;
 
 public interface TicketService extends GenericService<Ticket, String> {
@@ -13,4 +15,10 @@ public interface TicketService extends GenericService<Ticket, String> {
 
 	public Collection<Ticket> search(String key, TicketSearchDTO searchParams);
 	
+	public Collection<Ticket> reserve(ReservationDTO reservation);
+	
+	public CustomerType determineCustomerType(Double points);
+	
+	public Ticket cancelTicket(String key);
+
 }

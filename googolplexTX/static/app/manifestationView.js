@@ -9,8 +9,39 @@ Vue.component("manifestation-view", {
 			finished: null,
 			canComment: null,
 
+			customerType: null,
+			prices: {
+				REGULAR: 1,
+				FAN_PIT: 2,
+				VIP: 4,
+			},
+
+			reservation: {
+				ticketType: "REGULAR",
+				quantity: 1,
+			},
+
+			total: 0,
 		}
 	},
+	computed: {
+		getSum: function () {
+			total = this.manifestation.regularPrice * this.prices[this.reservation.ticketType] * this.reservation.quantity;
+		  	return Math.round(total * 10) / 10;
+		},
+		getTotalDiscont: function () {
+			sum = this.getSum;
+			if (this.customerType == null){
+				return sum;
+			}
+
+			sum = sum - sum * this.customerType.discount / 100; 
+			return Math.round(sum * 10) / 10;
+		}
+
+	},
+
+
 	template: ` 
 <div  class="d-flex" >
 		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
@@ -75,8 +106,47 @@ Vue.component("manifestation-view", {
 
 				</tbody>
 			</table>
+			<form v-on:submit.prevent="reserveTicket" v-if="userData && (userData.userRole == 'CUSTOMER') && this.customerType">
+
+				<div class="buy-section row">
+					<div class="col-lg-2 col-sm-6">
+						<div class="form-label-group">
+							<select name="inputTicketType" id="inputTicketType" v-model="reservation.ticketType" required>
+								<option value="REGULAR">Regular</option>
+								<option value="FAN_PIT">Fan Pit</option>
+								<option value="VIP">Vip</option>
+							</select>
+							<label for="inputTicketType">Ticket Type</label>
+						</div>
+					</div>
+					<div class="col-lg-2 col-sm-6">
+						<div class="form-label-group">
+							<input type="number" min="1" v-bind:max="manifestation.availableSeats" v-bind:disabled="manifestation.availableSeats <= 0" id="inputQuantity" class="form-control" placeholder="Quantity" required ref='focusMe' v-model="reservation.quantity">
+							<label for="inputQuantity">Quantity</label>
+						</div>
+					</div>
+					<div class="col-lg-2 col-sm-6">
+						<span>Type: {{ customerType.name }}</span>
+						<p>Discount: {{ customerType.discount }}%</p>
+					</div>
+					<div class="col-lg-2 col-sm-6">
+						<span>Total: {{ getSum }} - {{customerType.discount}}% =</span>
+						<p>Points: {{ calculatePoint( getSum ) }}</p>
+					</div>
+					<div class="col-lg-2">
+						<span><h2><strong>={{ getTotalDiscont }}</strong></h2></span>
+					</div>
+					<div class="col-lg-2">
+						<input v-bind:disabled="manifestation.availableSeats <= 0" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="RESERVE" />
+					</div>
+				</div>
+			</form>
+
+
 			<br>
 			<hr>
+
+
 
 			<div v-if="userData && manifestation && this.canComment">
 				<h1> Prosla provera za komentar</h1>
@@ -196,12 +266,14 @@ Vue.component("manifestation-view", {
 					console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
 					this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
 					this.userData.gender = response.data.gender;
+					this.loadCustomerTypes(response.data.customerType);
 				})
 				.catch(error => {
 					console.log("User not logged in");
 				});
 
 		}
+
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
@@ -257,8 +329,41 @@ Vue.component("manifestation-view", {
 			this.$root.$emit('mapCallback', current_location);
 		},
 
+		calculatePoint : function(price){
+			total = price / 1000 * 133;
+			return Math.round(total * 10) / 10;
+		},
+
+		reserveTicket : function() {
+			let reserveData =Object.assign({}, this.reservation); 
+			reserveData.customer = this.userData.username;
+			reserveData.manifestation = this.manifestation.id;
+			
+			axios
+				.post('api/manifestations/' + this.manifestation.id + '/reserve'  , reserveData)
+				.then(response => {
+					this.manifestation.availableSeats -= reserveData.quantity;
+					console.log(response)
+					this.updateQuantity();
+					//this.loadData(response);
+			});
+		},
+
+		loadCustomerTypes : function(id) {
+			axios
+			.get('api/customer-type/' + id)
+			.then(response => {
+				console.log(response);
+				this.customerType = response.data;
+			});
+		},
 
 
+		updateQuantity : function() {
+			if (this.reservation.quantity > this.manifestation.availableSeats){
+				this.reservation.quantity = this.manifestation.availableSeats;
+			}
+		},
 
 	},
 

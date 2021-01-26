@@ -363,6 +363,12 @@ public class UserServiceImpl implements UserService {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
 	}
+	
+	@Override
+	public CustomerType findOneCustomerType(String key) {
+		return this.custTypeDAO.findOne(key);
+	}
+
 
 	private int countCancelations (Customer customer,  LocalDateTime begin, LocalDateTime end) {
 		Collection<Ticket> tickets = customer.getTickets();

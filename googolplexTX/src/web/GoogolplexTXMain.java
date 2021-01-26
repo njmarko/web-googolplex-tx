@@ -46,7 +46,7 @@ public class GoogolplexTXMain {
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
 		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO, manifestationTypeDAO, userDAO, commentDAO);
-		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO, manifestationDAO); 
+		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO, manifestationDAO, customerTypeDAO); 
 		
 		UserController userController = new UserController(userServiceImpl);
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
@@ -155,6 +155,11 @@ public class GoogolplexTXMain {
 						});
 
 					});
+					
+					//  api/manifestation/:idm/reserve
+					path("/reserve", ()->{
+						post("", ticketController.reserveTicket); // req admin
+					});
 				});
 			});
 //			before("/users",UserController.authenticateUser); // all paths in manifestations are not allowed without login
@@ -215,13 +220,18 @@ public class GoogolplexTXMain {
 			path("/customer-type",()->{
 				get("",userController.findAllCustomerTypes);
 				path("/:idct", ()->{
-				//	get("", );
+					get("", userController.findOneCustomerType);
 					delete("", userController.deleteOneCustomerType);
 				});
 			});
 			
 			path("/tickets",()->{
 				get("",ticketController.findAllTickets); // TODO req admin
+				path("/:idt",()->{
+					path("/cancel",()->{
+						patch("",ticketController.cancelOneTicket); // TODO req admin
+					});				
+				});
 			});
 		});
 

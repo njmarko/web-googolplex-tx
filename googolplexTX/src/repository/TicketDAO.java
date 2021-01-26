@@ -3,6 +3,7 @@ package repository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,17 @@ public class TicketDAO implements GenericDAO<Ticket, String> {
 
 	private Map<String, Ticket> tickets = new ConcurrentHashMap<String, Ticket>();
 
+	
+	public String findNextId() {
+		if (tickets != null && tickets.size() > 0) {		
+			Long highest = tickets.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
+			Long id = highest + 1 ;
+			return id.toString();
+		}else {
+			return "1";
+		}
+	}
+	
 	public Map<String, Ticket> getTickets() {
 		return tickets;
 	}

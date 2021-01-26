@@ -20,7 +20,6 @@ public class TicketToTicketDTO {
 		retVal.setPrice(t.getPrice());
 		retVal.setTicketType(t.getTicketType().name());
 		retVal.setTicketStatus(t.getTicketStatus().name());
-		retVal.setDeleted(t.getDeleted());
 		retVal.setCustomer(t.getCustomer().getUsername());
 		retVal.setManifestation(t.getManifestation().getId());
 		
