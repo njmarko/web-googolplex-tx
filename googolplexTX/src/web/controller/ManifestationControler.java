@@ -354,12 +354,12 @@ public class ManifestationControler {
 			else if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
 				newEntity.setApproved(CommentStatus.PENDING.name());
 				comment = manifService.addUniqueComment(newEntity);
-			}else if (loggedIn.getUserRole() == UserRole.ADMIN || loggedIn.getUserRole() == UserRole.CUSTOMER) {
+			}else if (loggedIn.getUserRole() == UserRole.ADMIN || loggedIn.getUserRole() == UserRole.SALESMAN) {
 				comment = manifService.addUniqueComment(newEntity);
 			}
 			
 			if (comment == null) {
-				halt(HttpStatus.BAD_REQUEST_400, "Your comment is not valid");
+				halt(HttpStatus.BAD_REQUEST_400, "Your comment was not added");
 			}
 
 			return g.toJson(CommentToCommentDTO.convert(comment));

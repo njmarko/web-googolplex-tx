@@ -440,14 +440,17 @@ public class ManifestationServiceImpl implements ManifestationService {
 		
 		
 		
+		
+		cust.getComments().add(comment);
+		manif.getComments().add(comment);
 		commentDAO.save(comment);
 		commentDAO.saveFile();
 		
-		manif.getComments().add(comment);
+
 		manifestationDAO.save(manif);
 		manifestationDAO.saveFile();
 		
-		cust.getComments().add(comment);
+
 		userDAO.save(cust);
 		userDAO.saveFile();
 
@@ -475,7 +478,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 				}
 				// user must not already have an accepted comment. If accepted comment exists, new one will not be added
 				for (Comment com : cust.getComments()) {
-					if (com.getManifestation().getId().equals(dto.getManifestation()) && com.getApproved() == CommentStatus.ACCEPTED) {
+					if (com.getManifestation().getId().equals(dto.getManifestation()) && (com.getApproved() == CommentStatus.ACCEPTED || com.getApproved() == CommentStatus.PENDING)) {
 						return null;
 					}
 				}
