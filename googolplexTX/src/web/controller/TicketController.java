@@ -19,7 +19,9 @@ import spark.Route;
 import spark.http.matching.Halt;
 import support.JsonAdapter;
 import support.TicketToTicketDTO;
+import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.ReservationDTO;
 import web.dto.TicketDTO;
 import web.dto.TicketSearchDTO;
 import web.dto.UserSearchDTO;
@@ -174,6 +176,36 @@ public class TicketController {
 		}
 	};
 	
+	public final Route cancelOneTicket = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateUser.handle(req, res);
+			User user = userController.getAuthedUser(req);
+
+			
+			res.type("application/json");
+			String id = req.params("idt");
+			Ticket entity = ticketService.findOne(id);
+			if (entity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "not found");
+			}
+			if (!entity.getCustomer().getUsername().equals(user.getUsername())) {
+				halt(HttpStatus.BAD_REQUEST_400, "Only customer can cancel this manifestation");
+			}
+
+			try {
+				entity = ticketService.cancelTicket(id);
+			} catch (IllegalArgumentException e) {
+				halt(HttpStatus.BAD_REQUEST_400, e.getMessage());
+			}
+			entity = ticketService.cancelTicket(id);
+			
+			
+			return gson.toJson(TicketToTicketDTO.convert(entity));
+		}
+	};
+	
 	public final Route findReserverTicketsForSalesmanManifestation = new Route() {
 
 		@Override
@@ -210,5 +242,40 @@ public class TicketController {
 			return gson.toJson(TicketToTicketDTO.convert(foundEntities));
 		}
 	};
+	
+	public final Route reserveTicket = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			res.type("application/json");
+			
+			userController.authenticateUser.handle(req, res);
+			User loggedIn = userController.getAuthedUser(req);
+
+			if (loggedIn.getUserRole() != UserRole.CUSTOMER) {
+				halt(HttpStatus.FORBIDDEN_403, "Only customer or admin can view customer tickets");
+			}
+			
+			String body = req.body();
+			ReservationDTO reservationParams = gson.fromJson(body, ReservationDTO.class);
+			
+			String manifestation = req.params("idm");
+			reservationParams.setManifestation(manifestation);
+			
+			Collection<Ticket> entities = null;
+			try {
+				entities = ticketService.reserve(reservationParams);
+			} catch (IllegalArgumentException e) {
+				halt(HttpStatus.BAD_REQUEST_400, e.getMessage());
+			}
+
+			if (entities == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return gson.toJson(TicketToTicketDTO.convert(entities));
+		}
+	};
+	
 
 }

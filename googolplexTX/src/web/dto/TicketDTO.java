@@ -7,7 +7,6 @@ public class TicketDTO {
 	private String ticketType;
 	private String ticketStatus;
 	private Long cancelationDate;
-	private Boolean deleted;
 
 	public String customer;
 	public String manifestation;
@@ -32,7 +31,7 @@ public class TicketDTO {
 	 * @param cutomerFullName
 	 */
 	public TicketDTO(String id, Long dateOfManifestation, Double price, String ticketType, String ticketStatus,
-			Long cancelationDate, Boolean deleted, String customer, String manifestation, String manifestationName,
+			Long cancelationDate, String customer, String manifestation, String manifestationName,
 			String cutomerFullName) {
 		super();
 		this.id = id;
@@ -41,7 +40,6 @@ public class TicketDTO {
 		this.ticketType = ticketType;
 		this.ticketStatus = ticketStatus;
 		this.cancelationDate = cancelationDate;
-		this.deleted = deleted;
 		this.customer = customer;
 		this.manifestation = manifestation;
 		this.manifestationName = manifestationName;
@@ -96,14 +94,6 @@ public class TicketDTO {
 		this.cancelationDate = cancelationDate;
 	}
 
-	public Boolean getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-
 	public String getCustomer() {
 		return customer;
 	}
@@ -142,7 +132,7 @@ public class TicketDTO {
 	public String toString() {
 		return "TicketDTO [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
 				+ ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus + ", cancelationDate="
-				+ cancelationDate + ", deleted=" + deleted + ", customer=" + customer + ", manifestation="
+				+ cancelationDate + ", customer=" + customer + ", manifestation="
 				+ manifestation + ", manifestationName=" + manifestationName + ", cutomerFullName=" + cutomerFullName
 				+ "]";
 	}

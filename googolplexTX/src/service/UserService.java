@@ -29,6 +29,7 @@ public interface UserService extends GenericService<User, String> {
 	public User changePassword(PasswordDTO dto);
 	
 	public Collection<CustomerType> findAllCustomerTypes();
+	public CustomerType findOneCustomerType(String key);
 	public CustomerType deleteOneCustomerType(String key);
 
 	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto);

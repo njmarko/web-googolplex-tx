@@ -108,7 +108,7 @@ Vue.component("tickets", {
 					</tr>
 					<tr>
 						<td>Date of Occurence</td>
-						<td>{{t.dateOfManifestation}}</td>
+						<td>{{ dateToString(t.dateOfManifestation) }}</td>
 					</tr>
 					<tr>
 						<td>Price</td>
@@ -130,6 +130,11 @@ Vue.component("tickets", {
 					<tr>
 						<td>Ticket Type</td>
 						<td>{{t.ticketType}}</td>
+					</tr>
+					<tr v-if="isStarted(t.dateOfManifestation)">
+						<td colspan="2">
+						<button v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>		
@@ -176,9 +181,6 @@ Vue.component("tickets", {
 				.get(path, { params: sp })
 				.then(response => {
 					this.tickets = response.data;
-					for (let index = 0; index < this.tickets.length; index++) {
-						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
-					}
 					console.log(this.tickets);
 				});
 		}
@@ -188,9 +190,6 @@ Vue.component("tickets", {
 				.get(path, { params: sp })
 				.then(response => {
 					this.tickets = response.data;
-					for (let index = 0; index < this.tickets.length; index++) {
-						this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
-					}
 					console.log(this.tickets);
 				});
 		}
@@ -282,6 +281,35 @@ Vue.component("tickets", {
 			}
 		},
 
+		cancelTicket : function(obj) {
+			axios
+				.patch('api/tickets/' + obj.id + '/cancel')
+				.then(response => {
+					console.log(this.tickets);
+					Object.assign(obj, response.data);
+					console.log(this.tickets);
+			});
+		},
+
+		isCancelable : function(time) {
+			weekAgoManif = new Date(time);
+			weekAgoManif.setDate(weekAgoManif.getDate()-7);
+
+			today = new Date();
+			return today < weekAgoManif;
+		},
+
+		isStarted : function(time) {
+			manifDate = new Date(time);
+			today = new Date();
+			return today < manifDate;
+		},
+
+		dateToString : function(time) {
+			return new Date(time).toISOString().substring(0, 10);
+		},
+
+			
 	},
 
 

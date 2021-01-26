@@ -336,6 +336,25 @@ public class UserController {
 			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
 		}
 	};
+	
+	
+	public final Route findOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");
+
+			String id = req.params("idct");
+
+			CustomerType foundEntities = userService.findOneCustomerType(id);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Not found customer type.");
+			}
+
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
 
 	/**
 	 * Checks if user is logged in (This can be any type of user {CUSTOMER,
