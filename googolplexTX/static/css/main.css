@@ -148,6 +148,11 @@ body {
 	background-color: #3b5998;
 }
 
+textarea{
+	width:100%;
+	height:auto;
+}
+
 /* Fallback for Edge
   -------------------------------------------------- */
 

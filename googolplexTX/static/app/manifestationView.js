@@ -78,9 +78,11 @@ Vue.component("manifestation-view", {
 			<br>
 			<hr>
 
-			<div v-if="userData && manifestation && this.canComment">
-				<textarea id="userComment" name="text" rows="5" cols="50" placeholder="Insert comment here">
-				</textarea>	
+			<div class="row" v-if="userData && manifestation && this.canComment">
+				<form>
+					<textarea id="userComment" name="text" rows="5"  placeholder="Insert comment here">
+					</textarea>	
+				</form>
 
 			</div>
 
@@ -248,7 +250,7 @@ Vue.component("manifestation-view", {
 			if (this.localUserData != null) {
 				let username = this.localUserData.username;
 				for (const t of tickets) {
-					if (t.status == "RESERVED" && t.customer == username) {
+					if (t.ticketStatus == "RESERVED" && t.customer == username) {
 						this.userHasReservedTicket = true;
 						break;
 					}
@@ -278,7 +280,7 @@ Vue.component("manifestation-view", {
 						}	
 					}
 					return this.customerComment;
-		}
+		},
 		// TODO: Make this global (store or smth)
 		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);

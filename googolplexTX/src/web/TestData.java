@@ -116,7 +116,7 @@ public class TestData {
 		// MANIFESTATIONS WITH LOCATIONS AND ADDRESSES---------------------------
 
 		Location loc1 = new Location(111.3, 1111.3, "1", "Novi Sad", 21000, "Cika Perina");
-		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.now(), 123.3,
+		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.of(2018, 12, 22, 5, 13), 123.3,
 				ManifestationStatus.ACTIVE, "poster", false, mt1, sal1, loc1);
 
 		Location loc2 = new Location(222.3, 2222.3, "2", "Novi Sad", 21000, "Cika Perina"); // different number compared
