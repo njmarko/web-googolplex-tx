@@ -140,6 +140,11 @@ Vue.component("salesman-manifestations", {
 						<td>Salesman username</td>
 						<td>{{m.salesman}}</td>
 					</tr>
+
+					<tr v-if="m.averageRating">
+						<td>Average Rating</td>
+						<td>{{m.averageRating}}</td>
+					</tr>
 					<tr>
 						<td>Location</td>
 						<td>{{m.location.city}}</td>

@@ -1,6 +1,8 @@
 package service.implementation;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.Comment;
+import model.Customer;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationType;
@@ -20,6 +23,7 @@ import model.User;
 import model.enumerations.CommentStatus;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
+import model.enumerations.TicketStatus;
 import model.enumerations.UserRole;
 import model.Manifestation;
 import model.Ticket;
@@ -252,6 +256,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation save(ManifestationDTO dto) {
 
+		
+
+
+		
 		Manifestation found = null;
 		if (dto.getId() != null) {
 			found = manifestationDAO.findOne(dto.getId());
@@ -259,17 +267,49 @@ public class ManifestationServiceImpl implements ManifestationService {
 		if (found == null) {
 			found = new Manifestation();
 			found.setId(manifestationDAO.findNextId());
-			found.setDeleted(false);
+			found.setDeleted(false);	
 		}
+		
+		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
+		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
+		
+		
+		// check if manifestation exists at the same place and the same time	
+		Collection<Manifestation> manifs = this.findAll();
+		if (dto.getId() != null && found.getId() == dto.getId()) {
+			// if i edit manifestation i will not check for conflicts with the manifestation that i am editing
+			// so i remove it from the list of manifs that i will check for same place and time.
+			manifs.remove(found);
+		}
+		for (Manifestation m : manifs) {
+			if (m.getStatus() == ManifestationStatus.ACTIVE
+					&& m.getDateOfOccurence().toLocalDate().isEqual(dateOfOccurence.toLocalDate())
+					&& m.getLocation().getCity().equals(dto.getLocation().getCity())
+					&& m.getLocation().getStreet().equals(dto.getLocation().getStreet())
+					&& m.getLocation().getNumber().equals(dto.getLocation().getNumber())
+					&& m.getLocation().getZipCode().equals(dto.getLocation().getZipCode())) {
+				// this is the case where active manifestation already exists on the same place in the same time
+				return null;
+			}
+		}
+		
+		
 
 		// TODO: should i check for null and then add, is this save/edit or just save
 		found.setName(dto.getName());
 		found.setAvailableSeats(dto.getAvailableSeats());
 		found.setPoster(dto.getPoster());
 
-		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
-		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
 		found.setDateOfOccurence(dateOfOccurence);
+		
+		// i need to change all of the dates for the existing tickets for the manifestation in case of editing of date
+		for (Ticket t : found.getTickets()) {
+			// i will only change the date for the reserved tickets
+			if (t.getTicketStatus() == TicketStatus.RESERVED) {
+				t.setDateOfManifestation(dateOfOccurence);
+			}
+		}
+		
 
 		found.setRegularPrice(dto.getRegularPrice());
 
@@ -334,6 +374,145 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
 		return manifestationTypeDAO.delete(key);
+	}
+
+	@Override
+	public Comment save(CommentDTO dto) {
+		Comment comment = null;
+		if (dto.getId() != null) {
+			comment = commentDAO.findOne(dto.getId());
+		}else {
+			comment = new Comment();
+			comment.setId(commentDAO.findNextId());
+			comment.setDeleted(false);
+		}
+		if (comment == null) {
+			return null;
+		}
+		
+		
+		CommentStatus approved = null;
+		if (dto.getApproved() == null || dto.getApproved().trim().compareToIgnoreCase("PENDING") == 0) {
+			approved = CommentStatus.PENDING;
+		}else if (dto.getApproved().trim().compareToIgnoreCase("ACCEPTED") == 0) {
+			approved = CommentStatus.ACCEPTED;
+		}else if (dto.getApproved().trim().compareToIgnoreCase("REJECTED") == 0) {
+			approved = CommentStatus.REJECTED;
+		}else {
+			return null;
+		}
+		
+		comment.setApproved(approved);
+		
+		Manifestation manif = null;
+		if (dto.getManifestation() != null) {
+			manif = manifestationDAO.findOne(dto.getManifestation());
+		};
+		if (manif == null) {
+			return null;
+		}
+		
+		comment.setManifestation(manif);
+		
+		Customer cust = null;
+		if (dto.getCustomer() != null) {
+			User tempUser =  userDAO.findOne(dto.getCustomer());
+			if (tempUser != null && tempUser.getUserRole() == UserRole.CUSTOMER) {
+				cust = (Customer) tempUser;
+			}
+		}
+		if (cust == null) {
+			return null;
+		}
+		comment.setCustomer(cust);
+		
+		if (dto.getText() != null) {
+			comment.setText(dto.getText());
+		}else {
+			return null;
+		}
+		
+		if (dto.getRating() == null || (dto.getRating() < 1 || dto.getRating() > 5)) {
+			return null;
+		}else {
+			comment.setRating(dto.getRating());
+		}
+		
+		
+		
+		commentDAO.save(comment);
+		commentDAO.saveFile();
+		
+		manif.getComments().add(comment);
+		manifestationDAO.save(manif);
+		manifestationDAO.saveFile();
+		
+		cust.getComments().add(comment);
+		userDAO.save(cust);
+		userDAO.saveFile();
+
+		return comment;
+	}
+
+	@Override
+	public Comment addUniqueComment(CommentDTO dto) {
+		//check if comment from this user already exists for this manifestation
+		
+		if (dto.getCustomer() != null && dto.getManifestation()!= null) {
+			User tempUser = userDAO.findOne(dto.getCustomer());
+			if (tempUser.getUserRole() == UserRole.CUSTOMER) {
+				Customer cust = (Customer) tempUser;
+				Boolean hasTicket = false;
+				// User has to have a ticket for this manifestation
+				for (Ticket t : cust.getTickets()) {
+					if (t.getManifestation().getId().equals(dto.getManifestation()) && t.getTicketStatus() == TicketStatus.RESERVED) {
+						hasTicket = true;
+						break;
+					}
+				}
+				if (hasTicket == false) {
+					return null;
+				}
+				// user must not already have an accepted comment. If accepted comment exists, new one will not be added
+				for (Comment com : cust.getComments()) {
+					if (com.getManifestation().getId().equals(dto.getManifestation()) && com.getApproved() == CommentStatus.ACCEPTED) {
+						return null;
+					}
+				}
+				
+				// Comment can only be added to the manifestation that is finished and is active
+				Manifestation manif = manifestationDAO.findOne(dto.getManifestation());
+				
+				// manif must be active
+				if (manif == null || manif.getStatus() == ManifestationStatus.INACTIVE) {
+					return null;
+				}
+				
+//				String datePattern = "yyyy-MM-dd";
+//				SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+//				
+//				String manifDate = sdf.format(manif.getDateOfOccurence().toLocalDate());
+//				String currentDate = sdf.format(LocalDateTime.now());
+//				
+//				// if the current date is before the manifestations date of occurence then commenting is not allowed
+//				if (currentDate.compareTo(manifDate)<=0) {
+//					return null;
+//				}
+				
+				LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+				LocalDate currentDate = LocalDate.now();
+				
+				if (currentDate.isAfter(manifDate)) {
+					// rest of the checks are in the save method
+					return this.save(dto);	
+				}
+				else {
+					return null;
+				}
+
+			}
+		}	
+		return null;
 	}
 
 

@@ -6,8 +6,11 @@ Vue.component("manifestation-view", {
 			comments: null,
 			locationString: "",
 			userData: {},
-			finished: null,
+			manifFinished: null,
+			userHasReservedTicket: null,
 			canComment: null,
+			customerComment: {},
+			editTicket: false,
 
 		}
 	},
@@ -56,6 +59,10 @@ Vue.component("manifestation-view", {
 						<td>Salesman</td>
 						<td>{{manifestation.salesman}}</td>
 					</tr>
+					<tr v-if="manifestation.averageRating">
+						<td>Average Rating</td>
+						<td>{{manifestation.averageRating}}</td>
+					</tr>
 					<tr>
 						<td>Location</td>
 						<td>{{manifestation.location.city}}</td>
@@ -71,15 +78,36 @@ Vue.component("manifestation-view", {
 						</td>
 					</tr>
 
-
-
 				</tbody>
 			</table>
 			<br>
 			<hr>
 
-			<div v-if="userData && manifestation && this.canComment">
-				<h1> Prosla provera za komentar</h1>
+			<div class="col md-12" v-if="userData && manifestation && this.canComment">
+				<form v-on:submit.prevent="submitComment">
+					<div class="col-md-12">
+					<textarea id="userComment" name="text" rows="5"  placeholder="Insert comment here" v-model="customerComment.text">
+					</textarea>	
+					</div>
+						<div class="row">
+					  <div class="rate col-lg-6">
+					    <input type="radio" id="star5" name="rate" value="5" v-model="customerComment.rating" />
+					    <label for="star5" title="text">5 stars</label>
+					    <input type="radio" id="star4" name="rate" value="4" v-model="customerComment.rating" />
+					    <label for="star4" title="text">4 stars</label>
+					    <input type="radio" id="star3" name="rate" value="3" v-model="customerComment.rating" />
+					    <label for="star3" title="text">3 stars</label>
+					    <input type="radio" id="star2" name="rate" value="2" v-model="customerComment.rating" />
+					    <label for="star2" title="text">2 stars</label>
+					    <input type="radio" id="star1" name="rate" value="1" v-model="customerComment.rating" />
+					    <label for="star1" title="text">1 star</label>
+					  </div>
+
+					  <div class="col-lg-6">
+						<input type="submit" value="Post Review" class="btn btn-primary">
+					  </div>
+					  </div>
+				</form>
 
 			</div>
 
@@ -115,7 +143,11 @@ Vue.component("manifestation-view", {
 								</tr>
 								<tr>
 									<td>Manifestation</td>
-									<td>{{t.manifestation}}</td>
+									<td>{{t.manifestationName}}</td>
+								</tr>
+								<tr>
+									<td>Customer</td>
+									<td>{{t.cutomerFullName}}</td>
 								</tr>
 								<tr>
 									<td>Ticket Type</td>
@@ -158,12 +190,16 @@ Vue.component("manifestation-view", {
 									<td>{{c.rating}}</td>
 								</tr>
 								<tr>
-									<td>Price</td>
+									<td>Text</td>
 									<td>{{c.text}}</td>
 								</tr>
 								<tr>
 									<td>Status</td>
 									<td>{{c.approved}}</td>
+								</tr>
+								<tr>
+									<td>User</td>
+									<td>{{c.customer}}</td>
 								</tr>
 							</tbody>
 						</table>		
@@ -209,37 +245,93 @@ Vue.component("manifestation-view", {
 				this.locationString = response.data.location.city + ", " + response.data.location.street + ", " + response.data.location.number + ", " + response.data.location.zipCode;
 				this.manifestation.dateOfOccurence = new Date(response.data.dateOfOccurence);
 
-				let isActive = self.manifestation.status == "ACTIVE";
-				// check if the manifestation is finished
-				let manifDate = moment(self.manifestation.dateOfOccurence).format('YYYY-MM-DD');
-				let curDate = moment(Date.now()).format('YYYY-MM-DD');
-				// When this format is used i can compare two date strings to determine if one date is after another
-				let isInThePast = curDate > manifDate;
-				self.finished = isActive && isInThePast;
+				this.isManiffinished(self.manifestation);
+
+				this.getManifTickets();
 
 				this.$nextTick(() => {
 					self.sendMapCallback();
 				});
 			});
 
-		axios
-			.get('api/manifestations/' + this.$route.params.id + '/tickets')
-			.then(response => {
-
-				this.tickets = response.data;
-			});
-
-		axios
-			.get('api/manifestations/' + this.$route.params.id + '/comments')
-			.then(response => {
-
-				this.comments = response.data;
-			});
-
 
 	},
 	methods: {
 
+		submitComment: function(event){
+			event.preventDefault();
+			if (this.editTicket == true) {
+				let path = 'api/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.loadData(response);
+					})
+			} else {
+				let path = 'api/manifestations/' + this.manifestation.id + "/comments";
+				if (this.customerComment != null) {
+					this.customerComment.manifestation = this.manifestation.id;
+					this.customerComment.customer = this.localUserData.username;
+				}
+				axios
+					.post(path, this.customerComment)
+					.then(response => {
+						this.getManifComments();
+					})
+					.catch(error =>{
+						console.log("Error occured when adding comment" + error.response.data);
+					});
+			}
+		},
+		getManifTickets: function () {
+			axios
+				.get('api/manifestations/' + this.$route.params.id + '/tickets')
+				.then(response => {
+					this.tickets = response.data;
+
+					this.checkIfUserHasManifTicket(this.tickets);
+
+
+					this.getManifComments();
+				});
+		},
+		checkIfUserHasManifTicket: function (tickets) {
+			if (this.localUserData != null) {
+				let username = this.localUserData.username;
+				for (const t of tickets) {
+					if (t.ticketStatus == "RESERVED" && t.customer == username) {
+						this.userHasReservedTicket = true;
+						break;
+					}
+				}
+			}
+		},
+
+
+		getManifComments: function () {
+
+			axios
+				.get('api/manifestations/' + this.$route.params.id + '/comments')
+				.then(response => {
+					this.comments = response.data;
+					this.checkIfUserCommented(this.comments);
+					if (this.manifFinished && this.userHasReservedTicket) {
+						this.canComment = true;
+					}
+					
+				});
+		},
+		checkIfUserCommented: function(comments){
+					let username = this.localUserData.username;
+					for (const c of comments) {
+						if (c.customer == username) {
+							this.customerComment = c;
+							this.editTicket = true;
+							break;
+						}	
+					}
+					return this.customerComment;
+		},
 		// TODO: Make this global (store or smth)
 		dateFromInt: function (value) {
 			return new Date(value).toISOString().substring(0, 10);
@@ -247,7 +339,7 @@ Vue.component("manifestation-view", {
 		},
 
 		formatDate: function (value) {
-			return moment(this.manifestation.dateOfOccurence).format('DD/MM/YYYY hh:MM');
+			return moment(this.manifestation.dateOfOccurence).format('DD/MM/YYYY hh:mm');
 		},
 
 		sendMapCallback() {
@@ -257,7 +349,16 @@ Vue.component("manifestation-view", {
 			this.$root.$emit('mapCallback', current_location);
 		},
 
-
+		isManiffinished: function (manif) {
+			let isActive = manif.status == "ACTIVE";
+			// check if the manifestation is finished
+			let manifDate = moment(manif.dateOfOccurence).format('YYYY-MM-DD');
+			let curDate = moment(Date.now()).format('YYYY-MM-DD');
+			// When this format is used i can compare two date strings to determine if one date is after another
+			let isInThePast = curDate > manifDate;
+			this.manifFinished = isActive && isInThePast;
+			return this.manifFinished;
+		}
 
 
 	},

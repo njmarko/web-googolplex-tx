@@ -135,6 +135,10 @@ Vue.component("web-shop", {
 						<td>Salesman</td>
 						<td>{{p.salesman}}</td>
 					</tr>
+					<tr v-if="p.averageRating">
+						<td>Average Rating</td>
+						<td>{{p.averageRating}}</td>
+					</tr>
 					<tr>
 						<td>Location</td>
 						<td>{{p.location.city}}</td>

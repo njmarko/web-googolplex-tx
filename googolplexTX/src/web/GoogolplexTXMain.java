@@ -149,6 +149,7 @@ public class GoogolplexTXMain {
 //						before("*",UserController.authenticateUser); // all ticket paths require login
 
 						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman	
+						post("", manifestationControler.saveOneComment);
 						path("/:idc", ()->{
 							get("", manifestationControler.findOneComment); // req salesman	
 							delete("", manifestationControler.deleteManifestationComment);
@@ -222,6 +223,12 @@ public class GoogolplexTXMain {
 			
 			path("/tickets",()->{
 				get("",ticketController.findAllTickets); // TODO req admin
+			});
+			
+			path("/comments",()->{
+				path("/:idc",()->{
+					patch("", manifestationControler.saveOneComment);
+				});
 			});
 		});
 
