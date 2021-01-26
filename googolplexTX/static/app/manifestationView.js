@@ -5,7 +5,10 @@ Vue.component("manifestation-view", {
 			tickets: null,
 			comments: null,
 			locationString: "",
-			userData: {}
+			userData: {},
+			finished: null,
+			canComment: null,
+
 		}
 	},
 	template: ` 
@@ -35,7 +38,7 @@ Vue.component("manifestation-view", {
 					</tr>
 					<tr>
 						<td>Date of Occurence</td>
-						<td>{{manifestation.dateOfOccurence}}</td>
+						<td>{{formatDate(manifestation.dateOfOccurence)}}</td>
 					</tr>
 					<tr>
 						<td>Regular Price</td>
@@ -74,6 +77,11 @@ Vue.component("manifestation-view", {
 			</table>
 			<br>
 			<hr>
+
+			<div v-if="userData && manifestation && this.canComment">
+				<h1> Prosla provera za komentar</h1>
+
+			</div>
 
 			<div  v-if="tickets && (userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username)))">
 				<h2>Tickets</h2>
@@ -123,7 +131,12 @@ Vue.component("manifestation-view", {
 				<br>
 			</div>
 
+
+
 			<div  v-if="comments">
+
+
+
 				<h2>Comments</h2>
 				<a class="btn btn-primary" data-toggle="collapse" href="#collapseComments" role="button" aria-expanded="false" aria-controls="collapseComments">
 					Show comments list
@@ -188,15 +201,25 @@ Vue.component("manifestation-view", {
 				});
 
 		}
+		let self = this;
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
 				this.manifestation = response.data;
 				this.locationString = response.data.location.city + ", " + response.data.location.street + ", " + response.data.location.number + ", " + response.data.location.zipCode;
+				this.manifestation.dateOfOccurence = new Date(response.data.dateOfOccurence);
+
+				let isActive = self.manifestation.status == "ACTIVE";
+				// check if the manifestation is finished
+				let manifDate = moment(self.manifestation.dateOfOccurence).format('YYYY-MM-DD');
+				let curDate = moment(Date.now()).format('YYYY-MM-DD');
+				// When this format is used i can compare two date strings to determine if one date is after another
+				let isInThePast = curDate > manifDate;
+				self.finished = isActive && isInThePast;
 
 				this.$nextTick(() => {
 					self.sendMapCallback();
-                });
+				});
 			});
 
 		axios
@@ -223,12 +246,18 @@ Vue.component("manifestation-view", {
 
 		},
 
+		formatDate: function (value) {
+			return moment(this.manifestation.dateOfOccurence).format('DD/MM/YYYY hh:MM');
+		},
+
 		sendMapCallback() {
-            var current_location = {}
-            current_location.longitude = this.manifestation.location.longitude;
+			var current_location = {}
+			current_location.longitude = this.manifestation.location.longitude;
 			current_location.latitude = this.manifestation.location.latitude;
-            this.$root.$emit('mapCallback', current_location);
-        },
+			this.$root.$emit('mapCallback', current_location);
+		},
+
+
 
 
 	},

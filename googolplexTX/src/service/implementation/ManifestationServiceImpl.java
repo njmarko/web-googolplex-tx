@@ -17,6 +17,7 @@ import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
 import model.User;
+import model.enumerations.CommentStatus;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
@@ -226,11 +227,22 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Collection<Comment> findAllCommentsFromManifestation(String key) {
 		Manifestation manifestation = this.findOne(key);
-
+		if (manifestation == null || manifestation.getComments() == null) {
+			return null;
+		}
 		// TODO: Consider Creating using function to filter deleted like this.findAll
 		return manifestation.getComments().stream().filter((Comment ent) -> {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
+	}
+	
+	@Override
+	public Collection<Comment> findAllApprovedCommentsForManif(String key) {
+		Collection<Comment> retVal = findAllCommentsFromManifestation(key);
+		if (retVal != null) {
+			retVal = retVal.stream().filter((c)->{return c.getApproved() == CommentStatus.ACCEPTED;}).collect(Collectors.toList());
+		}
+		return retVal;
 	}
 
 	@Override
@@ -298,6 +310,8 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 		return found;
 	}
+
+
 
 
 

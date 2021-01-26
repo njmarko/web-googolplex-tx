@@ -22,4 +22,6 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	
 	public Manifestation save(ManifestationDTO dto);
 	public Collection<Comment> findAllCommentsFromManifestation(String key);
+
+	public Collection<Comment> findAllApprovedCommentsForManif(String key);
 }

@@ -37,6 +37,7 @@ import spark.Response;
 import spark.Route;
 import spark.RouteImpl;
 import spark.utils.IOUtils;
+import support.CommentToCommentDTO;
 import support.JsonAdapter;
 import support.ManifToManifDTO;
 import support.ManifTypeToManifTypeDTO;
@@ -287,19 +288,34 @@ public class ManifestationControler {
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
 			// No login needed for this request.
+			// No need to check if the manifestation is finished, because users are not
+			// allowed to post comments that are not finished.
 			// TODO add pagination
 
 			res.type("application/json");
 			String idm = req.params("idm");
 
-			Collection<Comment> foundEntities = manifService.findAllCommentsFromManifestation(idm);
+			User loggedIn = userController.getAuthedUser(req);
+			Manifestation manif = manifService.findOne(idm);
+
+			if (manif == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation doesn't exist");
+			}
+
+			Collection<Comment> foundEntities = null;
+
+			if (loggedIn != null && (loggedIn.getUserRole() == UserRole.ADMIN
+					|| (loggedIn.getUserRole() == UserRole.SALESMAN && manif.getSalesman().equals(loggedIn)))) {
+				foundEntities = manifService.findAllCommentsFromManifestation(idm);
+			}else {
+					foundEntities = manifService.findAllApprovedCommentsForManif(idm);
+			}
+
 			if (foundEntities == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No comments found");
 			}
 
-			// TODO consider using an adapter
-			// TODO use DTO objects
-			return JsonAdapter.commentsSerializationToFile().toJson(foundEntities);
+			return g.toJson(CommentToCommentDTO.convert(foundEntities));
 		}
 	};
 

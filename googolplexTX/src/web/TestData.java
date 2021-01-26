@@ -245,10 +245,16 @@ public class TestData {
 		userDAO.save(admin1);
 		userDAO.save(admin2);
 
-		
+		// Comments
 		Comment c1 = new Comment("1", "Predobarr film", 5, CommentStatus.ACCEPTED, false, man1, cust1);
 		Comment c2 = new Comment("2", "Jadnooo", 2, CommentStatus.ACCEPTED, false, man5, cust4);
 		Comment c3 = new Comment("3", "Okej", 3, CommentStatus.ACCEPTED, false, man1, cust3);
+		Comment c4 = new Comment("4", "Nije jos prihvacen (vidi ga samo admin i customer prodavac1)", 3, CommentStatus.PENDING, false, man1, cust1);
+		Comment c5 = new Comment("5", "Obrisan", 3, CommentStatus.ACCEPTED, true, man1, cust1);
+		Comment c6 = new Comment("6", "Odbijen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.REJECTED, false, man1, cust1);
+		Comment c7 = new Comment("7", "Nije jos prihvacen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.PENDING, false, man1, cust3);
+		Comment c8 = new Comment("8", "Odbijen (vidi ga samo admin i salesman prodavac1)", 3, CommentStatus.REJECTED, false, man1, cust3);
+		Comment c9 = new Comment("7", "Nije jos prihvacen (vidi ga samo admin i salesman prodavac2)", 3, CommentStatus.PENDING, false, man5, cust3);
 		
 		
 		// CustomerTypes
@@ -325,6 +331,13 @@ public class TestData {
 		commentDAO.save(c1);
 		commentDAO.save(c2);
 		commentDAO.save(c3);
+		commentDAO.save(c4);
+		commentDAO.save(c5);
+		commentDAO.save(c6);
+		commentDAO.save(c7);
+		commentDAO.save(c8);
+		commentDAO.save(c9);
+		
 		
 		
 		for (Manifestation m : manifestationDAO.getManifestations().values()) {
