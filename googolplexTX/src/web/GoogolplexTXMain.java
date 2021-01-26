@@ -23,6 +23,7 @@ import spark.Request;
 import web.controller.ManifestationControler;
 import web.controller.TicketController;
 import web.controller.UserController;
+import web.dto.CommentDTO;
 
 
 public class GoogolplexTXMain {
@@ -44,7 +45,7 @@ public class GoogolplexTXMain {
 		CustomerTypeDAO customerTypeDAO = new CustomerTypeDAO();
 		
 		UserServiceImpl userServiceImpl = new UserServiceImpl(userDAO, customerTypeDAO);
-		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO, manifestationTypeDAO, userDAO);
+		ManifestationServiceImpl manifestationServiceImpl = new ManifestationServiceImpl(manifestationDAO, manifestationTypeDAO, userDAO, commentDAO);
 		TicketServiceImpl ticketServiceImpl = new TicketServiceImpl(ticketDAO, userDAO, manifestationDAO); 
 		
 		UserController userController = new UserController(userServiceImpl);
@@ -139,7 +140,7 @@ public class GoogolplexTXMain {
 						get("", ticketController.findAllTicketsForManifestation); // req salesman					
 						path("/:idt", ()->{
 							get("", ticketController.findOneTicket); // TODO req admin or salesman
-//							delete("", ticketController.deleteOneTicket); // TODO req admin
+							delete("", ticketController.deleteOneTicket); // TODO req admin
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});
@@ -147,7 +148,11 @@ public class GoogolplexTXMain {
 					path("/comments",()->{
 //						before("*",UserController.authenticateUser); // all ticket paths require login
 
-						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman					
+						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman	
+						path("/:idc", ()->{
+							get("", manifestationControler.findOneComment); // req salesman	
+							delete("", manifestationControler.deleteManifestationComment);
+						});
 
 					});
 				});
@@ -170,7 +175,7 @@ public class GoogolplexTXMain {
 						get("", ticketController.findAllTicketsForUser); // TODO req admin					
 						path("/:idt", ()->{
 							get("", ticketController.findOneTicket); // TODO req admin or salesman
-//							delete("", ticketController.deleteOneTicket); // TODO req admin
+							delete("", ticketController.deleteOneTicket);
 //							put("", ticketController.editOneTicket); // TODO req admin or user who owns the ticket
 						});
 					});		
@@ -201,10 +206,18 @@ public class GoogolplexTXMain {
 			
 			path("/manifestation-type",()->{
 				get("",manifestationControler.findAllManifestationTypes);
+				path("/:idmt", ()->{
+				//	get("", );
+					delete("", manifestationControler.deleteOneManifestationType);
+				});
 			});
 			
 			path("/customer-type",()->{
 				get("",userController.findAllCustomerTypes);
+				path("/:idct", ()->{
+				//	get("", );
+					delete("", userController.deleteOneCustomerType);
+				});
 			});
 			
 			path("/tickets",()->{
@@ -222,6 +235,8 @@ public class GoogolplexTXMain {
 //		new UserController();
 		
 	}
+	
+	
 
 
 	

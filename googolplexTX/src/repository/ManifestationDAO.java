@@ -58,7 +58,8 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 		if (manifestation != null) {
 			manifestation.setDeleted(true);
 		}
-		return manifestation;	}
+		return manifestation;	
+	}
 
 	@Override
 	public Boolean saveFile() {

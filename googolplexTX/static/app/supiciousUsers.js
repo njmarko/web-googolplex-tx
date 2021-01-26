@@ -85,7 +85,7 @@ Vue.component("suspicious-users", {
 					<tr>
 						<td colspan="2">
 							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" v-bind:class="[u.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>
-							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" class="btn btn-danger text-uppercase">DELETE {{u.username}}</button>
+							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" class="btn btn-danger text-uppercase">TO DO ...DELETE {{u.username}}</button>
 						</td>
 					</tr>
 				</tbody>

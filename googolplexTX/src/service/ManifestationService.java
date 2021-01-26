@@ -19,7 +19,12 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	public Collection<Manifestation> findBySalesman(String salesman);
 	
 	public Collection<ManifestationType> findAllManifestationTypes();
+	public ManifestationType deleteOneManifestationType(String key);
 	
 	public Manifestation save(ManifestationDTO dto);
+	
 	public Collection<Comment> findAllCommentsFromManifestation(String key);
+	
+	public Comment findOneComment(String key);
+	public Comment deleteComment(String key);
 }

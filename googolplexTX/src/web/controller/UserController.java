@@ -516,4 +516,21 @@ public class UserController {
 		}
 	};
 
+	public final Route deleteOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idct");
+			CustomerType deletedEntity = userService.deleteOneCustomerType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+	
 }

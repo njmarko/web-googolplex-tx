@@ -58,6 +58,7 @@ public class TicketController {
 
 			// Collection<Ticket> foundEntities = ticketService.search(searchParams);
 			
+			// TODO returns deleted??
 			Collection<Ticket> foundEntities = ticketService.findAllByManifestation(idm);
 
 			if (foundEntities == null) {
@@ -87,7 +88,7 @@ public class TicketController {
 			}
 			// TODO Since it contains date consider using adapters.
 			// TODO Replace with DTO if needed
-			return new Gson().toJson(foundEntity);
+			return new Gson().toJson(TicketToTicketDTO.convert(foundEntity));
 		}
 	};
 
@@ -164,7 +165,7 @@ public class TicketController {
 
 			res.type("application/json");
 			String id = req.params("idt");
-			Ticket deletedEntity = ticketService.findOne(id);
+			Ticket deletedEntity = ticketService.delete(id);
 			if (deletedEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "not found");
 			}

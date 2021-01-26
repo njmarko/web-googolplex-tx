@@ -22,10 +22,12 @@ import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
 import model.Manifestation;
 import model.Ticket;
+import repository.CommentDAO;
 import repository.ManifestationDAO;
 import repository.ManifestationTypeDAO;
 import repository.UserDAO;
 import service.ManifestationService;
+import web.dto.CommentDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -34,13 +36,15 @@ public class ManifestationServiceImpl implements ManifestationService {
 	private ManifestationDAO manifestationDAO;
 	private ManifestationTypeDAO manifestationTypeDAO;
 	private UserDAO userDAO;
+	private CommentDAO commentDAO;
 	// TODO: Add required DAOs
 
-	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO, UserDAO userDao) {
+	public ManifestationServiceImpl(ManifestationDAO manifestationDAO, ManifestationTypeDAO manifestationTypeDAO, UserDAO userDao, CommentDAO commentDAO) {
 		super();
 		this.manifestationDAO = manifestationDAO;
 		this.manifestationTypeDAO = manifestationTypeDAO;
 		this.userDAO = userDao;
+		this.commentDAO = commentDAO;
 	}
 
 	@Override
@@ -278,5 +282,27 @@ public class ManifestationServiceImpl implements ManifestationService {
 		
 		return found;
 	}
+
+	@Override
+	public Comment deleteComment(String key) {
+		// TODO: save to file
+		return commentDAO.delete(key);
+	}
+	
+	@Override
+	public Comment findOneComment(String key) {
+		Comment found = this.commentDAO.findOne(key);
+		if (found != null && found.getDeleted()) {
+			return null;
+		}
+		return found;
+	}
+
+	@Override
+	public ManifestationType deleteOneManifestationType(String key) {
+		// TODO: save to file
+		return manifestationTypeDAO.delete(key);
+	}
+
 
 }

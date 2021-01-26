@@ -3,6 +3,7 @@ package service;
 import java.util.Collection;
 
 import model.CustomerType;
+import model.ManifestationType;
 import model.User;
 import web.dto.LoginDTO;
 import web.dto.PasswordDTO;
@@ -19,6 +20,7 @@ public interface UserService extends GenericService<User, String> {
 	public User registerUser(RegisterDTO registerData);
 	
 	public CustomerType determineCustomerType(Double points);
+
 	
 	public User login(LoginDTO loginData);
 	
@@ -27,7 +29,8 @@ public interface UserService extends GenericService<User, String> {
 	public User changePassword(PasswordDTO dto);
 	
 	public Collection<CustomerType> findAllCustomerTypes();
-	
+	public CustomerType deleteOneCustomerType(String key);
+
 	public Collection<User> findAllSuspiciousCustomers(SuspiciousSearchDTO dto);
 	
 	public User blockUser(String key);

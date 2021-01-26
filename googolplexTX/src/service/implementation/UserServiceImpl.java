@@ -431,5 +431,11 @@ public class UserServiceImpl implements UserService {
 		
 		return user;
 	}
+
+	@Override
+	public CustomerType deleteOneCustomerType(String key) {
+		// TODO: save to file
+		return custTypeDAO.delete(key);
+	}
 	
 }

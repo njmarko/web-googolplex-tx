@@ -20,9 +20,13 @@ Vue.component("navbar", {
 
 					<router-link to="/" class="nav-item nav-link">Home</router-link>
 					<router-link to="/manifestations" class="nav-item nav-link">Manifestations</router-link>
+					
 					<router-link v-if="user && user.userRole == 'ADMIN'" to="/users" class="nav-link">Users</router-link> 
 					<router-link v-if="user && user.userRole == 'ADMIN'" to="/add-user" class="nav-link">Add User</router-link>
 					<router-link v-if="user && user.userRole == 'ADMIN'" to="/suspicious-users" class="nav-link">Suspicious Users</router-link>
+					<router-link v-if="user && user.userRole == 'ADMIN'" to="/manifestation-types" class="nav-link">Manif Types</router-link>
+					<router-link v-if="user && user.userRole == 'ADMIN'" to="/customer-types" class="nav-link">Cust Types</router-link>
+					
 					<router-link v-if="user && user.userRole == 'SALESMAN'" to="/salesman-add-manif" class="nav-link">Add Manifestation</router-link>
 					<router-link to="/my-manifestations" v-if="user && user.userRole == 'SALESMAN'" class="nav-item nav-link">My Manifestations</router-link>
 					<router-link to="/sold-tickets" v-if="user && user.userRole == 'SALESMAN'" class="nav-item nav-link">Sold Tickets</router-link>
