@@ -184,7 +184,7 @@ Vue.component("manifestation-view", {
 	mounted() {
 		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
 		//null check in case the local storage was deleted
-		var self = this;
+		let self = this;
 		if (this.localUserData == null) {
 			this.localUserData = { username: "" };
 		} else {
@@ -202,7 +202,6 @@ Vue.component("manifestation-view", {
 				});
 
 		}
-		let self = this;
 		axios
 			.get('api/manifestations/' + this.$route.params.id)
 			.then(response => {
