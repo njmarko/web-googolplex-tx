@@ -181,7 +181,7 @@ Vue.component("user-profile", {
 					}
 					console.log("error.config");
 					console.log(error.config);
-				});
+			});
 		}
 
 	},

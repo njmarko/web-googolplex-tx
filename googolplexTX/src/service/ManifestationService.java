@@ -19,9 +19,17 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	public Collection<Manifestation> findBySalesman(String salesman, ManifestationSearchDTO searchParams);
 	
 	public Collection<ManifestationType> findAllManifestationTypes();
+	public ManifestationType deleteOneManifestationType(String key);
 	
 	public Manifestation save(ManifestationDTO dto);
+	
 	public Collection<Comment> findAllCommentsFromManifestation(String key);
+<<<<<<< HEAD
 
 	public Collection<Comment> findAllApprovedCommentsForManif(String key);
+=======
+	
+	public Comment findOneComment(String key);
+	public Comment deleteComment(String key);
+>>>>>>> feature/block-user
 }

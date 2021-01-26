@@ -159,7 +159,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User delete(String key) {
-		return this.userDAO.delete(key);
+		User user = findOne(key);
+		if (user == null) {
+			return null;
+		}
+		if (user.getUserRole() == UserRole.ADMIN)
+			return user;
+		
+		user.setDeleted(true);
+		return user;
 	}
 
 	/**
@@ -400,4 +408,34 @@ public class UserServiceImpl implements UserService {
 		return allUsers;
 	}
 
+	@Override
+	public User blockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null)
+			return null;
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(true);
+		
+		return user;
+	}
+
+	@Override
+	public User unblockUser(String key) {
+		User user = this.findOne(key);
+		if (user == null || user.getUserRole() == UserRole.ADMIN)
+			return null;
+		
+		if (user.getUserRole() != UserRole.ADMIN)
+			user.setBlocked(false);
+		
+		return user;
+	}
+
+	@Override
+	public CustomerType deleteOneCustomerType(String key) {
+		// TODO: save to file
+		return custTypeDAO.delete(key);
+	}
+	
 }

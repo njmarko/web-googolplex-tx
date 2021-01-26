@@ -24,5 +24,4 @@ public class CommentToCommentDTO {
 	public static Collection<CommentDTO> convert(Collection<Comment> allComments) {
 		return allComments.stream().map(CommentToCommentDTO::convert).collect(Collectors.toList());
 	}
-
 }

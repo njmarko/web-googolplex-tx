@@ -59,7 +59,7 @@ Vue.component("suspicious-users", {
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
-						<td>Username</td>
+						<td>Username <span v-if="u.blocked" class="badge badge-danger">Blocked</span></td>
 						<td>{{u.username }}</td>
 					</tr>
 					<tr>
@@ -76,15 +76,22 @@ Vue.component("suspicious-users", {
 					</tr>
 					<tr>
 						<td>Birthday</td>
-						<td>{{u.birthDate.month + "/" + u.birthDate.day + "/" + u.birthDate.year + "." }}</td>
+						<td>{{u.birthDate}}</td>
 					</tr>
 					<tr>
 						<td>gender</td>
 						<td>{{u.gender}}</td>
 					</tr>
-					<hr/>
+					<tr>
+						<td colspan="2">
+							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" v-bind:class="[u.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>
+							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" class="btn btn-danger text-uppercase">TO DO ...DELETE {{u.username}}</button>
+						</td>
+					</tr>
 				</tbody>
-			</table>		
+			</table>
+			<hr/>
+		
 		
 		</div>
 
@@ -160,6 +167,23 @@ Vue.component("suspicious-users", {
 
 			}
 		},
+
+		blockUser : function(obj, block) {
+			console.log(block);
+
+			action = "";
+			if (block == true){
+				action = "/unblock";
+			} else {
+				action = "/block";
+			}
+			console.log(action);
+			axios
+				.patch('api/users/' + obj.username + action)
+				.then(response => {
+					Object.assign(obj, response.data)
+			});
+		}
 
 
 	},

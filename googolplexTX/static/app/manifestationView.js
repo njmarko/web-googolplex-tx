@@ -184,6 +184,7 @@ Vue.component("manifestation-view", {
 	mounted() {
 		this.localUserData = JSON.parse(window.localStorage.getItem('user'));
 		//null check in case the local storage was deleted
+		var self = this;
 		if (this.localUserData == null) {
 			this.localUserData = { username: "" };
 		} else {

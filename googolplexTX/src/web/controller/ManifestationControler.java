@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 
 import io.jsonwebtoken.io.IOException;
 import model.Comment;
+import model.CustomerType;
 import model.Manifestation;
 import model.ManifestationType;
 import model.User;
@@ -318,6 +319,25 @@ public class ManifestationControler {
 			return g.toJson(CommentToCommentDTO.convert(foundEntities));
 		}
 	};
+	
+	public final Route deleteManifestationComment = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// TODO: Consider if user can delete comment
+			// userController.authenticateAdmin.handle(req, res);
+
+		//	String manifId = req.params("idm");
+			String ticketId = req.params("idc");
+			
+			Comment deletedEntity = manifService.deleteComment(ticketId);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
 
 	public final Route uploadImage = new Route() {
 
@@ -384,5 +404,40 @@ public class ManifestationControler {
 			return null;
 		}
 	}
+	
+	public final Route findOneComment = new Route() {
 
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");
+			String id = req.params("idc");
+			Comment foundEntity = manifService.findOneComment(id);
+			if (foundEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404, "No comment found");
+			}
+
+			return g.toJson(CommentToCommentDTO.convert(foundEntity));
+		}
+	};
+
+	public final Route deleteOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idmt");
+			ManifestationType deletedEntity = manifService.deleteOneManifestationType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+	
+	
 }
+

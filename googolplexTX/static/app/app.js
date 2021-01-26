@@ -14,6 +14,8 @@ const ManifestationView = { template: '<div><navbar></navbar><manifestation-view
 const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><footer-comp></footer-comp></div>' }
 const CustomerTickets = { template: '<div><navbar></navbar><tickets></tickets><footer-comp></footer-comp></div>' }
 const SuspiciousUsers = { template: '<div><navbar></navbar><suspicious-users></suspicious-users><footer-comp></footer-comp></div>' }
+const ManifTypes = { template: '<div><navbar></navbar><manifestation-types></manifestation-types><footer-comp></footer-comp></div>' }
+const CustTypes = { template: '<div><navbar></navbar><customer-types></customer-types><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
   mode: 'hash',
@@ -37,6 +39,8 @@ const router = new VueRouter({
     { path: '/salesman-add-manif', component: SalesmanAddManif },
     { path: '/tickets', component: CustomerTickets },
     { path: '/suspicious-users', component: SuspiciousUsers },
+    { path: '/manifestation-types', component: ManifTypes },
+    { path: '/customer-types', component: CustTypes },
 
   ]
 });
