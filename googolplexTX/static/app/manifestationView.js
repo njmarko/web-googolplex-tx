@@ -59,6 +59,10 @@ Vue.component("manifestation-view", {
 						<td>Salesman</td>
 						<td>{{manifestation.salesman}}</td>
 					</tr>
+					<tr v-if="manifestation.averageRating">
+						<td>Average Rating</td>
+						<td>{{manifestation.averageRating}}</td>
+					</tr>
 					<tr>
 						<td>Location</td>
 						<td>{{manifestation.location.city}}</td>

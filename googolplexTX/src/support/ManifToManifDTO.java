@@ -1,5 +1,6 @@
 package support;
 
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 import model.Comment;
 import model.Manifestation;
 import model.Ticket;
+import model.enumerations.CommentStatus;
+import model.enumerations.ManifestationStatus;
 import web.dto.ManifestationDTO;
 
 public class ManifToManifDTO {
@@ -31,6 +34,7 @@ public class ManifToManifDTO {
 		retVal.setSalesman(manif.getSalesman().getUsername());
 		retVal.setLocation(manif.getLocation());
 		
+		
 		retVal.setComments(manif.getComments()
 				.stream()
 				.map(Comment::getId)
@@ -41,6 +45,27 @@ public class ManifToManifDTO {
 				.map(Ticket::getId)
 				.collect(Collectors.toList())
 				);
+		
+		// check if the manifestation was approved (is active) and it has passed
+		if (manif.getStatus() == ManifestationStatus.ACTIVE) {
+			LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+			LocalDate today = LocalDate.now();
+			if (today.isAfter(manifDate)) {
+				// if the manifestation occurred then i can calculate the average score from the comments
+				Double sum = 0d;
+				Integer n = 0;
+				for (Comment c : manif.getComments()) {
+					if (c.getApproved() == CommentStatus.ACCEPTED && c.getDeleted() == false) {
+						sum += c.getRating();
+						n = n + 1;
+					}
+				}
+				if (n > 0) {
+					retVal.setAverageRating(sum/n);
+				}
+	
+			}
+		}
 		
 		return retVal;
 	}
