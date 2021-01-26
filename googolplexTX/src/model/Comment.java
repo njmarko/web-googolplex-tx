@@ -2,10 +2,6 @@ package model;
 
 import model.enumerations.CommentStatus;
 
-/**
- * @author Marko
- *
- */
 public class Comment {
 	private String id;
 	private String text;

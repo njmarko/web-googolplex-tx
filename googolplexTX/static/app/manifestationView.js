@@ -9,7 +9,8 @@ Vue.component("manifestation-view", {
 			manifFinished: null,
 			userHasReservedTicket: null,
 			canComment: null,
-			customerComment: {}
+			customerComment: {},
+			editTicket: false,
 
 		}
 	},
@@ -78,10 +79,30 @@ Vue.component("manifestation-view", {
 			<br>
 			<hr>
 
-			<div class="row" v-if="userData && manifestation && this.canComment">
-				<form>
-					<textarea id="userComment" name="text" rows="5"  placeholder="Insert comment here">
+			<div class="col md-12" v-if="userData && manifestation && this.canComment">
+				<form v-on:submit.prevent="submitComment">
+					<div class="col-md-12">
+					<textarea id="userComment" name="text" rows="5"  placeholder="Insert comment here" v-model="customerComment.text">
 					</textarea>	
+					</div>
+						<div class="row">
+					  <div class="rate col-lg-6">
+					    <input type="radio" id="star5" name="rate" value="5" v-model="customerComment.rating" />
+					    <label for="star5" title="text">5 stars</label>
+					    <input type="radio" id="star4" name="rate" value="4" v-model="customerComment.rating" />
+					    <label for="star4" title="text">4 stars</label>
+					    <input type="radio" id="star3" name="rate" value="3" v-model="customerComment.rating" />
+					    <label for="star3" title="text">3 stars</label>
+					    <input type="radio" id="star2" name="rate" value="2" v-model="customerComment.rating" />
+					    <label for="star2" title="text">2 stars</label>
+					    <input type="radio" id="star1" name="rate" value="1" v-model="customerComment.rating" />
+					    <label for="star1" title="text">1 star</label>
+					  </div>
+
+					  <div class="col-lg-6">
+						<input type="submit" value="Post Review" class="btn btn-primary">
+					  </div>
+					  </div>
 				</form>
 
 			</div>
@@ -233,7 +254,28 @@ Vue.component("manifestation-view", {
 	},
 	methods: {
 
-
+		submitComment: function(event){
+			event.preventDefault();
+			if (this.editTicket == true) {
+				let path = 'api/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.loadData(response);
+					})
+			} else {
+				let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
+				axios
+					.get(path, { params: sp })
+					.then(response => {
+						this.tickets = response.data;
+						for (let index = 0; index < this.tickets.length; index++) {
+							this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
+						}
+						console.log(this.tickets);
+					});
+			}
+		},
 		getManifTickets: function () {
 			axios
 				.get('api/manifestations/' + this.$route.params.id + '/tickets')
@@ -269,6 +311,7 @@ Vue.component("manifestation-view", {
 					if (this.manifFinished && this.userHasReservedTicket) {
 						this.canComment = true;
 					}
+					
 				});
 		},
 		checkIfUserCommented: function(comments){
@@ -276,6 +319,7 @@ Vue.component("manifestation-view", {
 					for (const c of comments) {
 						if (c.customer == username) {
 							this.customerComment = c;
+							this.editTicket = true;
 							break;
 						}	
 					}

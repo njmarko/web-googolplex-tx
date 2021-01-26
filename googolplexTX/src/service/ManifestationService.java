@@ -5,6 +5,7 @@ import java.util.Collection;
 import model.Comment;
 import model.Manifestation;
 import model.ManifestationType;
+import web.dto.CommentDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -28,5 +29,10 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	public Collection<Comment> findAllApprovedCommentsForManif(String key);
 	
 	public Comment findOneComment(String key);
+	
 	public Comment deleteComment(String key);
+	
+	public Comment save(CommentDTO dto);
+	
+	public Comment addUniqueComment(CommentDTO dto);
 }

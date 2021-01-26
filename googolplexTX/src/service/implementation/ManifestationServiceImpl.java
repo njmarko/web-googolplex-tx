@@ -1,5 +1,6 @@
 package service.implementation;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.Comment;
+import model.Customer;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationType;
@@ -20,6 +22,7 @@ import model.User;
 import model.enumerations.CommentStatus;
 import model.enumerations.Gender;
 import model.enumerations.ManifestationStatus;
+import model.enumerations.TicketStatus;
 import model.enumerations.UserRole;
 import model.Manifestation;
 import model.Ticket;
@@ -334,6 +337,120 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
 		return manifestationTypeDAO.delete(key);
+	}
+
+	@Override
+	public Comment save(CommentDTO dto) {
+		Comment comment = null;
+		if (dto.getId() != null) {
+			comment = commentDAO.findOne(dto.getId());
+		}else {
+			comment = new Comment();
+		}
+		if (comment == null) {
+			return null;
+		}
+		
+		CommentStatus approved = null;
+		if (dto.getApproved() == null || dto.getApproved().trim().compareToIgnoreCase("PENDING") == 0) {
+			approved = CommentStatus.PENDING;
+		}if (dto.getApproved().trim().compareToIgnoreCase("ACCEPTED") == 0) {
+			approved = CommentStatus.ACCEPTED;
+		}else if (dto.getApproved().trim().compareToIgnoreCase("REJECTED") == 0) {
+			approved = CommentStatus.REJECTED;
+		}else {
+			return null;
+		}
+		
+		comment.setApproved(approved);
+		
+		Manifestation manif = null;
+		if (dto.getManifestation() != null) {
+			manif = manifestationDAO.findOne(dto.getManifestation());
+		};
+		if (manif == null) {
+			return null;
+		}
+		
+		comment.setManifestation(manif);
+		
+		Customer cust = null;
+		if (dto.getCustomer() != null) {
+			User tempUser =  userDAO.findOne(dto.getCustomer());
+			if (tempUser != null && tempUser.getUserRole() == UserRole.CUSTOMER) {
+				cust = (Customer) tempUser;
+			}
+		}
+		if (cust == null) {
+			return null;
+		}
+		comment.setCustomer(cust);
+		
+		if (dto.getText() != null) {
+			comment.setText(dto.getText());
+		}else {
+			return null;
+		}
+		
+		if (dto.getRating() == null || (dto.getRating() < 1 || dto.getRating() > 5)) {
+			return null;
+		}else {
+			comment.setRating(dto.getRating());
+		}
+
+		return comment;
+	}
+
+	@Override
+	public Comment addUniqueComment(CommentDTO dto) {
+		//check if comment from this user already exists for this manifestation
+		
+		if (dto.getCustomer() != null && dto.getManifestation()!= null) {
+			User tempUser = userDAO.findOne(dto.getCustomer());
+			if (tempUser.getUserRole() == UserRole.CUSTOMER) {
+				Customer cust = (Customer) tempUser;
+				Boolean hasTicket = false;
+				// User has to have a ticket for this manifestation
+				for (Ticket t : cust.getTickets()) {
+					if (t.getManifestation().getId().equals(dto.getManifestation()) && t.getTicketStatus() == TicketStatus.RESERVED) {
+						hasTicket = true;
+						break;
+					}
+				}
+				if (hasTicket == false) {
+					return null;
+				}
+				// user must not already have an accepted comment. If accepted comment exists, new one will not be added
+				for (Comment com : cust.getComments()) {
+					if (com.getManifestation().getId().equals(dto.getManifestation()) && com.getApproved() == CommentStatus.ACCEPTED) {
+						return null;
+					}
+				}
+				
+				// Comment can only be added to the manifestation that is finished and is active
+				Manifestation manif = manifestationDAO.findOne(dto.getManifestation());
+				
+				// manif must be active
+				if (manif == null || manif.getStatus() == ManifestationStatus.INACTIVE) {
+					return null;
+				}
+				
+				String datePattern = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+				
+				String manifDate = sdf.format(manif.getDateOfOccurence());
+				String currentDate = sdf.format(LocalDateTime.now());
+				
+				// if the current date is before the manifestations date of occurence then commenting is not allowed
+				if (currentDate.compareTo(manifDate)<=0) {
+					return null;
+				}
+				
+				// rest of the checks are in the save method
+				return this.save(dto);	
+			}
+		}	
+		return null;
 	}
 
 

@@ -29,6 +29,7 @@ import model.CustomerType;
 import model.Manifestation;
 import model.ManifestationType;
 import model.User;
+import model.enumerations.CommentStatus;
 import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
 import service.ManifestationService;
@@ -42,6 +43,7 @@ import support.CommentToCommentDTO;
 import support.JsonAdapter;
 import support.ManifToManifDTO;
 import support.ManifTypeToManifTypeDTO;
+import web.dto.CommentDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 
@@ -317,6 +319,50 @@ public class ManifestationControler {
 			}
 
 			return g.toJson(CommentToCommentDTO.convert(foundEntities));
+		}
+	};
+	
+	
+	public final Route saveOneComment = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// TODO add pagination
+
+			res.type("application/json");
+			String idm = req.params("idm");
+
+			Manifestation manif = manifService.findOne(idm);
+
+			if (manif == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation doesn't exist");
+			}
+
+			String body = req.body();
+
+
+			CommentDTO newEntity = g.fromJson(body, CommentDTO.class);
+			
+			userController.authenticateUser.handle(req,res);
+			User loggedIn = userController.getAuthedUser(req);
+
+			Comment comment = null;
+			
+			if (loggedIn == null) {
+				halt(HttpStatus.FORBIDDEN_403, "You are not logged in");
+			}
+			else if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
+				newEntity.setApproved(CommentStatus.PENDING.name());
+				comment = manifService.addUniqueComment(newEntity);
+			}else if (loggedIn.getUserRole() == UserRole.ADMIN || loggedIn.getUserRole() == UserRole.CUSTOMER) {
+				comment = manifService.addUniqueComment(newEntity);
+			}
+			
+			if (comment == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Your comment is not valid");
+			}
+
+			return g.toJson(CommentToCommentDTO.convert(comment));
 		}
 	};
 	
