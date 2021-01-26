@@ -339,7 +339,7 @@ Vue.component("manifestation-view", {
 		},
 
 		formatDate: function (value) {
-			return moment(this.manifestation.dateOfOccurence).format('DD/MM/YYYY hh:MM');
+			return moment(this.manifestation.dateOfOccurence).format('DD/MM/YYYY hh:mm');
 		},
 
 		sendMapCallback() {

@@ -144,7 +144,7 @@ public class ManifestationControler {
 			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			res.type("application/json");
 
-			// TODO check if admin or salesman
+			
 			String body = req.body();
 
 			ManifestationDTO manifestationData = g.fromJson(body, ManifestationDTO.class);

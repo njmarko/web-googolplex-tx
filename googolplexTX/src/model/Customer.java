@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.enumerations.Gender;
 import model.enumerations.UserRole;
@@ -127,7 +128,13 @@ public class Customer extends User {
 	}
 
 	public Collection<Comment> getComments() {
-		return comments;
+		if (comments.isEmpty()) {
+			return comments;
+		}
+		Collection<Comment> retVal = comments.stream().filter((Comment ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
+		return retVal;
 	}
 
 	public void setComments(Collection<Comment> comments) {
@@ -135,6 +142,12 @@ public class Customer extends User {
 	}
 
 	public Collection<Ticket> getTickets() {
+		if (tickets.isEmpty()) {
+			return tickets;
+		}
+		tickets = tickets.stream().filter((Ticket ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 		return tickets;
 	}
 

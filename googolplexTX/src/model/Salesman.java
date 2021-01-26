@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import model.enumerations.Gender;
 import model.enumerations.UserRole;
@@ -86,6 +87,12 @@ public class Salesman extends User {
 	}
 
 	public Collection<Manifestation> getManifestation() {
+		if (manifestations.isEmpty()) {
+			return manifestations;
+		}
+		manifestations = manifestations.stream().filter((Manifestation ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 		return manifestations;
 	}
 

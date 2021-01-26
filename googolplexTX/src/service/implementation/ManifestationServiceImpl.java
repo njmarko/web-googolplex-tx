@@ -256,6 +256,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation save(ManifestationDTO dto) {
 
+		
+
+
+		
 		Manifestation found = null;
 		if (dto.getId() != null) {
 			found = manifestationDAO.findOne(dto.getId());
@@ -263,17 +267,49 @@ public class ManifestationServiceImpl implements ManifestationService {
 		if (found == null) {
 			found = new Manifestation();
 			found.setId(manifestationDAO.findNextId());
-			found.setDeleted(false);
+			found.setDeleted(false);	
 		}
+		
+		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
+		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
+		
+		
+		// check if manifestation exists at the same place and the same time	
+		Collection<Manifestation> manifs = this.findAll();
+		if (dto.getId() != null && found.getId() == dto.getId()) {
+			// if i edit manifestation i will not check for conflicts with the manifestation that i am editing
+			// so i remove it from the list of manifs that i will check for same place and time.
+			manifs.remove(found);
+		}
+		for (Manifestation m : manifs) {
+			if (m.getStatus() == ManifestationStatus.ACTIVE
+					&& m.getDateOfOccurence().toLocalDate().isEqual(dateOfOccurence.toLocalDate())
+					&& m.getLocation().getCity().equals(dto.getLocation().getCity())
+					&& m.getLocation().getStreet().equals(dto.getLocation().getStreet())
+					&& m.getLocation().getNumber().equals(dto.getLocation().getNumber())
+					&& m.getLocation().getZipCode().equals(dto.getLocation().getZipCode())) {
+				// this is the case where active manifestation already exists on the same place in the same time
+				return null;
+			}
+		}
+		
+		
 
 		// TODO: should i check for null and then add, is this save/edit or just save
 		found.setName(dto.getName());
 		found.setAvailableSeats(dto.getAvailableSeats());
 		found.setPoster(dto.getPoster());
 
-		Instant epochTime = java.time.Instant.ofEpochMilli(dto.getDateOfOccurence());
-		LocalDateTime dateOfOccurence = java.time.LocalDateTime.ofInstant(epochTime, java.time.ZoneId.of("UTC"));
 		found.setDateOfOccurence(dateOfOccurence);
+		
+		// i need to change all of the dates for the existing tickets for the manifestation in case of editing of date
+		for (Ticket t : found.getTickets()) {
+			// i will only change the date for the reserved tickets
+			if (t.getTicketStatus() == TicketStatus.RESERVED) {
+				t.setDateOfManifestation(dateOfOccurence);
+			}
+		}
+		
 
 		found.setRegularPrice(dto.getRegularPrice());
 

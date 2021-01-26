@@ -15,9 +15,7 @@ public class User {
 	private UserRole userRole;
 	private Boolean blocked;
 	private Boolean deleted;
-	/*
-	 * TODO add JSON Web token
-	 */
+
 
 	public User() {
 		super();
