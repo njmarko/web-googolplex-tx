@@ -264,15 +264,18 @@ Vue.component("manifestation-view", {
 						this.loadData(response);
 					})
 			} else {
-				let path = 'api/users/' + JSON.parse(window.localStorage.getItem('user')).username + '/tickets';
+				let path = 'api/manifestations/' + this.manifestation.id + "/comments";
+				if (this.customerComment != null) {
+					this.customerComment.manifestation = this.manifestation.id;
+					this.customerComment.customer = this.localUserData.username;
+				}
 				axios
-					.get(path, { params: sp })
+					.post(path, this.customerComment)
 					.then(response => {
-						this.tickets = response.data;
-						for (let index = 0; index < this.tickets.length; index++) {
-							this.tickets[index].dateOfManifestation = new Date(response.data[index].dateOfManifestation).toISOString().substring(0, 10);
-						}
-						console.log(this.tickets);
+						this.getManifComments();
+					})
+					.catch(error =>{
+						console.log("Error occured when adding comment" + error.response.data);
 					});
 			}
 		},

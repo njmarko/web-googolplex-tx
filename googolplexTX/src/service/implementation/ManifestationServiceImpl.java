@@ -2,6 +2,7 @@ package service.implementation;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -346,15 +347,18 @@ public class ManifestationServiceImpl implements ManifestationService {
 			comment = commentDAO.findOne(dto.getId());
 		}else {
 			comment = new Comment();
+			comment.setId(commentDAO.findNextId());
+			comment.setDeleted(false);
 		}
 		if (comment == null) {
 			return null;
 		}
 		
+		
 		CommentStatus approved = null;
 		if (dto.getApproved() == null || dto.getApproved().trim().compareToIgnoreCase("PENDING") == 0) {
 			approved = CommentStatus.PENDING;
-		}if (dto.getApproved().trim().compareToIgnoreCase("ACCEPTED") == 0) {
+		}else if (dto.getApproved().trim().compareToIgnoreCase("ACCEPTED") == 0) {
 			approved = CommentStatus.ACCEPTED;
 		}else if (dto.getApproved().trim().compareToIgnoreCase("REJECTED") == 0) {
 			approved = CommentStatus.REJECTED;
@@ -397,6 +401,19 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}else {
 			comment.setRating(dto.getRating());
 		}
+		
+		
+		
+		commentDAO.save(comment);
+		commentDAO.saveFile();
+		
+		manif.getComments().add(comment);
+		manifestationDAO.save(manif);
+		manifestationDAO.saveFile();
+		
+		cust.getComments().add(comment);
+		userDAO.save(cust);
+		userDAO.saveFile();
 
 		return comment;
 	}
@@ -435,19 +452,28 @@ public class ManifestationServiceImpl implements ManifestationService {
 					return null;
 				}
 				
-				String datePattern = "yyyy-MM-dd";
-				SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+//				String datePattern = "yyyy-MM-dd";
+//				SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+//				
+//				String manifDate = sdf.format(manif.getDateOfOccurence().toLocalDate());
+//				String currentDate = sdf.format(LocalDateTime.now());
+//				
+//				// if the current date is before the manifestations date of occurence then commenting is not allowed
+//				if (currentDate.compareTo(manifDate)<=0) {
+//					return null;
+//				}
 				
-				String manifDate = sdf.format(manif.getDateOfOccurence());
-				String currentDate = sdf.format(LocalDateTime.now());
+				LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+				LocalDate currentDate = LocalDate.now();
 				
-				// if the current date is before the manifestations date of occurence then commenting is not allowed
-				if (currentDate.compareTo(manifDate)<=0) {
+				if (currentDate.isAfter(manifDate)) {
+					// rest of the checks are in the save method
+					return this.save(dto);	
+				}
+				else {
 					return null;
 				}
-				
-				// rest of the checks are in the save method
-				return this.save(dto);	
+
 			}
 		}	
 		return null;

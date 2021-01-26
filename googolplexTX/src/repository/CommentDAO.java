@@ -3,6 +3,7 @@ package repository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,17 @@ public class CommentDAO implements GenericDAO<Comment, String> {
 		return comments;
 	}
 
+	
+	public String findNextId() {
+		if (comments != null && comments.size() > 0) {		
+			Long highest = comments.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
+			Long id = highest + 1 ;
+			return id.toString();
+		}else {
+			return "1";
+		}
+	}
+	
 	public void setComments(Map<String, Comment> comments) {
 		this.comments = comments;
 	}
