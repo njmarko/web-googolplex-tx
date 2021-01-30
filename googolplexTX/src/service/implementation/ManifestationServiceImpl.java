@@ -266,7 +266,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}
 		if (found == null) {
 			found = new Manifestation();
+			found.setComments(new ArrayList<Comment>());
+			found.setTickets(new ArrayList<Ticket>());
 			found.setId(manifestationDAO.findNextId());
+			
 			found.setDeleted(false);	
 		}
 		
