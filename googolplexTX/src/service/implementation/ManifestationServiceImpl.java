@@ -286,6 +286,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}
 		for (Manifestation m : manifs) {
 			if (m.getStatus() == ManifestationStatus.ACTIVE
+					&& !m.equals(found)
 					&& m.getDateOfOccurence().toLocalDate().isEqual(dateOfOccurence.toLocalDate())
 					&& m.getLocation().getCity().equals(dto.getLocation().getCity())
 					&& m.getLocation().getStreet().equals(dto.getLocation().getStreet())
