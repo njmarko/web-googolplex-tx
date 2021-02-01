@@ -149,7 +149,7 @@ public class GoogolplexTXMain {
 //						before("*",UserController.authenticateUser); // all ticket paths require login
 
 						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman	
-						post("", manifestationControler.saveOneComment);
+						post("", manifestationControler.addOneComment);
 						path("/:idc", ()->{
 							get("", manifestationControler.findOneComment); // req salesman	
 							delete("", manifestationControler.deleteManifestationComment);
@@ -237,7 +237,7 @@ public class GoogolplexTXMain {
 			
 			path("/comments",()->{
 				path("/:idc",()->{
-					patch("", manifestationControler.saveOneComment);
+					patch("", manifestationControler.editOneComment);
 				});
 			});
 		});

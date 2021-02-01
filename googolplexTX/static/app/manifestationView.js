@@ -273,6 +273,14 @@ Vue.component("manifestation-view", {
 									<td>User</td>
 									<td>{{c.customer}}</td>
 								</tr>
+								<tr>
+									<td colspan="2">
+										<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+										v-on:click="acceptComment(c)" v-bind:class="['btn-success', 'btn']">ACCEPT</button>
+										<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+										v-on:click="rejectComment(c)" class="btn btn-danger text-uppercase">REJECT</button>
+									</td>
+								</tr>
 							</tbody>
 						</table>		
 						<hr/>	
@@ -331,6 +339,21 @@ Vue.component("manifestation-view", {
 
 	},
 	methods: {
+
+		acceptComment: function(comment){
+			let path = "api/comments/"+ comment.id
+			comment.approved = "ACCEPTED";
+			console.log(comment)
+			axios
+				.patch(path, comment)
+				.then(response=>{
+					comment = response.data
+				})
+				.catch(response=>{
+					comment.approved = "PENDING";
+				});
+		},
+
 
 		submitComment: function(event){
 			event.preventDefault();

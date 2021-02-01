@@ -35,4 +35,6 @@ public interface ManifestationService extends GenericService<Manifestation, Stri
 	public Comment save(CommentDTO dto);
 	
 	public Comment addUniqueComment(CommentDTO dto);
+	
+	public Comment updateComment(CommentDTO dto);
 }

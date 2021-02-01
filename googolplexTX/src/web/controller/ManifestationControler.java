@@ -323,7 +323,7 @@ public class ManifestationControler {
 	};
 	
 	
-	public final Route saveOneComment = new Route() {
+	public final Route addOneComment = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
@@ -365,6 +365,51 @@ public class ManifestationControler {
 			return g.toJson(CommentToCommentDTO.convert(comment));
 		}
 	};
+	
+	
+	public final Route editOneComment = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			// TODO add pagination
+
+			res.type("application/json");
+			String idc = req.params("idc");
+
+			Comment foundEntity = manifService.findOneComment(idc);
+
+			if (foundEntity == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Comments doesn't exist");
+			}
+			
+			String body = req.body();
+
+
+			CommentDTO newEntity = g.fromJson(body, CommentDTO.class);
+			
+			userController.authenticateSalesmanOrAdmin.handle(req,res);
+			User loggedIn = userController.getAuthedUser(req);
+
+			Comment comment = null;
+			
+			if (loggedIn == null) {
+				halt(HttpStatus.FORBIDDEN_403, "You are not logged in");
+			}
+			else if (loggedIn.getUserRole() == UserRole.CUSTOMER && loggedIn.getUsername() == newEntity.getCustomer()) {
+				newEntity.setApproved(CommentStatus.PENDING.name());
+				comment = manifService.updateComment(newEntity);
+			}else if (loggedIn.getUserRole() == UserRole.ADMIN ||( loggedIn.getUserRole() == UserRole.SALESMAN && foundEntity.getManifestation().getSalesman().equals(loggedIn)) ) {
+				comment = manifService.updateComment(newEntity);
+			}
+			
+			if (comment == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Your comment was not updated");
+			}
+
+			return g.toJson(CommentToCommentDTO.convert(comment));
+		}
+	};
+	
 	
 	public final Route deleteManifestationComment = new Route() {
 

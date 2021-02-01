@@ -521,5 +521,14 @@ public class ManifestationServiceImpl implements ManifestationService {
 		return null;
 	}
 
+	@Override
+	public Comment updateComment(CommentDTO dto) {
+		
+		
+		
+		
+		return this.save(dto);
+	}
+
 
 }
