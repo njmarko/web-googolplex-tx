@@ -382,8 +382,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Comment save(CommentDTO dto) {
 		Comment comment = null;
+		Boolean alreadyExists = false;
 		if (dto.getId() != null) {
 			comment = commentDAO.findOne(dto.getId());
+			alreadyExists = true;
 		}else {
 			comment = new Comment();
 			comment.setId(commentDAO.findNextId());
@@ -443,20 +445,21 @@ public class ManifestationServiceImpl implements ManifestationService {
 		
 		
 		
-		
-		cust.getComments().add(comment);
-		manif.getComments().add(comment);
+		if (alreadyExists == false) {
+			cust.getComments().add(comment);
+			manif.getComments().add(comment);
+			
+			manifestationDAO.save(manif);
+			manifestationDAO.saveFile();
+			
+
+			userDAO.save(cust);
+			userDAO.saveFile();
+		}
+
 		commentDAO.save(comment);
 		commentDAO.saveFile();
 		
-
-		manifestationDAO.save(manif);
-		manifestationDAO.saveFile();
-		
-
-		userDAO.save(cust);
-		userDAO.saveFile();
-
 		return comment;
 	}
 

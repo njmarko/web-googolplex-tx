@@ -11,7 +11,7 @@ Vue.component("manifestation-view", {
 			canComment: null,
 			customerComment: {},
 			editTicket: false,
-
+			showRejectedComments:false,
 			customerType: null,
 			prices: {
 				REGULAR: 1,
@@ -247,43 +247,56 @@ Vue.component("manifestation-view", {
 				</a>
 
 				<div class="collapse" id="collapseComments">
-				
+					<hr/>
+					<button 
+						v-show="manifestation.salesman == userData.username || userData.userRole == 'ADMIN'" 
+						v-on:click="showRejectedComments = !showRejectedComments" v-bind:class="[showRejectedComments? 'btn-info' : 'btn-success', 'btn']">
+							{{showRejectedComments == false? 'SHOW':'HIDE' }} REJECTED COMMENTS
+					</button>
+					
 					<div v-for="(c,i) in comments">
-						<h5>{{i + 1}}</h5>
+						<div v-show="c.approved != 'REJECTED' || showRejectedComments">
+							<h5>{{i + 1}}</h5>
 
-						<table class="table table-hover table-bordered table-striped text-center">
-							<tbody >
-								<tr>
-									<td>Id</td>
-									<td>{{c.id }}</td>
-								</tr>
-								<tr>
-									<td>Rating</td>
-									<td>{{c.rating}}</td>
-								</tr>
-								<tr>
-									<td>Text</td>
-									<td>{{c.text}}</td>
-								</tr>
-								<tr>
-									<td>Status</td>
-									<td>{{c.approved}}</td>
-								</tr>
-								<tr>
-									<td>User</td>
-									<td>{{c.customer}}</td>
-								</tr>
-								<tr>
-									<td colspan="2">
-										<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
-										v-on:click="acceptComment(c)" v-bind:class="['btn-success', 'btn']">ACCEPT</button>
-										<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
-										v-on:click="rejectComment(c)" class="btn btn-danger text-uppercase">REJECT</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>		
-						<hr/>	
+							<table class="table table-hover table-bordered table-striped text-center">
+								<tbody >
+									<tr>
+										<td>Id</td>
+										<td>{{c.id }}</td>
+									</tr>
+									<tr>
+										<td>Rating</td>
+										<td>{{c.rating}}</td>
+									</tr>
+									<tr>
+										<td>Text</td>
+										<td>{{c.text}}</td>
+									</tr>
+									<tr>
+										<td>Status</td>
+										<td>{{c.approved}}</td>
+									</tr>
+									<tr>
+										<td>User</td>
+										<td>{{c.customer}}</td>
+									</tr>
+									<tr>
+										<td colspan="2">
+											<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+											v-on:click="changeCommentStatus(c,'ACCEPTED')" v-bind:class="['btn-success', 'btn']">
+												ACCEPT
+											</button>
+
+											<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+											v-on:click="changeCommentStatus(c, 'REJECTED')" class="btn btn-danger text-uppercase">
+												REJECT
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>		
+							<hr/>	
+						</div>
 					</div>
 					<div class="h2" v-if="comments.length === 0">No Comments</div>
 
@@ -340,20 +353,19 @@ Vue.component("manifestation-view", {
 	},
 	methods: {
 
-		acceptComment: function(comment){
+		changeCommentStatus: function(comment, newStatus){
 			let path = "api/comments/"+ comment.id
-			comment.approved = "ACCEPTED";
+			comment.approved = newStatus;
 			console.log(comment)
 			axios
 				.patch(path, comment)
 				.then(response=>{
-					comment = response.data
+					 comment = response.data
 				})
 				.catch(response=>{
 					comment.approved = "PENDING";
 				});
 		},
-
 
 		submitComment: function(event){
 			event.preventDefault();
