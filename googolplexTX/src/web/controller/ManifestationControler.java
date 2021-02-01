@@ -393,13 +393,15 @@ public class ManifestationControler {
 			Comment comment = null;
 			
 			if (loggedIn == null) {
-				halt(HttpStatus.FORBIDDEN_403, "You are not logged in");
+				halt(HttpStatus.UNAUTHORIZED_401, "You are not logged in");
 			}
 			else if (loggedIn.getUserRole() == UserRole.CUSTOMER && loggedIn.getUsername() == newEntity.getCustomer()) {
 				newEntity.setApproved(CommentStatus.PENDING.name());
 				comment = manifService.updateComment(newEntity);
 			}else if (loggedIn.getUserRole() == UserRole.ADMIN ||( loggedIn.getUserRole() == UserRole.SALESMAN && foundEntity.getManifestation().getSalesman().equals(loggedIn)) ) {
 				comment = manifService.updateComment(newEntity);
+			}else {
+				halt(HttpStatus.FORBIDDEN_403, "You can only edit your own comment");
 			}
 			
 			if (comment == null) {

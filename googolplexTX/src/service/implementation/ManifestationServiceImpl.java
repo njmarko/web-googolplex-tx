@@ -527,10 +527,51 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Comment updateComment(CommentDTO dto) {
 		
+		if (dto.getCustomer() != null && dto.getManifestation()!= null) {
+			User tempUser = userDAO.findOne(dto.getCustomer());
+			if (tempUser.getUserRole() == UserRole.CUSTOMER) {
+				Customer cust = (Customer) tempUser;
+				Boolean hasTicket = false;
+				
+				// Comment with the forwarded ID must exist in order to be updated
+				if (dto.getId() == null || commentDAO.findOne(dto.getId()) == null) {
+					return null;
+				}
+				
+				// User has to have a ticket for this manifestation
+				for (Ticket t : cust.getTickets()) {
+					if (t.getManifestation().getId().equals(dto.getManifestation()) && t.getTicketStatus() == TicketStatus.RESERVED) {
+						hasTicket = true;
+						break;
+					}
+				}
+				if (hasTicket == false) {
+					return null;
+				}
+				
+				// Comment can only be added to the manifestation that is finished and is active
+				Manifestation manif = manifestationDAO.findOne(dto.getManifestation());
+				
+				// manif must be active
+				if (manif == null || manif.getStatus() == ManifestationStatus.INACTIVE) {
+					return null;
+				}
+				
+				LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+				LocalDate currentDate = LocalDate.now();
+				
+				if (currentDate.isAfter(manifDate)) {
+					// rest of the checks are in the save method
+					return this.save(dto);	
+				}
+				else {
+					return null;
+				}
+
+			}
+		}	
+		return null;
 		
-		
-		
-		return this.save(dto);
 	}
 
 
