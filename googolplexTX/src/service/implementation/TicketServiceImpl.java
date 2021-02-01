@@ -312,6 +312,11 @@ public class TicketServiceImpl implements TicketService {
 		return ((double) Math.round(points * 10)) / 10;
 	}
 
+	public static double calculateLosedPoints(double total) {
+		double points = total / 1000 * 133 * 4;
+		return ((double) Math.round(points * 10)) / 10;
+	}
+	
 	@Override
 	public Ticket cancelTicket(String key) {
 		Ticket ticket = findOne(key);
@@ -323,9 +328,20 @@ public class TicketServiceImpl implements TicketService {
 			throw new IllegalArgumentException("You cannot cancel manifestation in 7 days before beginning");
 		}
 		
+		double losedPoints = calculateLosedPoints(ticket.getPrice());
+		
+		Manifestation manifestation = ticket.getManifestation();
+		Customer customer = ticket.getCustomer();
+		
+		manifestation.setAvailableSeats(manifestation.getAvailableSeats() + 1);
+		customer.setPoints(customer.getPoints() - losedPoints);
+		
 		ticket.setCancelationDate(LocalDateTime.now());
 		ticket.setTicketStatus(TicketStatus.CANCELED);
+		
 		ticketDAO.saveFile();
+		userDAO.saveFile();
+		manifestationDAO.saveFile();
 		return ticket;
 	}
 
