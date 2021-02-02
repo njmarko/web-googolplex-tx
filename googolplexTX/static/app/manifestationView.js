@@ -325,7 +325,9 @@ Vue.component("manifestation-view", {
 					console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
 					this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
 					this.userData.gender = response.data.gender;
-					this.loadCustomerTypes(response.data.customerType);
+					if (response.data.customerType != null) {
+						this.loadCustomerTypes(response.data.customerType);
+					}
 				})
 				.catch(error => {
 					console.log("User not logged in");
