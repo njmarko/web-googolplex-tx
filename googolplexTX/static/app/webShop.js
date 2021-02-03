@@ -20,39 +20,45 @@ Vue.component("web-shop", {
 	<div id="top" class="container">
 		<br>
 
-		<form v-on:submit.prevent="searchManifestations">
+		<div class="row mb-3">
+			<div class="col-md-12">
+				<a class="btn btn-primary float-right" data-toggle="collapse" href="#searchCollapse" role="button" aria-expanded="false" aria-controls="searchCollapse">
+					Filter
+				</a>
+			</div>
+		</div>
+
+		<form v-on:submit.prevent="searchManifestations" class="collapse" id="searchCollapse">
 			<div class="row">
-				<div class="col-sm-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 					<div class="form-label-group">
 						<input placeholder="Manifestation" id="findManifestation" class="form-control" ref="focusMe"
 							v-model="searchParams.name">
 						<label for="findManifestation">Manifestation Name</label>
 					</div>
 				</div>
-				<div class="col-sm-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 					<div class="form-label-group">
 						<input type="number" step="any" placeholder="MIN PRICE" id="findMinPrice"
 							class="form-control" v-model="searchParams.minPrice">
 						<label for="findMinPrice">Min Price</label>
 					</div>
 				</div>
-				<div class="col-sm-3">	
+				<div class="col-lg-3 col-md-4 col-sm-6">	
 					<div class="form-label-group">
 						<input type="number" step="any" placeholder="MAX PRICE" id="findMaxPrice"
 							class="form-control" v-model="searchParams.maxPrice">
 						<label for="findMaxPrice">Max Price</label>
 					</div>
 				</div>
-				<div class="col-sm-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 					<div class="form-label-group">
 						<input type="date" placeholder="FROM" id="findBeginDate" class="form-control"
 							v-model="searchParams.beginDate">
 						<label for="findBeginDate">Begin Date</label>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
 					<div class="form-label-group">
 						<input type="date" placeholder="TO" id="findEndDate" class="form-control"
@@ -60,7 +66,7 @@ Vue.component("web-shop", {
 						<label for="findEndDate">End Date</label>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
 					<div class="form-label-group">
 						<input placeholder="Location" id="findLocation" class="form-control" ref="focusMe"
@@ -68,7 +74,7 @@ Vue.component("web-shop", {
 						<label for="findLocation">City Location</label>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
 					<div class="form-label-group">
 						<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria">
@@ -81,7 +87,7 @@ Vue.component("web-shop", {
 						<label for="inputSortCriteria">Sort Criteria</label>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
 					<div class="form-label-group">
 						<select name="inputAscending" id="inputAscending" v-model="searchParams.ascending">
@@ -92,9 +98,7 @@ Vue.component("web-shop", {
 						<label for="inputAscending">Direction</label>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
 					<div class="form-label-group">
 						<select name="inputManifType" id="inputManifType" v-model="searchParams.manifestationType">
@@ -104,9 +108,9 @@ Vue.component("web-shop", {
 						<label for="inputManifType">Manifestation Type</label>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6" v-if="userData && userData.userRole == 'ADMIN'">
 
-					<div class="form-label-group" v-if="userData && userData.userRole == 'ADMIN'">
+					<div class="form-label-group">
 						<select name="inputStatus" id="inputStatus" v-model="searchParams.status">
 							<option :value="undefined"></option>
 							<option value="ACTIVE">Active</option>
@@ -115,23 +119,26 @@ Vue.component("web-shop", {
 						<label for="inputStatus">Status</label>
 					</div>
 				</div>
-				<div class="col-md-3">
+				<div class="col-lg-3 col-md-4 col-sm-6">
 
-					<div class="form-label-group">
+					<div class="form-label-group checkbox">
 						<input type="checkbox" name="inputHasAvailableTickets" class="form-control"
 							v-model="searchParams.hasAvailableTickets" id="inputHasAvailableTickets">
 						<label for="inputHasAvailableTickets">Has available tickets</label>
 					</div>
 				</div>
-				<div class="col-md-3">
-					<div class="form-inline">
-
-						<div class="form-label-group">
-							<button class="btn btn-primary" type="submit">Search</button>
+				<div class="col-lg-3 col-md-4 col-sm-6 ml-auto">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-label-group">
+								<button class="btn btn-block btn-primary" type="submit">Search</button>
+							</div>
 						</div>
+						<div class="col-sm-6">
 
-						<div class="form-label-group">
-							<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
+							<div class="form-label-group">
+								<button class="btn btn-warning btn-block" v-on:click="clearParameters">Clear</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -141,8 +148,8 @@ Vue.component("web-shop", {
 
 		<h1 class="text-center">Manifestations</h1>
 
-		<div class="row row-spacing" v-for="row in rowCount" :key="manifestations.id">
-			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(row, row + numberOfColumns)" :key="manifestations.id">
+		<div class="row row-spacing" v-for="(row, rowI) in rowCount" :key="manifestations.id">
+			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(rowI * numberOfColumns, rowI + numberOfColumns)" :key="manifestations.id">
 				<div class="card manif-card">
 					<router-link class="card-image" :to="{ path: '/manifestations/' + manifestation.id}">
 
@@ -152,7 +159,7 @@ Vue.component("web-shop", {
 								<h6>Available seats: {{manifestation.availableSeats}}</h6>
 								<h6 v-if="manifestation.averageRating">Rating: {{manifestation.averageRating}}</h6>
 								<br>			
-								<h6>Date: {{manifestation.dateOfOccurence}}</h6>
+								<h6>Date: {{formatDateTime(manifestation.dateOfOccurence)}}</h6>
 								<h6>Price: {{manifestation.regularPrice}}</h6>
 							</div>
 						</div>
@@ -223,18 +230,14 @@ Vue.component("web-shop", {
 			.get('api/manifestations', { params: sp })
 			.then(response => {
 				this.manifestations = response.data;
-				for (let index = 0; index < this.manifestations.length; index++) {
-					this.manifestations[index].dateOfOccurence = new
-						Date(response.data[index].dateOfOccurence).toISOString().substring(0, 10);
-				}
+			//	for (let index = 0; index < this.manifestations.length; index++) {
+		//			this.manifestations[index].dateOfOccurence = new
+		//				Date(response.data[index].dateOfOccurence).toISOString().substring(0, 10);
+		//		}
 			})
 	}, methods: {
-		loadData: function
-			(response) {
-				this.manifestations = response.data; for (let index = 0; index < this.manifestations.length; index++) {
-					this.manifestations[index].dateOfOccurence = new Date(response.data[index].dateOfOccurence).toISOString().substring(0,
-						10);
-				}
+		loadData: function (response) {
+				this.manifestations = response.data; 
 		}, searchManifestations: function (event) {
 			event.preventDefault(); this.$router.push({ query: {} }); let
 				sp = Object.assign({}, this.searchParams); if (sp.beginDate != null) { sp.beginDate = new Date(sp.beginDate).getTime() }
@@ -262,6 +265,10 @@ Vue.component("web-shop", {
 				.then(response => {
 					this.loadData(response);
 				})
+		},
+		
+		formatDateTime: function (value) {
+			return moment(value).format('DD/MM/YYYY hh:mm');
 		},
 
 	},

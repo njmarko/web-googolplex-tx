@@ -14,6 +14,11 @@ body {
 	background: linear-gradient(to right, #0062E6, #33AEFF);
 }
 
+h1, h2, h3, h4, h5, h6 {
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
 
 .nopadding {
 	padding: 0 !important;
@@ -58,6 +63,27 @@ body {
 	position: relative;
 	display: flex;
 	margin-bottom: 1rem;
+	height: 50px;
+}
+
+.form-label-group.checkbox {
+	border: 1px solid #ced4da;
+	border-radius: 2rem;
+	padding-left: 10px;
+
+}
+
+.form-label-group.checkbox input {
+	width: 30px;
+	height: 30px;
+	margin: 9px;
+}
+
+.form-label-group.checkbox label {
+	position: inherit;
+	width: 100%;
+	padding: 10px 0;
+	font-size: 16px;
 }
 
 .form-label-group input,
@@ -354,4 +380,63 @@ body {
 
 .manif-card:hover .image-dim {
 	transform: translate(0, 0);
+}
+
+/* Tickets */
+
+.ticket {
+	margin: 20px 0;
+    background: linear-gradient(45deg, #2282ff, #b5d5ff);
+	border: 0.1em solid #729bf2;
+	border-radius: 1.6em;
+	position: relative;
+	transition: 0.5s ease-in-out all;
+}
+
+.ticket.fan-pit {
+	background: linear-gradient(45deg, #f21dc7, #ff7cfb);
+	border: 0.1em solid #da00d3;
+}
+
+.ticket.vip {
+	background: linear-gradient(45deg, #d58a00, #8eff1e);
+	border: 0.1em solid #ff8529;
+}
+
+.ticket a:hover {
+	color:#333;
+}
+
+.ticket:hover {
+	box-shadow: #0000005e 0 0px 26px;
+}
+
+
+.ticket .ticket-cover {
+	border-radius: 1.5em;
+	width:100%;
+	max-height: 300px;}
+
+.ticket .content {
+	padding: 15px;
+	z-index: 10;
+}
+
+.ticket-content {
+	padding-right: 15px;
+}
+
+.margin-v-auto {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.ticket .text-overlay {
+	position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    font-size: 8em;
+    transform: translate(-50%, -50%) rotate(-7deg);
+    color: #ff1919;
 }
