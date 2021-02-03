@@ -12,7 +12,9 @@ import support.DateConverter;
 import support.JsonAdapter;
 import support.UserToUserDTO;
 import spark.Filter;
+import web.dto.CustomerTypeDTO;
 import web.dto.LoginDTO;
+import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
@@ -356,6 +358,70 @@ public class UserController {
 		}
 	};
 
+	
+	public final Route addOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+			
+			res.type("application/json");
+
+			String body = req.body();
+
+			CustomerTypeDTO newEntity = g.fromJson(body, CustomerTypeDTO.class);
+			
+			CustomerType foundEntities = userService.postOneCustomerType(newEntity);
+			
+			if (foundEntities == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Name Already exists.");
+			}
+
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
+	
+	public final Route putOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+			
+			res.type("application/json");
+
+			String id = req.params("idct");
+			String body = req.body();
+
+			CustomerTypeDTO newEntity = g.fromJson(body, CustomerTypeDTO.class);
+
+			
+			
+			CustomerType foundEntities = userService.putOneCustomerType(id, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Name already exists or old-Name is invalid.");
+			}
+
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
+	
+	public final Route deleteOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idct");
+			CustomerType deletedEntity = userService.deleteOneCustomerType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+	
 	/**
 	 * Checks if user is logged in (This can be any type of user {CUSTOMER,
 	 * SALESMAN, ADMIN). It can be called in the before method for all the paths
@@ -532,23 +598,6 @@ public class UserController {
 			}
 
 			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
-		}
-	};
-
-	public final Route deleteOneCustomerType = new Route() {
-
-		@Override
-		public Object handle(Request req, Response res) throws Exception {
-			authenticateAdmin.handle(req, res);
-
-			// res.type("application/json");
-			String id = req.params("idct");
-			CustomerType deletedEntity = userService.deleteOneCustomerType(id);
-			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
-			}
-
-			return HttpStatus.NO_CONTENT_204;
 		}
 	};
 	

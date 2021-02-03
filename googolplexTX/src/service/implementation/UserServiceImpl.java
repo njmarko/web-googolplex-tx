@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import model.Customer;
 import model.CustomerType;
 import model.Manifestation;
+import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
 import model.User;
@@ -25,6 +26,7 @@ import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
 import support.DateConverter;
+import web.dto.CustomerTypeDTO;
 import web.dto.LoginDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
@@ -366,10 +368,69 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public CustomerType findOneCustomerType(String key) {
-		return this.custTypeDAO.findOne(key);
+		CustomerType found = this.custTypeDAO.findOne(key);
+		if (found == null || found.getDeleted())
+			return null;
+		return found;
 	}
 
+	@Override
+	public CustomerType deleteOneCustomerType(String key) {
+		// TODO: save to file
+		return custTypeDAO.delete(key);
+	}
 
+	@Override
+	public CustomerType putOneCustomerType(String key, CustomerTypeDTO dto) {
+		CustomerType foundEntity = this.findOneCustomerType(dto.getName());
+		if (!dto.getName().equalsIgnoreCase(key) && foundEntity != null)	// Already exists
+			return null;
+		
+		CustomerType customerType = null;
+		if (key != null) {
+			customerType = this.findOneCustomerType(key);
+			if(customerType == null)
+				return null;
+			
+		}
+		
+		if (customerType == null) {
+			customerType = new CustomerType();
+			customerType.setDeleted(false);
+		} else if (!dto.getName().equalsIgnoreCase(key)) {
+			
+			custTypeDAO.delete(key);
+			customerType = new CustomerType();
+			customerType.setDeleted(false);
+			
+		}
+		
+		customerType.setName(dto.getName());
+		customerType.setDiscount(dto.getDiscount());
+		customerType.setRequiredPoints(dto.getRequiredPoints());
+		custTypeDAO.save(customerType);
+		custTypeDAO.saveFile();
+		
+		return customerType;
+	}
+	
+	@Override
+	public CustomerType postOneCustomerType(CustomerTypeDTO dto) {
+		CustomerType customerType = this.findOneCustomerType(dto.getName());
+		if (customerType != null)	// Already exists
+			return null;
+		
+		customerType = new CustomerType();
+		customerType.setDeleted(false);	
+		customerType.setName(dto.getName());
+		customerType.setDiscount(dto.getDiscount());
+		customerType.setRequiredPoints(dto.getRequiredPoints());
+		custTypeDAO.save(customerType);
+		custTypeDAO.saveFile();
+		
+		return customerType;
+	}
+	
 	private int countCancelations (Customer customer,  LocalDateTime begin, LocalDateTime end) {
 		Collection<Ticket> tickets = customer.getTickets();
 		int count = 0;
@@ -438,10 +499,5 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-	@Override
-	public CustomerType deleteOneCustomerType(String key) {
-		// TODO: save to file
-		return custTypeDAO.delete(key);
-	}
 	
 }
