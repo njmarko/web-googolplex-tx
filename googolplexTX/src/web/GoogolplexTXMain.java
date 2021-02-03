@@ -212,16 +212,21 @@ public class GoogolplexTXMain {
 			
 			path("/manifestation-type",()->{
 				get("",manifestationControler.findAllManifestationTypes);
+				post("", manifestationControler.addOneManifestationType);
+	
 				path("/:idmt", ()->{
-				//	get("", );
+					get("", manifestationControler.findOneManifestationType);
+					put("", manifestationControler.putOneManifestationType);
 					delete("", manifestationControler.deleteOneManifestationType);
 				});
 			});
 			
 			path("/customer-type",()->{
 				get("",userController.findAllCustomerTypes);
+				post("", userController.addOneCustomerType);
 				path("/:idct", ()->{
 					get("", userController.findOneCustomerType);
+					put("", userController.putOneCustomerType);
 					delete("", userController.deleteOneCustomerType);
 				});
 			});

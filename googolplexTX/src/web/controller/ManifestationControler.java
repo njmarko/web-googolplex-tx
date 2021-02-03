@@ -40,12 +40,15 @@ import spark.Route;
 import spark.RouteImpl;
 import spark.utils.IOUtils;
 import support.CommentToCommentDTO;
+import support.CustTypeToCustTypeDTO;
 import support.JsonAdapter;
 import support.ManifToManifDTO;
 import support.ManifTypeToManifTypeDTO;
 import web.dto.CommentDTO;
+import web.dto.CustomerTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.ManifestationTypeDTO;
 
 public class ManifestationControler {
 
@@ -285,6 +288,87 @@ public class ManifestationControler {
 			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
 		}
 	};
+	
+	public final Route findOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");
+
+			String id = req.params("idmt");
+
+			ManifestationType foundEntities = manifService.findOneManifestationType(id);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Not found manifestation type.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
+	
+	public final Route addOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+			
+			res.type("application/json");
+
+			String body = req.body();
+
+			ManifestationTypeDTO newEntity = g.fromJson(body, ManifestationTypeDTO.class);
+			
+			ManifestationType foundEntities = manifService.putOneManifestationType(null, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Name Already exists.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+	
+	public final Route putOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+			
+			res.type("application/json");
+
+			String id = req.params("idmt");
+			String body = req.body();
+
+			ManifestationTypeDTO newEntity = g.fromJson(body, ManifestationTypeDTO.class);
+
+			
+			
+			ManifestationType foundEntities = manifService.putOneManifestationType(id, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Name already exists or old-Name is invalid.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+	
+	public final Route deleteOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idmt");
+			ManifestationType deletedEntity = manifService.deleteOneManifestationType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
 
 	public final Route findAllCommentsFromManifestation = new Route() {
 
@@ -467,23 +551,7 @@ public class ManifestationControler {
 		}
 	};
 
-	public final Route deleteOneManifestationType = new Route() {
 
-		@Override
-		public Object handle(Request req, Response res) throws Exception {
-			userController.authenticateAdmin.handle(req, res);
-
-			// res.type("application/json");
-			String id = req.params("idmt");
-			ManifestationType deletedEntity = manifService.deleteOneManifestationType(id);
-			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
-			}
-
-			return HttpStatus.NO_CONTENT_204;
-		}
-	};
-	
 	
 }
 

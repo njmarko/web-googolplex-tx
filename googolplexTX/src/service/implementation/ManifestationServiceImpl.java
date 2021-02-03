@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import model.Comment;
 import model.Customer;
+import model.CustomerType;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationType;
@@ -33,8 +34,10 @@ import repository.ManifestationTypeDAO;
 import repository.UserDAO;
 import service.ManifestationService;
 import web.dto.CommentDTO;
+import web.dto.CustomerTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.ManifestationTypeDTO;
 import web.dto.TicketSearchDTO;
 
 public class ManifestationServiceImpl implements ManifestationService {
@@ -80,7 +83,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation findOne(String key) {
 		Manifestation found = this.manifestationDAO.findOne(key);
-		if (found != null && found.getDeleted()) {
+		if (found == null || found.getDeleted()) {
 			return null;
 		}
 		return found;
@@ -374,6 +377,61 @@ public class ManifestationServiceImpl implements ManifestationService {
 		return found;
 	}
 
+	
+	@Override
+	public ManifestationType findOneManifestationType(String key) {
+		ManifestationType found = this.manifestationTypeDAO.findOne(key);
+		if (found == null || found.getDeleted())
+			return null;
+		return found;
+	}
+
+	@Override
+	public ManifestationType putOneManifestationType(String key, ManifestationTypeDTO dto) {
+		ManifestationType foundEntity = this.findOneManifestationType(dto.getName());
+		if (!dto.getName().equalsIgnoreCase(key) && foundEntity != null)	// Already exists
+			return null;
+		
+		ManifestationType manifestationType = null;
+		if (key != null) {
+			manifestationType = this.findOneManifestationType(key);
+			if (manifestationType == null)	// Not found old
+				return null;
+			
+		}
+		
+		if (manifestationType == null) {
+			manifestationType = new ManifestationType();
+			manifestationType.setDeleted(false);
+		} else if (!dto.getName().equalsIgnoreCase(key)) {
+			
+			manifestationTypeDAO.delete(key);
+			manifestationType = new ManifestationType();
+			manifestationType.setDeleted(false);
+			
+		}
+		manifestationType.setName(dto.getName());
+		manifestationTypeDAO.save(manifestationType);
+		manifestationTypeDAO.saveFile();
+		
+		return manifestationType;	
+	}
+	
+	@Override
+	public ManifestationType postOneManifestationType(ManifestationTypeDTO dto) {
+		ManifestationType manifestationType = this.findOneManifestationType(dto.getName());
+		if (manifestationType != null)	// Already exists
+			return null;
+		
+		manifestationType = new ManifestationType();
+		manifestationType.setDeleted(false);	
+		manifestationType.setName(dto.getName());
+		manifestationTypeDAO.save(manifestationType);
+		manifestationTypeDAO.saveFile();
+		
+		return manifestationType;
+	}
+	
 	@Override
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
