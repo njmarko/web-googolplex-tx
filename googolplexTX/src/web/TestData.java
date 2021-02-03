@@ -168,71 +168,71 @@ public class TestData {
 		Location loc10 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Kicoska"); // Only Street is different
 																							// in the address
 		Manifestation man10 = new Manifestation("10101010", "Man10InAddressOnlyCityDifferentDELETED", 332,
-				LocalDateTime.now(), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
+				LocalDateTime.now().plusDays(10), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
 																											// deleted
 
 		// TICKETS---------------------------------------------------
 
 		// For customer 1
-		Ticket t1 = new Ticket("1", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+		Ticket t1 = new Ticket("1", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
 				cust1, man1);
 
-		Ticket t2 = new Ticket("2", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+		Ticket t2 = new Ticket("2", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
 				cust1, man1);
 
-		Ticket t3 = new Ticket("3", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+		Ticket t3 = new Ticket("3", man1.getDateOfOccurence(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust1, man1);
 
-		Ticket t4 = new Ticket("4", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.parse("2020-01-10T00:00:00"), false,
+		Ticket t4 = new Ticket("4", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.parse("2020-01-10T00:00:00"), false,
 				cust1, man1);
 
-		Ticket t5 = new Ticket("5", LocalDateTime.now(), 969.68d, TicketType.VIP, TicketStatus.RESERVED, null, true,
+		Ticket t5 = new Ticket("5", man1.getDateOfOccurence(), 969.68d, TicketType.VIP, TicketStatus.RESERVED, null, true,
 				cust1, man1); // deleted reserved ticket
 
-		Ticket t6 = new Ticket("6", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
+		Ticket t6 = new Ticket("6", man4.getDateOfOccurence(), 160d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust1, man4); // references a deleted manifestation and is also
 								// canceled
 
-		Ticket t7 = new Ticket("7", LocalDateTime.now(), 160d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+		Ticket t7 = new Ticket("7", man10.getDateOfOccurence(), 160d, TicketType.VIP, TicketStatus.RESERVED, null, false,
 				cust1, man10); // references a deleted manifestation and is reserved
 
 		// for customer 2 same as first 4 tickets for cust 1
-		Ticket t8 = new Ticket("8", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+		Ticket t8 = new Ticket("8", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
 				cust2, man1);
 
-		Ticket t9 = new Ticket("9", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+		Ticket t9 = new Ticket("9", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
 				cust2, man1);
 
-		Ticket t10 = new Ticket("10", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+		Ticket t10 = new Ticket("10", man1.getDateOfOccurence(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust2, man1);
 
-		Ticket t11 = new Ticket("11", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(6),
+		Ticket t11 = new Ticket("11", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(6),
 				false, cust2, man1);
 
 		// for customer 3 same as first 4 tickets for cust 1 and 2
-		Ticket t12 = new Ticket("12", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
+		Ticket t12 = new Ticket("12", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
 				false, cust3, man1);
 
-		Ticket t13 = new Ticket("13", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
+		Ticket t13 = new Ticket("13", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.RESERVED, null,
 				false, cust3, man1);
 
-		Ticket t14 = new Ticket("14", LocalDateTime.now(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
+		Ticket t14 = new Ticket("14", man1.getDateOfOccurence(), 484.84d, TicketType.FAN_PIT, TicketStatus.RESERVED, null,
 				false, cust3, man1);
 
-		Ticket t15 = new Ticket("15", LocalDateTime.now(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(8),
+		Ticket t15 = new Ticket("15", man1.getDateOfOccurence(), 242.42, TicketType.REGULAR, TicketStatus.CANCELED, LocalDateTime.now().minusDays(8),
 				false, cust3, man1);
 
 		// for customer 4 different event from cust 1,2 and 3
-		Ticket t16 = new Ticket("16", LocalDateTime.now(), 100d, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
+		Ticket t16 = new Ticket("16", man5.getDateOfOccurence(), 100d, TicketType.REGULAR, TicketStatus.RESERVED, null, false,
 				cust4, man5);
 
-		Ticket t17 = new Ticket("17", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,
+		Ticket t17 = new Ticket("17", man5.getDateOfOccurence(), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,
 				cust4, man5);
 
-		Ticket t18 = new Ticket("18", LocalDateTime.now(), 200d, TicketType.FAN_PIT, TicketStatus.RESERVED, null, false,
+		Ticket t18 = new Ticket("18", man5.getDateOfOccurence(), 200d, TicketType.FAN_PIT, TicketStatus.RESERVED, null, false,
 				cust4, man5);
 
-		Ticket t19 = new Ticket("19", LocalDateTime.now(), 400d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
+		Ticket t19 = new Ticket("19", man5.getDateOfOccurence(), 400d, TicketType.VIP, TicketStatus.CANCELED, LocalDateTime.now().minusDays(10), false,
 				cust4, man5);
 		
 		Ticket t20 = new Ticket("20", LocalDateTime.of(2001, 12, 22, 5, 13), 400d, TicketType.VIP, TicketStatus.RESERVED, null, false,

@@ -199,7 +199,6 @@ public class TicketController {
 			} catch (IllegalArgumentException e) {
 				halt(HttpStatus.BAD_REQUEST_400, e.getMessage());
 			}
-			entity = ticketService.cancelTicket(id);
 			
 			
 			return gson.toJson(TicketToTicketDTO.convert(entity));

@@ -46,8 +46,104 @@ Vue.component("manifestation-view", {
 
 
 	template: ` 
-<div  class="d-flex" >
-		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
+<div  class="d-flex">
+	<!-- Modal -->
+	<div  v-if="manifestation && manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType"
+		 class="modal fade" id="paymentConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="paymentConfirmationModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Payment informations</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<table>
+				<tr>
+					<th colspan="2"><h3>Custoemr info</h3></th>
+				</tr>
+				<tr>
+					<td>Customer: </td>
+					<td>{{userData.username}}</td>
+				</tr>
+				<tr>
+					<td>Full name: </td>
+					<td>{{userData.firstName}} {{userData.lastName}}</td>
+				</tr>
+				<tr>
+					<td>Points: </td>
+					<td>{{userData.points}}</td>
+				</tr>
+				<tr>
+					<td>Status: </td>
+					<td>{{customerType.name}}</td>
+				</tr>
+				<tr>
+					<td>Discount: </td>
+					<td>{{customerType.discount}}%</td>
+				</tr>
+
+
+				<tr>
+					<th colspan="2"><h3>Manifestation info</h3></th>
+				</tr>
+				<tr>
+					<td>Name: </td>
+					<td>{{manifestation.name}}</td>
+				</tr>
+				<tr>
+					<td>Manifestation Type: </td>
+					<td>{{manifestation.manifestationType}}</td>
+				</tr>
+				<tr>
+					<td>Ticket Type: </td>
+					<td>{{reservation.ticketType}}</td>
+				</tr>
+				<tr>
+					<td>Starting at: </td>
+					<td>{{formatDate(manifestation.dateOfOccurence)}}</td>
+				</tr>
+				<tr>
+					<td>Location: </td>
+					<td>{{manifestation.location.city}}, {{manifestation.location.street}} {{manifestation.location.number}}, {{manifestation.location.zipCode}}</td>
+				</tr>
+
+
+				<tr>
+					<th colspan="2"><h3>Payment info</h3></th>
+				</tr>
+				<tr>
+					<td>Unit Price: </td>
+					<td>{{manifestation.regularPrice}}</td>
+				</tr>
+				<tr>
+					<td>Quantity: </td>
+					<td>{{reservation.quantity}}</td>
+				</tr>
+				<tr>
+					<td>Sum: </td>
+					<td>{{ getSum }}  - {{customerType.discount}}%</td>
+				</tr>
+				<tr>
+					<td>Points earned: </td>
+					<td>{{ calculatePoint( getSum ) }} ( {{userData.points + calculatePoint( getSum )}}  )</td>
+				</tr>
+				<tr colspan="2">
+					<th><h2 class="font-weight-bold">TOTAL: {{ getTotalDiscont }}</h2></th>
+				</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" 
+				v-on:click="reserveTicket">Confirm Reservation</button>
+			</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 	<div id="top" class="container" >
 		<br>
 		
@@ -111,7 +207,13 @@ Vue.component("manifestation-view", {
 
 				</tbody>
 			</table>
-			<form v-on:submit.prevent="reserveTicket" v-if="userData && (userData.userRole == 'CUSTOMER') && this.customerType">
+			<form v-on:submit.prevent="" v-if="manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType">
+
+
+			
+
+
+
 
 				<div class="buy-section row">
 					<div class="col-lg-2 col-sm-6">
@@ -135,14 +237,17 @@ Vue.component("manifestation-view", {
 						<p>Discount: {{ customerType.discount }}%</p>
 					</div>
 					<div class="col-lg-2 col-sm-6">
-						<span>Total: {{ getSum }} - {{customerType.discount}}% =</span>
+						<span>Total: {{ getSum }} ( -{{customerType.discount}}% )</span>
 						<p>Points: {{ calculatePoint( getSum ) }}</p>
 					</div>
 					<div class="col-lg-2">
 						<span><h2><strong>={{ getTotalDiscont }}</strong></h2></span>
 					</div>
 					<div class="col-lg-2">
-						<input v-bind:disabled="manifestation.availableSeats <= 0" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="RESERVE" />
+						<button type="button" class="btn btn-lg btn-primary btn-block text-uppercase" data-toggle="modal" data-target="#paymentConfirmationModal"
+						v-bind:disabled="manifestation.availableSeats <= 0">
+						Reserve
+						</button>
 					</div>
 				</div>
 			</form>
