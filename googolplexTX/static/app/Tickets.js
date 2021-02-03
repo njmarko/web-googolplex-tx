@@ -156,6 +156,8 @@ Vue.component("tickets", {
 						</router-link>
 						<span v-bind:class="[t.ticketStatus == 'RESERVED' ? 'badge-success' : 'badge-danger']" class="badge">{{t.ticketStatus}}</span>
 						<span class="badge badge-warning">{{t.ticketType}}</span>
+						<span v-if="isOnGoing(t.dateOfManifestation)" class="badge badge-danger">On-going</span>
+						<span v-if="isFinished(t.dateOfManifestation)" class="badge badge-success">Finished</span>
 
 
 						<button  v-if="isStarted(t.dateOfManifestation)" v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
@@ -355,6 +357,23 @@ Vue.component("tickets", {
 			today = new Date();
 			console.log(manifDate);
 			return today < manifDate;
+		},
+
+		isFinished : function(time){
+			dayAfterManifestation = new Date(time);
+			dayAfterManifestation.setDate(dayAfterManifestation.getDate()+1);
+
+			today = new Date();
+			return today > dayAfterManifestation;
+		},
+
+		isOnGoing : function(time){
+			startedManif = new Date(time);
+			dayAfterManifestation = new Date(time);
+			dayAfterManifestation.setDate(dayAfterManifestation.getDate()+1);
+
+			today = new Date();
+			return today < dayAfterManifestation && today > startedManif;
 		},
 
 		formatDateTime: function (value) {

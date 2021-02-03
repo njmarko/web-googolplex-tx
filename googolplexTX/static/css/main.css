@@ -436,7 +436,16 @@ body {
     z-index: 1;
     left: 50%;
     top: 50%;
-    font-size: 8em;
+    font-size: 4rem;
     transform: translate(-50%, -50%) rotate(-7deg);
     color: #ff1919;
 }
+
+@media (min-width: 576px) {  
+	.ticket .text-overlay {font-size:6rem;} /*1rem = 16px*/
+}
+
+@media (min-width: 768px) {  
+	.ticket .text-overlay {font-size:8rem;} /*1rem = 16px*/
+}
+
