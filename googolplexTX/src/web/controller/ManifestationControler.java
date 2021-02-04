@@ -98,7 +98,7 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				if (!String.valueOf(v).trim().isBlank()) {
+				if (!v[0].trim().isBlank()) {
 					queryParams.put(k, v[0]);
 				}			
 			});
