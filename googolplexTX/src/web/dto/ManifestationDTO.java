@@ -13,6 +13,12 @@ public class ManifestationDTO {
 	private String id;
 	private String name;
 	private Integer availableSeats;
+	
+	/**
+	 * total seats are calculated as availableSeats + reservedTickets 
+	 * in support class that converts Manifestation to ManifestationDTO
+	 */
+	private Integer totalSeats;
 	private Long dateOfOccurence;
 	private Double regularPrice;
 	private String status;
@@ -56,10 +62,10 @@ public class ManifestationDTO {
 			err = "You have to enter dateOfOccurence";
 		} else if (regularPrice == null) {
 			err = "You have to enter regularPrice";
-		} else if (availableSeats <= 0) {
-			err = "Manifestation mush have at least one available seat";
+		} else if (availableSeats < 0) {
+			err = "Number of seats must not be negative";
 		} else if (regularPrice < 0) {
-			err = "Manifestation mush have at least one available seat";
+			err = "Price must not be negative";
 		}
 		return err;
 	}
@@ -81,28 +87,16 @@ public class ManifestationDTO {
 		super();
 	}
 
-	/**
-	 * @param id
-	 * @param name
-	 * @param availableSeats
-	 * @param dateOfOccurence
-	 * @param regularPrice
-	 * @param status
-	 * @param poster
-	 * @param manifestationType
-	 * @param salesman
-	 * @param location
-	 * @param averageRating
-	 * @param comments
-	 * @param tickets
-	 */
-	public ManifestationDTO(String id, String name, Integer availableSeats, Long dateOfOccurence, Double regularPrice,
-			String status, String poster, String manifestationType, String salesman, Location location,
-			Double averageRating, Collection<String> comments, Collection<String> tickets) {
+
+
+	public ManifestationDTO(String id, String name, Integer availableSeats, Integer totalSeats, Long dateOfOccurence,
+			Double regularPrice, String status, String poster, String manifestationType, String salesman,
+			Location location, Double averageRating, Collection<String> comments, Collection<String> tickets) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.availableSeats = availableSeats;
+		this.totalSeats = totalSeats;
 		this.dateOfOccurence = dateOfOccurence;
 		this.regularPrice = regularPrice;
 		this.status = status;
@@ -218,14 +212,26 @@ public class ManifestationDTO {
 	public void setAverageRating(Double averageRating) {
 		this.averageRating = averageRating;
 	}
+	
+	
+
+	public Integer getTotalSeats() {
+		return totalSeats;
+	}
+
+	public void setTotalSeats(Integer totalSeats) {
+		this.totalSeats = totalSeats;
+	}
 
 	@Override
 	public String toString() {
-		return "ManifestationDTO [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats
-				+ ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status=" + status
-				+ ", poster=" + poster + ", manifestationType=" + manifestationType + ", salesman=" + salesman
+		return "ManifestationDTO [id=" + id + ", name=" + name + ", availableSeats=" + availableSeats + ", totalSeats="
+				+ totalSeats + ", dateOfOccurence=" + dateOfOccurence + ", regularPrice=" + regularPrice + ", status="
+				+ status + ", poster=" + poster + ", manifestationType=" + manifestationType + ", salesman=" + salesman
 				+ ", location=" + location + ", averageRating=" + averageRating + ", comments=" + comments
 				+ ", tickets=" + tickets + "]";
 	}
+
+
 
 }

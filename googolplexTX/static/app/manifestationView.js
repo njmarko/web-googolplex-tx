@@ -163,7 +163,11 @@ Vue.component("manifestation-view", {
 						<td>{{manifestation.name }}</td>
 					</tr>
 					<tr>
-						<td>Available Seats</td>
+						<td>Total Seats</td>
+						<td>{{manifestation.totalSeats }}</td>
+					</tr>
+					<tr>
+						<td>Available tickets</td>
 						<td>{{manifestation.availableSeats }}</td>
 					</tr>
 					<tr>
