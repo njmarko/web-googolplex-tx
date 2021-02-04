@@ -276,7 +276,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public CustomerType determineCustomerType(Double points) {
 
-		Collection<CustomerType> custTypes = custTypeDAO.findAll();
+		Collection<CustomerType> custTypes = this.findallCustomerTypes();
 
 		if (custTypes == null) {
 			return null;
@@ -339,10 +339,22 @@ public class TicketServiceImpl implements TicketService {
 		ticket.setCancelationDate(LocalDateTime.now());
 		ticket.setTicketStatus(TicketStatus.CANCELED);
 		
+		CustomerType newType = determineCustomerType(customer.getPoints());
+		if (newType != null) {
+			customer.setCustomerType(newType);
+		}
+		
 		ticketDAO.saveFile();
 		userDAO.saveFile();
 		manifestationDAO.saveFile();
 		return ticket;
+	}
+
+	@Override
+	public Collection<CustomerType> findallCustomerTypes() {
+		return this.custTypeDAO.findAll().stream().filter((ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 	}
 
 }
