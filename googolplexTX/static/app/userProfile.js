@@ -89,7 +89,7 @@ Vue.component("user-profile", {
 			<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="Save changes" />
 			<hr class="my-4">
 
-			<div class="row">
+			<div class="row mb-3">
 				<div class="col-md-6">
 					<h5 class="card-title text-center">Password:</h5>
 				</div>
@@ -102,7 +102,7 @@ Vue.component("user-profile", {
 
 		</form>
 
-		<div v-if="userData.userRole == 'CUSTOMER'">
+		<div v-if="userData.userRole != 'ADMIN'">
 
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody>
@@ -120,7 +120,7 @@ Vue.component("user-profile", {
 					</tr>
 					<tr>
 						<td>Birthday</td>
-						<td>{{userData.birthDate}}</td>
+						<td>{{ formatDate(userData.birthDate) }}</td>
 					</tr>
 					<tr>
 						<td>Gender</td>
@@ -130,11 +130,7 @@ Vue.component("user-profile", {
 						<td>Role</td>
 						<td>{{userData.userRole}}</td>
 					</tr>
-					<tr>
-						<td>Role</td>
-						<td>{{userData.userRole}}</td>
-					</tr>
-					<tr v-if="userData.points">
+					<tr v-if="userData.userRole == 'CUSTOMER'">
 						<td>Points</td>
 						<td>{{userData.points}}</td>
 					</tr>
@@ -158,9 +154,6 @@ Vue.component("user-profile", {
 			.get('api/users/' + localUserData.username)
 			.then(response => {
 				this.userData = response.data;
-				console.log(response.data.birthDate);
-				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
 				this.userData.gender = response.data.gender;
 			});
 		
@@ -194,7 +187,10 @@ Vue.component("user-profile", {
 					console.log("error.config");
 					console.log(error.config);
 			});
-		}
+		},
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 
 	},
 
