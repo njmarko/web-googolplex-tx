@@ -8,10 +8,11 @@ public class TicketDTO {
 	private String ticketStatus;
 	private Long cancelationDate;
 
-	public String customer;
-	public String manifestation;
-	public String manifestationName;
-	public String cutomerFullName;
+	private String poster;
+	private String customer;
+	private String manifestation;
+	private String manifestationName;
+	private String cutomerFullName;
 
 	public TicketDTO() {
 		super();
@@ -24,14 +25,14 @@ public class TicketDTO {
 	 * @param ticketType
 	 * @param ticketStatus
 	 * @param cancelationDate
-	 * @param deleted
+	 * @param poster
 	 * @param customer
 	 * @param manifestation
 	 * @param manifestationName
 	 * @param cutomerFullName
 	 */
 	public TicketDTO(String id, Long dateOfManifestation, Double price, String ticketType, String ticketStatus,
-			Long cancelationDate, String customer, String manifestation, String manifestationName,
+			Long cancelationDate, String poster, String customer, String manifestation, String manifestationName,
 			String cutomerFullName) {
 		super();
 		this.id = id;
@@ -40,6 +41,7 @@ public class TicketDTO {
 		this.ticketType = ticketType;
 		this.ticketStatus = ticketStatus;
 		this.cancelationDate = cancelationDate;
+		this.poster = poster;
 		this.customer = customer;
 		this.manifestation = manifestation;
 		this.manifestationName = manifestationName;
@@ -109,8 +111,6 @@ public class TicketDTO {
 	public void setManifestation(String manifestation) {
 		this.manifestation = manifestation;
 	}
-	
-	
 
 	public String getManifestationName() {
 		return manifestationName;
@@ -128,13 +128,20 @@ public class TicketDTO {
 		this.cutomerFullName = cutomerFullName;
 	}
 
+	public String getPoster() {
+		return poster;
+	}
+
+	public void setPoster(String poster) {
+		this.poster = poster;
+	}
+
 	@Override
 	public String toString() {
 		return "TicketDTO [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
 				+ ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus + ", cancelationDate="
-				+ cancelationDate + ", customer=" + customer + ", manifestation="
-				+ manifestation + ", manifestationName=" + manifestationName + ", cutomerFullName=" + cutomerFullName
-				+ "]";
+				+ cancelationDate + ", poster=" + poster + ", customer=" + customer + ", manifestation=" + manifestation
+				+ ", manifestationName=" + manifestationName + ", cutomerFullName=" + cutomerFullName + "]";
 	}
 
 }

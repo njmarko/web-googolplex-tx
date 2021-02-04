@@ -23,7 +23,8 @@ public class TicketToTicketDTO {
 		retVal.setCustomer(t.getCustomer().getUsername());
 		retVal.setManifestation(t.getManifestation().getId());
 		
-
+		retVal.setPoster(t.getManifestation().getPoster());
+		
 		Long dateOfManifestation = t.getDateOfManifestation().toInstant(ZoneOffset.UTC).toEpochMilli();
 		retVal.setDateOfManifestation(dateOfManifestation);
 		
