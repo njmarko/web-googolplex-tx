@@ -113,6 +113,7 @@ Vue.component("map-component", {
 
         };
         map.on('singleclick', function (evt) {
+            console.log('click');
             if (!self.readonly){
 
 
@@ -224,7 +225,9 @@ Vue.component("map-component", {
                     return response.json();
                 }).then(function (json) {
                     json = self.fixMissingJsonAddress(json);
-                    if (self.firstLoading == false){
+                    // When you edit, on first loading, map shouldnt send new info
+                    console.log(self.inpLatitude);
+                    if (self.firstLoading == false || self.inpLatitude == undefined || self.inpLongitude ==undefined){
                         emitAddr(json);
                     } else {
                         self.firstLoading = false;
