@@ -147,7 +147,7 @@ public class TestData {
 																									// else
 		// is
 		// same
-		Manifestation man6 = new Manifestation("6666", "Man6SameLocationDifferentZip", 17, LocalDateTime.now(), 22.3d,
+		Manifestation man6 = new Manifestation("6666", "Man6SameLocationDifferentZip", 17, LocalDateTime.now().plusDays(20), 22.3d,
 				ManifestationStatus.ACTIVE, "manif-6666.jpg", false, mt1, sal2, loc5); // on the same location as deleted
 																				// manifestation
 

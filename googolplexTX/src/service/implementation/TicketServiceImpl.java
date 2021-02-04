@@ -246,7 +246,7 @@ public class TicketServiceImpl implements TicketService {
 		
 		
 		
-		Double total = calculatePrice(reservation.getTicketType(), reservation.getQuantity(), manifestation.getRegularPrice());
+		Double total = calculatePrice(reservation.getTicketType(), reservation.getQuantity(), manifestation.getRegularPrice(), customer.getCustomerType());
 		Double points = calculatePoints(total);
 		
 		double customerPoints = customer.getPoints() + points;
@@ -256,8 +256,9 @@ public class TicketServiceImpl implements TicketService {
 		
 		Collection<Ticket> tickets = new ArrayList<Ticket>();
 		
+		Double individualTicketPrice = ((double) Math.round(total/reservation.getQuantity() * 10)) / 10;
 		for (int i = 0; i < reservation.getQuantity() ; ++i) {
-			Ticket ticket = new Ticket(ticketDAO.findNextId(), manifestation.getDateOfOccurence(), total, reservation.getTicketType(), TicketStatus.RESERVED, null, false, customer, manifestation);
+			Ticket ticket = new Ticket(ticketDAO.findNextId(), manifestation.getDateOfOccurence(),individualTicketPrice , reservation.getTicketType(), TicketStatus.RESERVED, null, false, customer, manifestation);
 			customer.getTickets().add(ticket);
 			manifestation.getTickets().add(ticket);
 			
@@ -300,9 +301,11 @@ public class TicketServiceImpl implements TicketService {
 		return adequateType;
 	}
 	
-	public static double calculatePrice(TicketType ticketType, int quantity, double regularPrice) {
+	public static double calculatePrice(TicketType ticketType, int quantity, double regularPrice, CustomerType custType) {
 		double multiplier = typePrices.get(ticketType);
-		double total = regularPrice * multiplier * quantity;
+		// if discount is 5% i will multiply total price with 0.95
+		double discount = 1d -custType.getDiscount() /100d; 
+		double total = regularPrice * multiplier * quantity * discount;
 		return ((double) Math.round(total * 10)) / 10;
 
 	}
