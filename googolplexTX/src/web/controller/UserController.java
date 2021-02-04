@@ -90,12 +90,15 @@ public class UserController {
 
 			String err = null;
 
-			authenticateUser.handle(req, res);
+
 			User loggedInUser = getAuthedUser(req);
 
 			if (loggedInUser == null) {
 				err = registerData.validate(null);
 			} else {
+				// only admin can register new salesman. Logged in customer can register another account 
+				// but it can only be a customer account
+				authenticateUser.handle(req, res);
 				err = registerData.validate(loggedInUser.getUserRole());
 			}
 			if (!StringUtils.isEmpty(err)) {
