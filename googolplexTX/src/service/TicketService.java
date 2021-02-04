@@ -20,5 +20,7 @@ public interface TicketService extends GenericService<Ticket, String> {
 	public CustomerType determineCustomerType(Double points);
 	
 	public Ticket cancelTicket(String key);
+	
+	public Collection<CustomerType> findallCustomerTypes();
 
 }
