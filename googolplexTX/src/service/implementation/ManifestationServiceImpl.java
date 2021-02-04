@@ -441,8 +441,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Comment save(CommentDTO dto) {
 		Comment comment = null;
+		Boolean alreadyExists = false;
 		if (dto.getId() != null) {
 			comment = commentDAO.findOne(dto.getId());
+			alreadyExists = true;
 		}else {
 			comment = new Comment();
 			comment.setId(commentDAO.findNextId());
@@ -502,20 +504,21 @@ public class ManifestationServiceImpl implements ManifestationService {
 		
 		
 		
-		
-		cust.getComments().add(comment);
-		manif.getComments().add(comment);
+		if (alreadyExists == false) {
+			cust.getComments().add(comment);
+			manif.getComments().add(comment);
+			
+			manifestationDAO.save(manif);
+			manifestationDAO.saveFile();
+			
+
+			userDAO.save(cust);
+			userDAO.saveFile();
+		}
+
 		commentDAO.save(comment);
 		commentDAO.saveFile();
 		
-
-		manifestationDAO.save(manif);
-		manifestationDAO.saveFile();
-		
-
-		userDAO.save(cust);
-		userDAO.saveFile();
-
 		return comment;
 	}
 
@@ -578,6 +581,56 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}
 		}	
 		return null;
+	}
+
+	@Override
+	public Comment updateComment(CommentDTO dto) {
+		
+		if (dto.getCustomer() != null && dto.getManifestation()!= null) {
+			User tempUser = userDAO.findOne(dto.getCustomer());
+			if (tempUser.getUserRole() == UserRole.CUSTOMER) {
+				Customer cust = (Customer) tempUser;
+				Boolean hasTicket = false;
+				
+				// Comment with the forwarded ID must exist in order to be updated
+				if (dto.getId() == null || commentDAO.findOne(dto.getId()) == null) {
+					return null;
+				}
+				
+				// User has to have a ticket for this manifestation
+				for (Ticket t : cust.getTickets()) {
+					if (t.getManifestation().getId().equals(dto.getManifestation()) && t.getTicketStatus() == TicketStatus.RESERVED) {
+						hasTicket = true;
+						break;
+					}
+				}
+				if (hasTicket == false) {
+					return null;
+				}
+				
+				// Comment can only be added to the manifestation that is finished and is active
+				Manifestation manif = manifestationDAO.findOne(dto.getManifestation());
+				
+				// manif must be active
+				if (manif == null || manif.getStatus() == ManifestationStatus.INACTIVE) {
+					return null;
+				}
+				
+				LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+				LocalDate currentDate = LocalDate.now();
+				
+				if (currentDate.isAfter(manifDate)) {
+					// rest of the checks are in the save method
+					return this.save(dto);	
+				}
+				else {
+					return null;
+				}
+
+			}
+		}	
+		return null;
+		
 	}
 
 

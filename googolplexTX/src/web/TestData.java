@@ -117,7 +117,7 @@ public class TestData {
 
 		Location loc1 = new Location(111.3, 1111.3, "1", "Novi Sad", 21000, "Cika Perina");
 		Manifestation man1 = new Manifestation("1111", "Man1", 123, LocalDateTime.of(2018, 12, 22, 5, 13), 123.3,
-				ManifestationStatus.ACTIVE, "poster", false, mt1, sal1, loc1);
+				ManifestationStatus.ACTIVE, "manif-1111.jpg", false, mt1, sal1, loc1);
 
 		Location loc2 = new Location(222.3, 2222.3, "2", "Novi Sad", 21000, "Cika Perina"); // different number compared
 																							// to adrs1
@@ -125,19 +125,19 @@ public class TestData {
 																													// set
 																													// this
 				// to negative values
-				ManifestationStatus.INACTIVE, "poster", false, mt2, sal1, loc2);
+				ManifestationStatus.INACTIVE, "manif-2222.jpg", false, mt2, sal1, loc2);
 
 		Location loc3 = new Location(333.3, 3333.3, "33", "Novi Sad", 21000, "Bulevar Oslobodjenja");
 		Manifestation man3 = new Manifestation("3333", "Man3Inactive", 5, LocalDateTime.of(2011, 3, 22, 3, 54), 11d,
-				ManifestationStatus.INACTIVE, "poster", false, mt1, sal1, loc3);
+				ManifestationStatus.INACTIVE, "manif-3333.jpg", false, mt1, sal1, loc3);
 
 		Location loc4 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
 		Manifestation man4 = new Manifestation("4444", "Man4Deleted", 51, LocalDateTime.now(), 33.3d,
-				ManifestationStatus.ACTIVE, "poster", true, mt1, sal2, loc4); // deleted
+				ManifestationStatus.ACTIVE, "manif-4444.jpg", true, mt1, sal2, loc4); // deleted
 
 		Location loc5 = new Location(444.3, 4444.3, "44", "Beograd", 11000, "Marka Kraljevica");
 		Manifestation man5 = new Manifestation("5555", "Man5SameLocationAndAddressAsDeleted", 51, LocalDateTime.of(2012, 12, 3, 13, 22),
-				33.3d, ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
+				33.3d, ManifestationStatus.ACTIVE, "manif-5555.jpg", false, mt1, sal2, loc5); // on the same location as deleted
 																						// manifestation
 
 		Location loc6 = new Location(444.3, 4444.3, "44", "Beograd", 11001, "Marka Kraljevica"); // same coordinates as
@@ -148,27 +148,27 @@ public class TestData {
 		// is
 		// same
 		Manifestation man6 = new Manifestation("6666", "Man6SameLocationDifferentZip", 17, LocalDateTime.now(), 22.3d,
-				ManifestationStatus.ACTIVE, "poster", false, mt1, sal2, loc5); // on the same location as deleted
+				ManifestationStatus.ACTIVE, "manif-6666.jpg", false, mt1, sal2, loc5); // on the same location as deleted
 																				// manifestation
 
 		Location loc7 = new Location(777.3, 7777.3, "11a", "Prigrevica", 25263, "Apatinska");
 		Manifestation man7 = new Manifestation("7777", "Man7Inactive", 1000, LocalDateTime.now(), 550d,
-				ManifestationStatus.INACTIVE, "poster", false, mt2, sal3, loc7);
+				ManifestationStatus.INACTIVE, "manif-7777.jpg", false, mt2, sal3, loc7);
 
 		Location loc8 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Apatinska"); // Only city is different
 																								// in the address
 		Manifestation man8 = new Manifestation("8888", "Man8InAddressOnlyCityDifferent", 15, LocalDateTime.now(), 333d,
-				ManifestationStatus.ACTIVE, "poster", false, mt3, sal3, loc8);
+				ManifestationStatus.ACTIVE, "manif-8888.jpg", false, mt3, sal3, loc8);
 
 		Location loc9 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Apatinska"); // Only city is different
 																								// in the address
 		Manifestation man9 = new Manifestation("9999", "Man9InAddressOnlyCityDifferent", 71, LocalDateTime.now(), 21d,
-				ManifestationStatus.ACTIVE, "poster", false, mt3, sal3, loc9);
+				ManifestationStatus.ACTIVE, "manif-9999.jpg", false, mt3, sal3, loc9);
 
 		Location loc10 = new Location(777.3, 7777.3, "11a", "Slepcevic", 25263, "Kicoska"); // Only Street is different
 																							// in the address
 		Manifestation man10 = new Manifestation("10101010", "Man10InAddressOnlyCityDifferentDELETED", 332,
-				LocalDateTime.now().plusDays(10), 0.01d, ManifestationStatus.ACTIVE, "poster", true, mt3, sal3, loc10); // active but
+				LocalDateTime.now().plusDays(10), 0.01d, ManifestationStatus.ACTIVE, "manif-10101010.jpg", true, mt3, sal3, loc10); // active but
 																											// deleted
 
 		// TICKETS---------------------------------------------------
@@ -240,6 +240,10 @@ public class TestData {
 		
 		Ticket t21 = new Ticket("21", LocalDateTime.of(1992, 3, 13, 4, 22), 415d, TicketType.VIP, TicketStatus.RESERVED, null, false,
 				cust4, man2);
+		
+		Ticket t22 = new Ticket("22", LocalDateTime.of(1995, 4, 12, 5, 11), 252.32, TicketType.REGULAR, TicketStatus.RESERVED, null,
+				false, cust3, man5);
+
 
 		// saving
 		userDAO.save(admin1);
@@ -327,6 +331,7 @@ public class TestData {
 		ticketDAO.save(t19);
 		ticketDAO.save(t20);
 		ticketDAO.save(t21);
+		ticketDAO.save(t22);
 
 		commentDAO.save(c1);
 		commentDAO.save(c2);
