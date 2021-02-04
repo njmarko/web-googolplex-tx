@@ -1,7 +1,6 @@
 #top,
 #navbar {
 	background-color: white;
-	z-index: 100;
 }
 
 :root {
@@ -120,6 +119,13 @@ h1, h2, h3, h4, h5, h6 {
 	border-radius: .25rem;
 	transition: all .1s ease-in-out;
 }
+
+.dropdown-menu-dark {
+	color: #dee2e6;
+    background-color: #343a40;
+    border-color: rgba(0,0,0,.15);
+}
+
 
 .form-label-group input::-webkit-input-placeholder,
 .form-label-group select::-webkit-select-placeholder {
