@@ -142,18 +142,18 @@ Vue.component("salesman-tickets", {
 
 		this.$nextTick(() => {
 			this.searchParams = this.$route.query;
-			if (this.$route.query.beginDate != null) {
+			if (this.$route.query.beginDate ) {
 				this.searchParams.beginDate = new Date(new Number(this.$route.query.beginDate)).toISOString().substring(0,10);
 			}
-			if (this.$route.query.endDate != null) {
+			if (this.$route.query.endDate ) {
 				this.searchParams.endDate = new Date(new Number(this.$route.query.endDate)).toISOString().substring(0,10);
 			}
 			this.$router.push({ query: {} });
 			let sp =Object.assign({}, this.searchParams); 
-			if (sp.beginDate != null) {
+			if (sp.beginDate) {
 				sp.beginDate =  new Date(sp.beginDate).getTime()
 			}
-			if (sp.endDate != null) {
+			if (sp.endDate) {
 				sp.endDate =  new Date(sp.endDate).getTime()
 			}
 
@@ -189,10 +189,10 @@ Vue.component("salesman-tickets", {
 			event.preventDefault();
 			this.$router.push({ query: {} });
 			let sp =Object.assign({}, this.searchParams); 
-			if (sp.beginDate != null) {
+			if (sp.beginDate ) {
 				sp.beginDate =  new Date(sp.beginDate).getTime()
 			}
-			if (sp.endDate != null) {
+			if (sp.endDate ) {
 				sp.endDate =  new Date(sp.endDate).getTime()
 			}
 
@@ -207,10 +207,10 @@ Vue.component("salesman-tickets", {
 			event.preventDefault();
 			this.searchParams = {};
 			let sp =Object.assign({}, this.searchParams); 
-			if (sp.beginDate != null) {
+			if (sp.beginDate ) {
 				sp.beginDate =  new Date(sp.beginDate).getTime()
 			}
-			if (sp.endDate != null) {
+			if (sp.endDate ) {
 				sp.endDate =  new Date(sp.endDate).getTime()
 			}
 			this.$router.push({ query: sp });
