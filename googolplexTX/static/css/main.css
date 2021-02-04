@@ -352,7 +352,8 @@ body {
 }
 
 .manif-card:hover {
-	box-shadow: #0000005e 0 0px 26px;
+    box-shadow: #0000005e 0 12px 26px;
+    transform: translate(0px,-10px);
 }
 
 .vertical-centered {

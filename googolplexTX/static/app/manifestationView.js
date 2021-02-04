@@ -360,7 +360,7 @@ Vue.component("manifestation-view", {
 					</button>
 					
 					<div v-for="(c,i) in comments">
-						<div v-show="c.approved != 'REJECTED' || showRejectedComments">
+						<div v-show="c.approved != 'REJECTED' || showRejectedComments" v-bind:style="{ background: c.deleted ? '#aaa' : ''}" >
 							<h5>{{i + 1}}</h5>
 
 							<table class="table table-hover table-bordered table-striped text-center">
@@ -387,14 +387,19 @@ Vue.component("manifestation-view", {
 									</tr>
 									<tr>
 										<td colspan="2">
-											<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+											<button v-bind:disabled="c.deleted"  v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
 											v-on:click="changeCommentStatus(c,'ACCEPTED')" v-bind:class="['btn-success', 'btn']">
 												ACCEPT
 											</button>
 
-											<button v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
+											<button v-bind:disabled="c.deleted" v-show="(manifestation.salesman == userData.username || userData.userRole == 'ADMIN') && c.approved == 'PENDING'" 
 											v-on:click="changeCommentStatus(c, 'REJECTED')" class="btn btn-danger text-uppercase">
 												REJECT
+											</button>
+
+											<button v-bind:disabled="c.deleted" v-show="userData.userRole == 'ADMIN'" 
+											v-on:click="deleteComment(c)" class="btn btn-danger text-uppercase">
+												DELETE
 											</button>
 										</td>
 									</tr>
@@ -460,10 +465,28 @@ Vue.component("manifestation-view", {
 	},
 	methods: {
 
+		deleteComment: function(comment){
+			var confirmed = confirm("Are your sure that you want to remove comment from: " + comment.customer);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
+			let path = "api/comments/"+ comment.id
+			axios
+				.delete(path, comment)
+				.then(response=>{
+					// comment.deleted = true;
+					// this.$forceUpdate();
+					this.getManifComments();
+				})
+				.catch(response=>{
+					console.log("Delete failed: " + response.data);
+				});
+		},
 		changeCommentStatus: function(comment, newStatus){
 			let path = "api/comments/"+ comment.id
 			comment.approved = newStatus;
-			console.log(comment)
 			axios
 				.patch(path, comment)
 				.then(response=>{

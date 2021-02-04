@@ -365,7 +365,9 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Comment deleteComment(String key) {
 		// TODO: save to file
-		return commentDAO.delete(key);
+		Comment deleted = commentDAO.delete(key);
+		commentDAO.saveFile();
+		return deleted;
 	}
 	
 	@Override

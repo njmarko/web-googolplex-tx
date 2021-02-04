@@ -13,7 +13,6 @@
 # Package Files #
 *.jar
 !googolplexTX/lib/*.jar
-**/data/*.json
 *.war
 *.nar
 *.ear
@@ -27,3 +26,5 @@ hs_err_pid*
 googolplexTX/data/users.json
 googolplexTX/data/manifestations.json
 googolplexTX/data/tickets.json
+googolplexTX/data/*.json
+**/data/*.json

@@ -28,6 +28,7 @@ import model.Comment;
 import model.CustomerType;
 import model.Manifestation;
 import model.ManifestationType;
+import model.Ticket;
 import model.User;
 import model.enumerations.CommentStatus;
 import model.enumerations.ManifestationStatus;
@@ -97,9 +98,12 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!String.valueOf(v).trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
-
+					
+			
 			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
 
 			// TODO remove debug print message
@@ -369,6 +373,7 @@ public class ManifestationControler {
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
+	
 
 	public final Route findAllCommentsFromManifestation = new Route() {
 
@@ -501,15 +506,14 @@ public class ManifestationControler {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// TODO: Consider if user can delete comment
-			// userController.authenticateAdmin.handle(req, res);
+			 userController.authenticateAdmin.handle(req, res);
 
-		//	String manifId = req.params("idm");
-			String ticketId = req.params("idc");
+
+			String commentId = req.params("idc");
 			
-			Comment deletedEntity = manifService.deleteComment(ticketId);
+			Comment deletedEntity = manifService.deleteComment(commentId);
 			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
+				halt(HttpStatus.NOT_FOUND_404, "Comment was not deleted!");
 			}
 
 			return HttpStatus.NO_CONTENT_204;

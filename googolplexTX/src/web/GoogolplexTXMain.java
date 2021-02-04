@@ -243,6 +243,7 @@ public class GoogolplexTXMain {
 			path("/comments",()->{
 				path("/:idc",()->{
 					patch("", manifestationControler.editOneComment);
+					delete("", manifestationControler.deleteManifestationComment);
 				});
 			});
 		});

@@ -147,6 +147,7 @@ Vue.component("tickets", {
 				<div class="col-sm-4 margin-v-auto nopadding">
 					<router-link class="card-image" :to="{ path: '/manifestations/' + t.manifestation}">
 						<img class="ticket-cover" :src="'https://picsum.photos/300/200/'" alt="">
+						<!-- <img class="ticket-cover"  v-bind:src="'/uploads/' + manifestation.poster" alt=""> -->
 					</router-link>
 				</div>
 				<div class="col-sm-8 content">

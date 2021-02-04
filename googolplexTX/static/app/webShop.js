@@ -163,8 +163,8 @@ Vue.component("web-shop", {
 								<h6>Price: {{manifestation.regularPrice}}</h6>
 							</div>
 						</div>
-						<img class="card-img-top" :src="'https://picsum.photos/300/200/' + '/'.repeat(row * numberOfColumns + index) " alt="">
-						<!-- <img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt=""> -->
+						<!-- <img class="card-img-top" :src="'https://picsum.photos/300/200/' + '/'.repeat(row * numberOfColumns + index) " alt=""> -->
+						<img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt="">
 						
 					</router-link>
 					<div class="card-body">
