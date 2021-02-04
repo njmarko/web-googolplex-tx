@@ -275,7 +275,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User login(LoginDTO loginData) {
-		User found = userDAO.findOne(loginData.getUsername());
+		User found = findOne(loginData.getUsername());
 		if (found == null || !found.getPassword().equals(loginData.getPassword())) {
 			return null;
 		}
