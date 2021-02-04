@@ -163,7 +163,11 @@ Vue.component("manifestation-view", {
 						<td>{{manifestation.name }}</td>
 					</tr>
 					<tr>
-						<td>Available Seats</td>
+						<td>Total Seats</td>
+						<td>{{manifestation.totalSeats }}</td>
+					</tr>
+					<tr>
+						<td>Available tickets</td>
 						<td>{{manifestation.availableSeats }}</td>
 					</tr>
 					<tr>
@@ -192,7 +196,15 @@ Vue.component("manifestation-view", {
 					</tr>
 					<tr>
 						<td>Location</td>
-						<td>{{manifestation.location.city}}</td>
+						<td>{{manifestation.location.street }} {{ manifestation.location.number}}</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>{{manifestation.location.city }} {{manifestation.location.zipCode}}</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>{{manifestation.location.longitude }} {{manifestation.location.latitude}}</td>
 					</tr>
 					<tr>
 						<td colspan="2">

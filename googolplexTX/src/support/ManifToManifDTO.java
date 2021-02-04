@@ -11,6 +11,7 @@ import model.Manifestation;
 import model.Ticket;
 import model.enumerations.CommentStatus;
 import model.enumerations.ManifestationStatus;
+import model.enumerations.TicketStatus;
 import web.dto.ManifestationDTO;
 
 public class ManifToManifDTO {
@@ -22,17 +23,26 @@ public class ManifToManifDTO {
 		retVal.setId(manif.getId());
 		retVal.setName(manif.getName());
 		retVal.setAvailableSeats(manif.getAvailableSeats());
+		
+		Integer numReservedTickets =  manif.getTickets().stream().filter((t)->{return t.getTicketStatus() == TicketStatus.RESERVED;}).collect(Collectors.toList()).size();
+		Integer totalSeats = manif.getAvailableSeats();
+		if (numReservedTickets != null) {
+			totalSeats = totalSeats +  numReservedTickets;
+		}
+		retVal.setTotalSeats(totalSeats);
+		
 		// DATUM
 		Long dateOfOccurence = manif.getDateOfOccurence().toInstant(ZoneOffset.UTC).toEpochMilli();
 		retVal.setDateOfOccurence(dateOfOccurence);
 		
 		retVal.setRegularPrice(manif.getRegularPrice());
 		retVal.setStatus(manif.getStatus().name());
-		// TODO ADD POSTER
+
 		retVal.setPoster(manif.getPoster());
 		retVal.setManifestationType(manif.getManifestationType().getName());
 		retVal.setSalesman(manif.getSalesman().getUsername());
 		retVal.setLocation(manif.getLocation());
+		
 		
 		
 		retVal.setComments(manif.getComments()
