@@ -2,7 +2,7 @@ Vue.component("user-profile", {
 	data: function () {
 		return {
 			userData: {},
-			saveInfo: null
+			saveInfo: null,
 		}
 	},
 	template: ` 
@@ -68,7 +68,7 @@ Vue.component("user-profile", {
 
 				<div class="col-md-6">
 					<div class="form-label-group">
-						<input type="date" id="inputBirthDate" class="form-control" placeholder="Birthday" v-model="userData.birthDate" required autofocus>
+						<input type="date" id="inputBirthDate" class="form-control" placeholder="Birthday" v-model="userData.formDate" required autofocus>
 						<label for="inputBirthDate">Birthday</label>
 					</div>
 
@@ -154,6 +154,7 @@ Vue.component("user-profile", {
 			.get('api/users/' + localUserData.username)
 			.then(response => {
 				this.userData = response.data;
+				this.userData.formDate = moment(response.data.birthDate).format("YYYY-MM-DD");
 				this.userData.gender = response.data.gender;
 			});
 		
@@ -169,7 +170,7 @@ Vue.component("user-profile", {
 				firstName: this.userData.firstName,
 				lastName: this.userData.lastName,
 				gender: this.userData.gender,
-				birthDate: new Date(this.userData.birthDate).getTime()
+				birthDate: new Date(this.userData.formDate).getTime(),
 			}
 			axios
 				.patch('api/users/' + localUserData.username, userData)
