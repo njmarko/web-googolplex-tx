@@ -13,10 +13,10 @@ public class ManifestationDTO {
 	private String id;
 	private String name;
 	private Integer availableSeats;
-	
+
 	/**
-	 * total seats are calculated as availableSeats + reservedTickets 
-	 * in support class that converts Manifestation to ManifestationDTO
+	 * total seats are calculated as availableSeats + reservedTickets in support
+	 * class that converts Manifestation to ManifestationDTO
 	 */
 	private Integer totalSeats;
 	private Long dateOfOccurence;
@@ -87,8 +87,22 @@ public class ManifestationDTO {
 		super();
 	}
 
-
-
+	/**
+	 * @param id
+	 * @param name
+	 * @param availableSeats
+	 * @param totalSeats
+	 * @param dateOfOccurence
+	 * @param regularPrice
+	 * @param status
+	 * @param poster
+	 * @param manifestationType
+	 * @param salesman
+	 * @param location
+	 * @param averageRating
+	 * @param comments
+	 * @param tickets
+	 */
 	public ManifestationDTO(String id, String name, Integer availableSeats, Integer totalSeats, Long dateOfOccurence,
 			Double regularPrice, String status, String poster, String manifestationType, String salesman,
 			Location location, Double averageRating, Collection<String> comments, Collection<String> tickets) {
@@ -212,8 +226,6 @@ public class ManifestationDTO {
 	public void setAverageRating(Double averageRating) {
 		this.averageRating = averageRating;
 	}
-	
-	
 
 	public Integer getTotalSeats() {
 		return totalSeats;
@@ -231,7 +243,5 @@ public class ManifestationDTO {
 				+ ", location=" + location + ", averageRating=" + averageRating + ", comments=" + comments
 				+ ", tickets=" + tickets + "]";
 	}
-
-
 
 }

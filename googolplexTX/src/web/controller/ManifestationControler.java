@@ -172,7 +172,7 @@ public class ManifestationControler {
 
 			Manifestation savedEntity = manifService.save(manifestationData);
 			if (savedEntity == null) {
-				halt(HttpStatus.BAD_REQUEST_400);
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation like that already exists");
 			}
 			return g.toJson(ManifToManifDTO.convert(savedEntity));
 
