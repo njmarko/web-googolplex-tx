@@ -112,7 +112,9 @@ public class TicketController {
 			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 			String user = req.params("idu");
 			System.out.println("User: " + user);
@@ -144,7 +146,9 @@ public class TicketController {
 			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);
@@ -216,7 +220,9 @@ public class TicketController {
 			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 			System.out.println(gson.toJson(queryParams));
 			TicketSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams), TicketSearchDTO.class);

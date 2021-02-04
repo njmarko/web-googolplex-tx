@@ -200,18 +200,18 @@ Vue.component("web-shop", {
 
 		// load params from the address line
 		this.searchParams = this.$route.query;
-		if (this.$route.query.beginDate != null) {
+		if (this.$route.query.beginDate ) {
 			this.searchParams.beginDate = new Date(new Number(this.$route.query.beginDate)).toISOString().substring(0, 10);
 		}
-		if (this.$route.query.endDate != null) {
+		if (this.$route.query.endDate ) {
 			this.searchParams.endDate = new Date(new Number(this.$route.query.endDate)).toISOString().substring(0, 10);
 		}
 		this.$router.push({ query: {} });
 		let sp = Object.assign({}, this.searchParams);
-		if (sp.beginDate != null) {
+		if (sp.beginDate ) {
 			sp.beginDate = new Date(sp.beginDate).getTime()
 		}
-		if (sp.endDate != null) {
+		if (sp.endDate ) {
 			sp.endDate = new Date(sp.endDate).getTime()
 		}
 
@@ -231,31 +231,39 @@ Vue.component("web-shop", {
 			.get('api/manifestations', { params: sp })
 			.then(response => {
 				this.manifestations = response.data;
-			//	for (let index = 0; index < this.manifestations.length; index++) {
-		//			this.manifestations[index].dateOfOccurence = new
-		//				Date(response.data[index].dateOfOccurence).toISOString().substring(0, 10);
-		//		}
+				//	for (let index = 0; index < this.manifestations.length; index++) {
+				//			this.manifestations[index].dateOfOccurence = new
+				//				Date(response.data[index].dateOfOccurence).toISOString().substring(0, 10);
+				//		}
 			})
 	}, methods: {
 		loadData: function (response) {
-				this.manifestations = response.data; 
-		}, searchManifestations: function (event) {
-			event.preventDefault(); this.$router.push({ query: {} }); let
-				sp = Object.assign({}, this.searchParams); if (sp.beginDate != null) { sp.beginDate = new Date(sp.beginDate).getTime() }
-			if (sp.endDate != null) { sp.endDate = new Date(sp.endDate).getTime() } this.$router.push({ query: sp }); let
-				path = 'api/manifestations'; axios.get(path, { params: sp }).then(response => {
-					this.loadData(response);
-				})
+			this.manifestations = response.data;
+		},
+		searchManifestations: function (event) {
+			event.preventDefault(); this.$router.push({ query: {} });
+			let sp = Object.assign({}, this.searchParams);
+			if (sp.beginDate ) {
+				sp.beginDate = new Date(sp.beginDate).getTime()
+			}
+			if (sp.endDate ) {
+				sp.endDate = new Date(sp.endDate).getTime()
+			}
+			this.$router.push({ query: sp });
+			let path = 'api/manifestations';
+			axios.get(path, { params: sp }).then(response => {
+				this.loadData(response);
+			})
 		},
 		clearParameters: function (event) {
 			event.preventDefault();
 
 			this.searchParams = {};
 			let sp = Object.assign({}, this.searchParams);
-			if (sp.beginDate != null) {
+			if (sp.beginDate ) {
 				sp.beginDate = new Date(sp.beginDate).getTime()
 			}
-			if (sp.endDate != null) {
+			if (sp.endDate ) {
 				sp.endDate = new Date(sp.endDate).getTime()
 			}
 			this.$router.push({ query: sp });
@@ -267,7 +275,7 @@ Vue.component("web-shop", {
 					this.loadData(response);
 				})
 		},
-		
+
 		formatDateTime: function (value) {
 			return moment(value).format('DD/MM/YYYY hh:mm');
 		},

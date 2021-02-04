@@ -98,7 +98,7 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				if (!String.valueOf(v).trim().isBlank()) {
+				if (!v[0].trim().isBlank()) {
 					queryParams.put(k, v[0]);
 				}			
 			});
@@ -266,7 +266,9 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 
 			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);

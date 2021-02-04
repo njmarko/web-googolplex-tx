@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 				if (ent.getUserRole() != null && ent.getUserRole() == UserRole.CUSTOMER && (ent instanceof Customer)) {
 					return ((Customer) ent).getCustomerType().getName().equals(searchParams.getCustomerType());
 				} else {
-					return true;
+					return false;
 				}
 			}).collect(Collectors.toList());
 		}
@@ -275,7 +275,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User login(LoginDTO loginData) {
-		User found = userDAO.findOne(loginData.getUsername());
+		User found = findOne(loginData.getUsername());
 		if (found == null || !found.getPassword().equals(loginData.getPassword())) {
 			return null;
 		}

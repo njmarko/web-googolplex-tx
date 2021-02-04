@@ -175,6 +175,10 @@ Vue.component("display-users", {
 			event.preventDefault();
 			this.$router.push({ query: {} });
 			let sp = this.searchParams;
+			if(sp.userRole != 'CUSTOMER') {
+				// Don't allow for customer type to be sent if there Customer is not selected
+				delete sp.customerType;	
+			}
 			this.$router.push({ query: sp });
 			axios
 				.get('api/users', { params: sp })
