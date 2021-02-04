@@ -222,7 +222,9 @@ public class UserController {
 			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 			System.out.println(g.toJson(queryParams));
 			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
@@ -540,7 +542,9 @@ public class UserController {
 			
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}			
 			});
 			
 			System.out.println(queryParams.get("frequiency"));
