@@ -449,3 +449,7 @@ body {
 	.ticket .text-overlay {font-size:8rem;} /*1rem = 16px*/
 }
 
+.overflow-table {
+	display: block;
+	overflow-x: auto;
+}
