@@ -241,6 +241,11 @@ public class ManifestationControler {
 			} else if (loggedIn.getUserRole() == UserRole.SALESMAN && !loggedIn.equals(existingManif.getSalesman())) {
 				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only edit his own manifestations");
 			}
+			if (loggedIn.getUserRole() == UserRole.SALESMAN) {
+				// When salesman edits his own manifestation, manif status will change to INACTIVE
+				// because admin has to approve the changes because a lot of critical details can be changed
+				newEntity.setStatus(ManifestationStatus.INACTIVE.name());
+			}
 			Manifestation savedEntity = manifService.save(newEntity);
 
 			return g.toJson(ManifToManifDTO.convert(savedEntity));
