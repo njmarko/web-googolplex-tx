@@ -149,7 +149,7 @@ Vue.component("web-shop", {
 		<h1 class="text-center">Manifestations</h1>
 
 		<div class="row row-spacing" v-for="(row, rowI) in rowCount" :key="manifestations.id">
-			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(rowI * numberOfColumns, rowI + numberOfColumns)" :key="manifestations.id">
+			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(rowI * numberOfColumns, rowI * numberOfColumns + numberOfColumns)" :key="manifestations.id">
 				<div class="card manif-card">
 					<router-link class="card-image" :to="{ path: '/manifestations/' + manifestation.id}">
 
@@ -169,6 +169,7 @@ Vue.component("web-shop", {
 					</router-link>
 					<div class="card-body">
 						<router-link :to="{ path: '/manifestations/' + manifestation.id}"><h5>{{manifestation.name}}</h5></router-link>
+						<span v-if="manifestation.status == 'INACTIVE'" class="badge badge-warning">INACTIVE</span>
 						<p><i class="glyphicon glyphicon-globe"></i> {{manifestation.location.city}}</p>
 					</div>
 				</div>

@@ -308,16 +308,20 @@ body {
 .map-point {
 	width: 200px;
 	margin-left: -100px;
+	text-align: center;
 }
 
 .map-point a {
 	background: #eee;
 	padding: 10px;
+	position: absolute;
+    top: -20px;
+    right: 0px;
 }
 
 .map-icon {
 	width: 50px;
-	margin-left: 75px;
+	/* margin-left: 75px; */
 	margin-top: -70px;
 }
 

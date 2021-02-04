@@ -2,7 +2,7 @@ Vue.component("suspicious-users", {
 	data: function () {
 		var date1 = new Date();
 		var date2 = new Date();
-		date1.setDate( date2.getDate() - 30 );
+		date1.setDate(date2.getDate() - 30);
 
 		return {
 			error: {},
@@ -13,7 +13,7 @@ Vue.component("suspicious-users", {
 				startDate: date1.toDateInputValue(),
 				endDate: date2.toDateInputValue(),
 				frequency: 1,
-				
+
 			},
 			formatedSearchParams: {}
 		}
@@ -30,7 +30,7 @@ Vue.component("suspicious-users", {
 		</div>
 
 		
-		<h1 class="text-center">Suspicious Users<span class="badge badge-danger">{{userData.userRole}}</span></h1>
+		<h1 class="text-center">Suspicious Users</h1>
 
 		<form v-on:change="getSuspiciousUsers" v-on:submit.prevent="getSuspiciousUsers">
 			<div class="form-inline">
@@ -55,37 +55,35 @@ Vue.component("suspicious-users", {
 			</div>
 		</form>
 		
-		<div v-for="u in users">
+		<div>
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
-						<td>Username <span v-if="u.blocked" class="badge badge-danger">Blocked</span></td>
-						<td>{{u.username }}</td>
-					</tr>
-					<tr>
+						<td>Username</td>
 						<td>First Name</td>
-						<td>{{u.firstName }}</td>
-					</tr>
-					<tr>
 						<td>Last Name</td>
-						<td>{{u.lastName }}</td>
-					</tr>
-					<tr>
 						<td>Points</td>
-						<td>{{u.points}}</td>
-					</tr>
-					<tr>
 						<td>Birthday</td>
-						<td>{{u.birthDate}}</td>
-					</tr>
-					<tr>
 						<td>gender</td>
-						<td>{{u.gender}}</td>
+						<td></td>
+						<td></td>
 					</tr>
-					<tr>
-						<td colspan="2">
+
+					<tr v-bind:style="{ background: u.deleted ? '#aaa' : ''}" v-for="u in users">
+						<td>{{u.username }}
+							<span v-if="u.blocked" class="badge badge-danger">Blocked</span>
+							<span v-if="u.deleted" class="badge badge-danger">Deleted</span>
+						</td>
+						<td>{{u.firstName }}</td>
+						<td>{{u.lastName }}</td>
+						<td>{{u.points}}</td>
+						<td>{{u.birthDate}}</td>
+						<td>{{u.gender}}</td>
+						<td>
 							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" v-bind:class="[u.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>
-							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" class="btn btn-danger text-uppercase">TO DO ...DELETE {{u.username}}</button>
+						</td>
+						<td>
+							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="deleteUser(u, u.blocked)" class="btn btn-danger text-uppercase">DELETE {{u.username}}</button>
 						</td>
 					</tr>
 				</tbody>
@@ -100,12 +98,12 @@ Vue.component("suspicious-users", {
 </div>		  
 `
 	,
-	beforeMount(){
+	beforeMount() {
 		this.userData = JSON.parse(window.localStorage.getItem('user'));
 	},
 	mounted() {
 		let localUserData = JSON.parse(window.localStorage.getItem('user'));
-		if (localUserData == null || (localUserData.userRole != "ADMIN" )) {
+		if (localUserData == null || (localUserData.userRole != "ADMIN")) {
 			this.$router.push("/");
 		}
 
@@ -113,7 +111,7 @@ Vue.component("suspicious-users", {
 
 		var self = this;
 
-		window.onpopstate = function(event) {
+		window.onpopstate = function (event) {
 			self.updateInputs();
 		};
 
@@ -123,7 +121,7 @@ Vue.component("suspicious-users", {
 
 	},
 	methods: {
-		getSuspiciousUsers : function(event){
+		getSuspiciousUsers: function (event) {
 			console.log(event);
 
 			var formatedSearchParams = Object.assign({}, this.searchParams);
@@ -136,19 +134,19 @@ Vue.component("suspicious-users", {
 				router.push({ query: formatedSearchParams });
 
 			axios
-			.get('api/users/suspicious', { params: formatedSearchParams })
-			.then(response => {
-				this.users = response.data;
-				console.log(this.users);
-			});
-		
+				.get('api/users/suspicious', { params: formatedSearchParams })
+				.then(response => {
+					this.users = response.data;
+					console.log(this.users);
+				});
+
 		},
 
-		updateInputs : function() {
+		updateInputs: function () {
 			if (this.$route.query.startDate != null) {
 				this.searchParams.startDate = new Date(new Number(this.$route.query.startDate)).toISOString().substring(0, 10);
 			}
-	
+
 			if (this.$route.query.endDate != null) {
 				this.searchParams.endDate = new Date(new Number(this.$route.query.endDate)).toISOString().substring(0, 10);
 			}
@@ -159,7 +157,7 @@ Vue.component("suspicious-users", {
 			this.getSuspiciousUsers();
 		},
 
-		clearEmptyObjects : function(o){
+		clearEmptyObjects: function (o) {
 			for (var k in o) {
 				if (!o[k] || o[k] == "") {
 					delete o[k];
@@ -168,11 +166,11 @@ Vue.component("suspicious-users", {
 			}
 		},
 
-		blockUser : function(obj, block) {
+		blockUser: function (obj, block) {
 			console.log(block);
 
 			action = "";
-			if (block == true){
+			if (block == true) {
 				action = "/unblock";
 			} else {
 				action = "/block";
@@ -182,8 +180,29 @@ Vue.component("suspicious-users", {
 				.patch('api/users/' + obj.username + action)
 				.then(response => {
 					Object.assign(obj, response.data)
+				});
+		},
+		deleteUser : function(obj) {
+			var confirmed = confirm("Are your sure that you want to remove user: " + obj.username);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
+
+			axios
+				.delete('api/users/' + obj.username)
+				.then(response => {
+					obj.deleted = true;
+					this.$forceUpdate();
+
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
 			});
-		}
+		},
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 
 
 	},
