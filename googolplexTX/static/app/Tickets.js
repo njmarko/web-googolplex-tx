@@ -280,10 +280,10 @@ Vue.component("tickets", {
 
 			this.$router.push({ query: {} });
 			let sp = Object.assign({}, this.searchParams);
-			if (sp.beginDate != null) {
+			if (sp.beginDate) {
 				sp.beginDate = new Date(sp.beginDate).getTime()
 			}
-			if (sp.endDate != null) {
+			if (sp.endDate) {
 				sp.endDate = new Date(sp.endDate).getTime()
 			}
 

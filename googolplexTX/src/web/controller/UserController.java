@@ -226,11 +226,8 @@ public class UserController {
 					queryParams.put(k, v[0]);
 				}			
 			});
-			System.out.println(g.toJson(queryParams));
-			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
 
-			// TODO remove debug print message
-			System.out.println("[DBG] searchParamsDTO" + searchParams);
+			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
 
 			Collection<User> users = userService.search(searchParams);
 			if (users == null) {

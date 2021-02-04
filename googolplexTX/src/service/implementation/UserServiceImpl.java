@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 				if (ent.getUserRole() != null && ent.getUserRole() == UserRole.CUSTOMER && (ent instanceof Customer)) {
 					return ((Customer) ent).getCustomerType().getName().equals(searchParams.getCustomerType());
 				} else {
-					return true;
+					return false;
 				}
 			}).collect(Collectors.toList());
 		}
