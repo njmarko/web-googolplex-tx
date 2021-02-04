@@ -196,7 +196,15 @@ Vue.component("manifestation-view", {
 					</tr>
 					<tr>
 						<td>Location</td>
-						<td>{{manifestation.location.city}}</td>
+						<td>{{manifestation.location.street }} {{ manifestation.location.number}}</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>{{manifestation.location.city }} {{manifestation.location.zipCode}}</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>{{manifestation.location.longitude }} {{manifestation.location.latitude}}</td>
 					</tr>
 					<tr>
 						<td colspan="2">
