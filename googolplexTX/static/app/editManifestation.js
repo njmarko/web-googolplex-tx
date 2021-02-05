@@ -59,7 +59,7 @@ Vue.component("edit-manif", {
 						</div>
                         
                         <div class="form-label-group">
-                        <input type="number" step="any" v-on:keyup="evalQuantityRange($event)" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
+                        <input type="number" step="any" min='0' v-on:keyup="evalQuantityRange($event)" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
                         <label for="inputRegularPrice">Regular Price</label>
                         </div>
 
@@ -277,7 +277,7 @@ Vue.component("edit-manif", {
             this.manifData.availableSeats = Number(this.manifData.availableSeats);
             this.manifData.location.zipCode = Number(this.manifData.location.zipCode);
 
-		}
+		},
     },
 });
 
