@@ -26,8 +26,8 @@ Vue.component("add-manifestation-type", {
 			<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 			<div class="card card-signin my-5">
 				<div class="card-body">
-				<h5 v-if="oldName" class="card-title text-center">Edit Customer Type</h5>
-				<h5 v-if="!oldName" class="card-title text-center">Add Customer Type</h5>
+				<h5 v-if="oldName" class="card-title text-center">Edit Manifestation Type</h5>
+				<h5 v-if="!oldName" class="card-title text-center">Add Manifestation Type</h5>
 
 				<form class="form-signin" v-on:submit.prevent="addManifestationType">
 
@@ -42,7 +42,7 @@ Vue.component("add-manifestation-type", {
 					</div>
 
 	
-					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" :value="oldName ? 'Edit Customer Type' : 'Add Customer Type'" />
+					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" :value="oldName ? 'Edit Manifestation Type' : 'Add Manifestation Type'" />
 
 				</form>
 				</div>
@@ -83,7 +83,7 @@ Vue.component("add-manifestation-type", {
 			axios
 				.post('api/manifestation-type', this.manifestationTypeData)
 				.then(response => {
-					this.saveInfo.push("Customer Type Added Successfully");
+					this.saveInfo.push("Manifestation Type Added Successfully");
 					this.error = "";
 				})
 				.catch(function (error) {
@@ -97,7 +97,7 @@ Vue.component("add-manifestation-type", {
 			axios
 				.put('api/manifestation-type/' + this.oldName, this.manifestationTypeData)
 				.then(response => {
-					this.saveInfo.push("Customer Type Added Successfully");
+					this.saveInfo.push("Manifestation Type Added Successfully");
 					this.oldName = response.data.name;
 					this.error = "";
 				})
