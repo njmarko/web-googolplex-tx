@@ -20,89 +20,131 @@ Vue.component("salesman-manifestations", {
 			<strong>Success</strong> {{saveInfo}}
 		</div>
 
-		
-		<div class="row">
-					<div class="col-md-12">
-						<form v-on:submit.prevent="searchManifestations">
-							<div class="form-inline">
-								<div class="form-label-group">
-										<input placeholder="Manifestation" id="findManifestation" class="form-control" ref="focusMe" v-model="searchParams.name"	>
-										<label for="findManifestation">Manifestation Name</label>
-								</div>
-								<div class="form-label-group">
-										<input type="number" step="any" placeholder="MIN PRICE" id="findMinPrice" class="form-control" v-model="searchParams.minPrice"	>
-										<label for="findMinPrice">Min Price</label>
-								</div>	
-								<div class="form-label-group">
-										<input type="number" step="any" placeholder="MAX PRICE" id="findMaxPrice" class="form-control" v-model="searchParams.maxPrice"	>
-										<label for="findMaxPrice">Max Price</label> 
-								</div>
-								<div class="form-label-group">
-										<input type="date"  placeholder="FROM" id="findBeginDate" class="form-control" v-model="searchParams.beginDate"	>
-										<label for="findBeginDate">Begin Date</label> 
-								</div>
+	<div class="row mb-3">
+			<div class="col-md-12">
+				<a class="btn btn-primary float-right" data-toggle="collapse" href="#searchCollapse" role="button" aria-expanded="false" aria-controls="searchCollapse">
+					Filter
+				</a>
+			</div>
+		</div>
 
-								<div class="form-label-group">
-										<input type="date"  placeholder="TO" id="findEndDate" class="form-control" v-model="searchParams.endDate"	>
-										<label for="findEndDate">End Date</label> 
-								</div>
-
-								<div class="form-label-group">
-										<input placeholder="Location" id="findLocation" class="form-control" ref="focusMe" v-model="searchParams.location"	>
-										<label for="findLocation">City Location</label>
-								</div>
-								
-								<div class="form-label-group">
-								<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria" >
-									<option :value="undefined"></option>
-									<option value="MANIF_NAME">Manifestation Name</option>
-									<option value="MANIF_DATE">Manifestation Date</option>
-									<option value="TICKET_PRICE">Ticket Price</option>
-									<option value="LOCATION">Location</option>
-								</select>
-								<label for="inputSortCriteria">Sort Criteria</label>
-								</div>
-
-								<div class="form-label-group">
-								<select name="inputAscending" id="inputAscending"  v-model="searchParams.ascending"	>
-									<option :value="undefined"></option>
-									<option value="true">Ascending</option>
-									<option value="false">Descending</option>
-								</select>
-								<label for="inputAscending">Direction</label>
-								</div>
-
-								 <div class="form-label-group">
-       			                 <select name="inputManifType" id="inputManifType" v-model="searchParams.manifestationType" >
-       			                     <option v-for='(value, key) in manifTypes' :value='value.name' > {{value.name}}</option>
-       			                 </select>
-       			                 <label for="inputManifType">Manifestation Type</label>
-									</div>				
-
-								<div class="form-label-group" >
-									<select name="inputStatus" id="inputStatus"  v-model="searchParams.status"	>
-										<option :value="undefined"></option>
-										<option value="ACTIVE">Active</option>
-										<option value="INACTIVE">Inactive</option>
-									</select>
-									<label for="inputStatus">Status</label>
-								</div>
-
-								<div class="form-label-group">
-									<input type="checkbox" name="inputHasAvailableTickets" class="form-control" v-model="searchParams.hasAvailableTickets" id="inputHasAvailableTickets" >
-									<label for="inputHasAvailableTickets">Has available tickets</label>
-								</div>
-
-								<div class="form-label-group">
-										<button class="btn btn-primary" type="submit">Search</button>
-								</div>
-								<div class="form-label-group">
-										<button class="btn btn-warning pull-right" v-on:click="clearParameters">Clear</button>
-								</div>
-							</div>
-						</form>
+		<form v-on:submit.prevent="searchManifestations" class="collapse" id="searchCollapse">
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div class="form-label-group">
+						<input placeholder="Manifestation" id="findManifestation" class="form-control" ref="focusMe"
+							v-model="searchParams.name">
+						<label for="findManifestation">Manifestation Name</label>
 					</div>
 				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div class="form-label-group">
+						<input type="number" step="any" placeholder="MIN PRICE" id="findMinPrice"
+							class="form-control" v-model="searchParams.minPrice">
+						<label for="findMinPrice">Min Price</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">	
+					<div class="form-label-group">
+						<input type="number" step="any" placeholder="MAX PRICE" id="findMaxPrice"
+							class="form-control" v-model="searchParams.maxPrice">
+						<label for="findMaxPrice">Max Price</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div class="form-label-group">
+						<input type="date" placeholder="FROM" id="findBeginDate" class="form-control"
+							v-model="searchParams.beginDate">
+						<label for="findBeginDate">Begin Date</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group">
+						<input type="date" placeholder="TO" id="findEndDate" class="form-control"
+							v-model="searchParams.endDate">
+						<label for="findEndDate">End Date</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group">
+						<input placeholder="Location" id="findLocation" class="form-control" ref="focusMe"
+							v-model="searchParams.location">
+						<label for="findLocation">City Location</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group">
+						<select name="inputSortCriteria" id="inputSortCriteria" v-model="searchParams.sortCriteria">
+							<option :value="undefined"></option>
+							<option value="MANIF_NAME">Manifestation Name</option>
+							<option value="MANIF_DATE">Manifestation Date</option>
+							<option value="TICKET_PRICE">Ticket Price</option>
+							<option value="LOCATION">Location</option>
+						</select>
+						<label for="inputSortCriteria">Sort Criteria</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group">
+						<select name="inputAscending" id="inputAscending" v-model="searchParams.ascending">
+							<option :value="undefined"></option>
+							<option value="true">Ascending</option>
+							<option value="false">Descending</option>
+						</select>
+						<label for="inputAscending">Direction</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group">
+						<select name="inputManifType" id="inputManifType" v-model="searchParams.manifestationType">
+							<option :value="undefined"></option>
+							<option v-for='(value, key) in manifTypes' :value='value.name'> {{value.name}}</option>
+						</select>
+						<label for="inputManifType">Manifestation Type</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6" v-if="userData && userData.userRole == 'ADMIN'">
+
+					<div class="form-label-group">
+						<select name="inputStatus" id="inputStatus" v-model="searchParams.status">
+							<option :value="undefined"></option>
+							<option value="ACTIVE">Active</option>
+							<option value="INACTIVE">Inactive</option>
+						</select>
+						<label for="inputStatus">Status</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+
+					<div class="form-label-group checkbox">
+						<input type="checkbox" name="inputHasAvailableTickets" class="form-control"
+							v-model="searchParams.hasAvailableTickets" id="inputHasAvailableTickets">
+						<label for="inputHasAvailableTickets">Has available tickets</label>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6 ml-auto">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-label-group">
+								<button class="btn btn-block btn-primary" type="submit">Search</button>
+							</div>
+						</div>
+						<div class="col-sm-6">
+
+							<div class="form-label-group">
+								<button class="btn btn-warning btn-block" v-on:click="clearParameters">Clear</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>		
+	
 
 		
 		<div v-for="m in manifestations">
