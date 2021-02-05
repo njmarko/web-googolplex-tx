@@ -161,6 +161,7 @@ Vue.component("web-shop", {
 								<br>			
 								<h6>Date: {{formatDateTime(manifestation.dateOfOccurence)}}</h6>
 								<h6>Price: {{manifestation.regularPrice}}</h6>
+								<button v-if="userData && userData.userRole == 'ADMIN' && manifestation.status=='INACTIVE'" v-on:click="activateManif($event, manifestation)" class="btn btn-success text-uppercase btn-block mt-auto">ACTIVATE</button>
 							</div>
 						</div>
 						<!-- <img class="card-img-top" :src="'https://picsum.photos/300/200/' + '/'.repeat(row * numberOfColumns + index) " alt=""> -->
@@ -238,6 +239,30 @@ Vue.component("web-shop", {
 				//		}
 			})
 	}, methods: {
+        activateManif: function (event, manif) {
+			if (event) {
+				event.preventDefault();
+			}
+
+            let component = this;
+
+            // MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
+            // this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
+            var requestData = { ...manif };
+            requestData.location = { ...manif.location };
+            requestData.dateOfOccurence = new Date(manif.dateOfOccurence).getTime();
+			requestData.status = "ACTIVE";
+
+            axios
+                .patch('api/manifestations/' + manif.id, requestData)
+                .then(response => {
+					// this.$forceUpdate();
+					manif.status="ACTIVE";
+                })
+                .catch(function (error) {
+                    component.activateError = error.response.data;
+                });
+        },
 		deleteManif: function(manif){
 			var confirmed = confirm("Are your sure that you want to remove the manifestation: " + manif.name);
 			
@@ -251,7 +276,7 @@ Vue.component("web-shop", {
 				.then(response => {
 					// manif.deleted = true;
 					this.searchManifestations();
-					this.$forceUpdate();
+					// this.$forceUpdate();
 					//TODO: Consider if you want to update model
 					//this.users = this.users.filter(item => item !== obj);
 				
