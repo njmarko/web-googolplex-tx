@@ -2,11 +2,18 @@ Vue.component("salesman-manifestations", {
 	data: function () {
 		return {
 			error: {},
-			manifestations: {},
+			manifestations: null,
 			userData: {},
 			searchParams: {},
 			manifTypes: {},
-			saveInfo: null
+			saveInfo: null,
+			numberOfColumns: 3,
+		}
+	},
+	computed: {
+		rowCount: function () {
+			if (this.manifestations)
+				return Math.floor(((this.manifestations.length - 1) / this.numberOfColumns)) + 1
 		}
 	},
 	template: ` 
@@ -20,7 +27,7 @@ Vue.component("salesman-manifestations", {
 			<strong>Success</strong> {{saveInfo}}
 		</div>
 
-	<div class="row mb-3">
+		<div class="row mb-3">
 			<div class="col-md-12">
 				<a class="btn btn-primary float-right" data-toggle="collapse" href="#searchCollapse" role="button" aria-expanded="false" aria-controls="searchCollapse">
 					Filter
@@ -146,65 +153,38 @@ Vue.component("salesman-manifestations", {
 		</form>		
 	
 
-		
-		<div v-for="m in manifestations">
-			<table class="table table-hover table-bordered table-striped text-center">
-				<tbody >
-					<tr>
-						<td>Id</td>
-						<td>{{m.id }}</td>
-					</tr>
-					<tr>
-						<td>Name</td>
-						<td>{{m.name }}</td>
-					</tr>
-					<tr>
-						<td>Available Seats</td>
-						<td>{{m.availableSeats }}</td>
-					</tr>
-					<tr>
-						<td>Date of Occurence</td>
-						<td>{{m.dateOfOccurence}}</td>
-					</tr>
-					<tr>
-						<td>Regular Price</td>
-						<td>{{m.regularPrice}}</td>
-					</tr>
-					<tr>
-						<td>Status</td>
-						<td>{{m.status}}</td>
-					</tr>
-					<tr>
-						<td>Manifestation Type</td>
-						<td>{{m.manifestationType}}</td>
-					</tr>
-					<tr>
-						<td>Salesman username</td>
-						<td>{{m.salesman}}</td>
-					</tr>
+		<h1 class="text-center">My Manifestations</h1>
 
-					<tr v-if="m.averageRating">
-						<td>Average Rating</td>
-						<td>{{m.averageRating}}</td>
-					</tr>
-					<tr>
-						<td>Location</td>
-						<td>{{m.location.city}}</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<img v-bind:src="'/uploads/' + m.poster" class="poster-img" />
-						</td>
-					</tr>
-					<tr>
-					<td colspan="2">
-						<router-link :to="{ path: '/manifestations/' + m.id}" class="btn btn-warning btn-block text-uppercase">View</router-link>
-					</td>
-				</tr>
-				</tbody>
-			</table>		
+		<div class="row row-spacing" v-for="(row, rowI) in rowCount" :key="manifestations.id">
+			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(rowI * numberOfColumns, rowI * numberOfColumns + numberOfColumns)" :key="manifestations.id">
+				<div class="card manif-card">
+					<router-link class="card-image" :to="{ path: '/manifestations/' + manifestation.id}">
+
+						<div class="image-dim">
+							<div class="vertical-centered">
+								<span class="badge badge-primary">{{manifestation.manifestationType}}</span>
+								<h6>Available seats: {{manifestation.availableSeats}}</h6>
+								<h6 v-if="manifestation.averageRating">Rating: {{manifestation.averageRating}}</h6>
+								<br>			
+								<h6>Date: {{formatDateTime(manifestation.dateOfOccurence)}}</h6>
+								<h6>Price: {{manifestation.regularPrice}}</h6>
+								<button v-if="userData && userData.userRole == 'ADMIN' && manifestation.status=='INACTIVE'" v-on:click="activateManif($event, manifestation)" class="btn btn-success text-uppercase btn-block mt-auto">ACTIVATE</button>
+							</div>
+						</div>
+						<!-- <img class="card-img-top" :src="'https://picsum.photos/300/200/' + '/'.repeat(row * numberOfColumns + index) " alt=""> -->
+						<img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt="">
+						
+					</router-link>
+					<div class="card-body d-flex flex-column">
+						<router-link :to="{ path: '/manifestations/' + manifestation.id}"><h5>{{manifestation.name}}</h5></router-link>
+						<span v-if="manifestation.status == 'INACTIVE'" class="badge badge-warning">INACTIVE</span>
+						<p><i class="glyphicon glyphicon-globe"></i> {{manifestation.location.city}}</p>
+						<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteManif(manifestation)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
+					</div>
+				</div>
+			</div>
+		</div>	
 		
-		</div>
 
 		<br>
 	</div>	
@@ -313,6 +293,10 @@ Vue.component("salesman-manifestations", {
 				.then(response => {
 					this.loadData(response);
 				})
+		},
+
+		formatDateTime: function (value) {
+			return moment(value).format('DD/MM/YYYY hh:mm');
 		},
 
 	},
