@@ -139,7 +139,7 @@ public class ManifestationControler {
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestation found");
 			}
-
+			System.out.println(foundEntity.getDateOfOccurence());
 			return g.toJson(ManifToManifDTO.convert(foundEntity));
 		}
 	};

@@ -43,7 +43,12 @@ Vue.component("salesman-add-manif", {
 						<input type="date" id="inputDateOfOccurence" class="form-control" placeholder="Date of Occurence" v-model="manifData.dateOfOccurence" required autofocus>
 						<label for="inputDateOfOccurence">Date of Occurence</label>
 						</div>
-						
+
+						<div class="form-label-group">
+						<input type="time" id="inputTimeOfOccurence" class="form-control" placeholder="Time of Occurence" v-model="manifData.timeOfOccurence" required autofocus>
+						<label for="inputTimeOfOccurence">Time of Occurence</label>
+						</div>
+
 						<div class="form-label-group">
 						<input type="number" step="any"  id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
 						<label for="inputRegularPrice">Regular Price</label>
@@ -167,7 +172,9 @@ Vue.component("salesman-add-manif", {
 			// this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
 			var requestData = { ...this.manifData };
 			requestData.location = { ...this.manifData.location };
-			requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
+			// Adding date and time and then i am parsing it into JS Date
+			let dateTime = this.manifData.dateOfOccurence + " " + this.manifData.timeOfOccurence;
+			requestData.dateOfOccurence = new Date(dateTime).getTime() ;
 
 			axios
 				.post('api/manifestations', requestData)
