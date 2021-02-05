@@ -247,7 +247,7 @@ Vue.component("manifestation-view", {
 					</div>
 					<div class="col-lg-2 col-sm-6">
 						<div class="form-label-group">
-							<input type="number" min="1" v-bind:max="manifestation.availableSeats" v-bind:disabled="manifestation.availableSeats <= 0" id="inputQuantity" class="form-control" placeholder="Quantity" required ref='focusMe' v-model="reservation.quantity">
+							<input type="number" v-on:keyup="evalQuantityRange($event)" min="1" step="1" v-bind:max="manifestation.availableSeats" v-bind:disabled="manifestation.availableSeats <= 0" id="inputQuantity" class="form-control" placeholder="Quantity" required ref='focusMe' v-model="reservation.quantity">
 							<label for="inputQuantity">Quantity</label>
 						</div>
 					</div>
@@ -779,6 +779,18 @@ Vue.component("manifestation-view", {
 			console.log(manifDate);
 			return today < manifDate;
 		},
+		evalQuantityRange: function(event){
+			if (event) {
+				event.preventDefault();
+			}
+			if (this.reservation.quantity && this.reservation.quantity < 1) {
+				this.reservation.quantity = 1;
+			}
+			if (this.reservation.quantity && this.reservation.quantity > this.manifestation.availableSeats) {
+				this.reservation.quantity = this.manifestation.availableSeats;
+			}
+			
+		}
 	},
 
 });
