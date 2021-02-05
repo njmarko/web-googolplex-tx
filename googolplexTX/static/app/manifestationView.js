@@ -790,7 +790,7 @@ Vue.component("manifestation-view", {
 				this.reservation.quantity = this.manifestation.availableSeats;
 			}
 			
-		}
+		},
 	},
 
 });
