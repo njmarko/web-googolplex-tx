@@ -212,8 +212,11 @@ Vue.component("manifestation-view", {
 						</td>
 					</tr>
 					<tr v-if="userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username))">
-						<td colspan="2" >
+						<td colspan="1" >
 							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
+						</td>
+						<td>
+							<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteManif(manifestation)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
 						</td>
 					</tr>
 
@@ -477,6 +480,31 @@ Vue.component("manifestation-view", {
 	},
 	methods: {
 
+							
+		deleteManif: function(manif){
+			var confirmed = confirm("Are your sure that you want to remove the manifestation: " + manif.name);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
+
+			axios
+				.delete('api/manifestations/' + manif.id)
+				.then(response => {
+					// manif.deleted = true;
+					// this.$forceUpdate();
+					this.$router.push("/");
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
+				
+			})
+			.catch(response=>{
+				console.log("Delete failed: " + response.data);
+			});
+		},
+
+							
 		deleteComment: function(comment){
 			var confirmed = confirm("Are your sure that you want to remove comment from: " + comment.customer);
 			
