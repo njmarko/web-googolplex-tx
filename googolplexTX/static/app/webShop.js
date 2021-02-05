@@ -167,10 +167,11 @@ Vue.component("web-shop", {
 						<img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt="">
 						
 					</router-link>
-					<div class="card-body">
+					<div class="card-body d-flex flex-column">
 						<router-link :to="{ path: '/manifestations/' + manifestation.id}"><h5>{{manifestation.name}}</h5></router-link>
 						<span v-if="manifestation.status == 'INACTIVE'" class="badge badge-warning">INACTIVE</span>
 						<p><i class="glyphicon glyphicon-globe"></i> {{manifestation.location.city}}</p>
+						<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteManif(manifestation)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
 					</div>
 				</div>
 			</div>
@@ -237,11 +238,37 @@ Vue.component("web-shop", {
 				//		}
 			})
 	}, methods: {
+		deleteManif: function(manif){
+			var confirmed = confirm("Are your sure that you want to remove the manifestation: " + manif.name);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
+
+			axios
+				.delete('api/manifestations/' + manif.id)
+				.then(response => {
+					// manif.deleted = true;
+					this.searchManifestations();
+					this.$forceUpdate();
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
+				
+			})
+			.catch(response=>{
+				console.log("Delete failed: " + response.data);
+			});
+		},
+
 		loadData: function (response) {
 			this.manifestations = response.data;
 		},
 		searchManifestations: function (event) {
-			event.preventDefault(); this.$router.push({ query: {} });
+			if (event) {
+				event.preventDefault();
+			}
+			 this.$router.push({ query: {} });
 			let sp = Object.assign({}, this.searchParams);
 			if (sp.beginDate ) {
 				sp.beginDate = new Date(sp.beginDate).getTime()
@@ -256,7 +283,9 @@ Vue.component("web-shop", {
 			})
 		},
 		clearParameters: function (event) {
-			event.preventDefault();
+			if (event) {
+				event.preventDefault();
+			}
 
 			this.searchParams = {};
 			let sp = Object.assign({}, this.searchParams);
