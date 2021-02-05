@@ -52,6 +52,11 @@ Vue.component("edit-manif", {
                         <input type="date" id="inputDateOfOccurence" class="form-control" placeholder="Date of Occurence" v-model="manifData.dateOfOccurence" required autofocus>
                         <label for="inputDateOfOccurence">Date of Occurence</label>
                         </div>
+
+						<div class="form-label-group">
+						<input type="time" id="inputTimeOfOccurence" class="form-control" placeholder="Time of Occurence" v-model="manifData.timeOfOccurence" required autofocus>
+						<label for="inputTimeOfOccurence">Time of Occurence</label>
+						</div>
                         
                         <div class="form-label-group">
                         <input type="number" step="any" id="inputRegularPrice" class="form-control" placeholder="Regular Price" v-model="manifData.regularPrice" required>
@@ -149,7 +154,9 @@ Vue.component("edit-manif", {
             .get('api/manifestations/' + this.$route.params.id)
             .then(response => {
                 this.manifData = response.data;
-                this.manifData.dateOfOccurence = new Date(response.data.dateOfOccurence).toISOString().substring(0, 10);
+			    let dateTime = Object.assign(response.data.dateOfOccurence);
+                this.manifData.dateOfOccurence = moment(response.data.dateOfOccurence).format("YYYY-MM-DD");
+                this.manifData.timeOfOccurence = moment(dateTime).format('hh:mm');
                 this.$nextTick(() => {
                     self.sendMapCallback();
                 });
@@ -211,7 +218,8 @@ Vue.component("edit-manif", {
             // this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
             var requestData = { ...this.manifData };
             requestData.location = { ...this.manifData.location };
-            requestData.dateOfOccurence = new Date(this.manifData.dateOfOccurence).getTime();
+			let dateTime = this.manifData.dateOfOccurence + " " + this.manifData.timeOfOccurence;
+			requestData.dateOfOccurence = new Date(dateTime).getTime() ;
 
             axios
                 .patch('api/manifestations/' + this.manifData.id, requestData)
