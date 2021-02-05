@@ -495,8 +495,7 @@ Vue.component("manifestation-view", {
 				this.locationString = response.data.location.city + ", " + response.data.location.street + ", " + response.data.location.number + ", " + response.data.location.zipCode;
 				this.manifestation.dateOfOccurence = new Date(response.data.dateOfOccurence);
 
-				this.isManiffinished(self.manifestation);
-
+				this.isManiffinished(self.manifestation);					
 				this.getManifTickets();
 
 				this.$nextTick(() => {
@@ -644,6 +643,9 @@ Vue.component("manifestation-view", {
 
 
 					this.getManifComments();
+				})
+				.catch(error=>{
+					this.getManifComments();
 				});
 		},
 		checkIfUserHasManifTicket: function (tickets) {
@@ -670,6 +672,9 @@ Vue.component("manifestation-view", {
 						this.canComment = true;
 					}
 					
+				})
+				.catch(error=>{
+
 				});
 		},
 		checkIfUserCommented: function(comments){

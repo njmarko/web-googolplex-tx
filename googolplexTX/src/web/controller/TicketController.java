@@ -55,7 +55,7 @@ public class TicketController {
 			// TODO add pagination
 			res.type("application/json");
 			String idm = req.params("idm");
-			userController.authenticateUser.handle(req, res);
+//			userController.authenticateUser.handle(req, res);
 
 			User loggedIn = userController.getAuthedUser(req);
 

@@ -32,10 +32,10 @@ Vue.component("login-form", {
 					<label for="inputPassword">Password</label>
 					</div>
 	
-					<div class="custom-control custom-checkbox mb-3">
-					<input type="checkbox" class="custom-control-input" id="customCheck1">
-					<label class="custom-control-label" for="customCheck1">Remember password</label>
-					</div>
+					<!-- <div class="custom-control custom-checkbox mb-3"> -->
+					<!-- <input type="checkbox" class="custom-control-input" id="customCheck1"> -->
+					<!-- <label class="custom-control-label" for="customCheck1">Remember password</label> -->
+					<!-- </div> -->
 
 					<input class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" value="SIGN UP" />
 
