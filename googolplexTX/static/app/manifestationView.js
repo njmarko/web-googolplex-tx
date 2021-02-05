@@ -211,11 +211,16 @@ Vue.component("manifestation-view", {
 							<map-component :inpLongitude="manifestation.location.longitude" :inpLatitude="manifestation.location.latitude" :readonly=true :locString="locationString" ></map-component>
 						</td>
 					</tr>
+					<tr v-if="userData && userData.userRole == 'ADMIN'">
+						<td colspan="2" >
+							<button v-if="userData && userData.userRole == 'ADMIN' && manifestation.status=='INACTIVE'" v-on:click="activateManif($event, manifestation)" class="btn btn-success text-uppercase btn-block mt-auto">ACTIVATE</button>
+						</td>
+					</tr>
 					<tr v-if="userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username))">
-						<td colspan="1" >
+						<td :colspan="userData && userData.userRole == 'ADMIN'? 1:2" >
 							<router-link :to="{ path: '/manifestations/' + manifestation.id + '/edit'}" class="btn btn-warning btn-block text-uppercase">Edit Manifestation</router-link>
 						</td>
-						<td>
+						<td v-if="userData && userData.userRole == 'ADMIN'">
 							<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteManif(manifestation)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
 						</td>
 					</tr>
@@ -223,12 +228,6 @@ Vue.component("manifestation-view", {
 				</tbody>
 			</table>
 			<form v-on:submit.prevent="" v-if="manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType">
-
-
-			
-
-
-
 
 				<div class="buy-section row">
 					<div class="col-lg-2 col-sm-6">
@@ -480,6 +479,30 @@ Vue.component("manifestation-view", {
 	},
 	methods: {
 
+        activateManif: function (event, manif) {
+			if (event) {
+				event.preventDefault();
+			}
+
+            let component = this;
+
+            // MANUAL DEEP COPY of all the attributes that can be changed in this edit form by using spread operator ... 
+            // this does not do deep copy of the two lists that are tied to the manifestation as those list are not changed here
+            var requestData = { ...manif };
+            requestData.location = { ...manif.location };
+            requestData.dateOfOccurence = new Date(manif.dateOfOccurence).getTime();
+			requestData.status = "ACTIVE";
+
+            axios
+                .patch('api/manifestations/' + manif.id, requestData)
+                .then(response => {
+					// this.$forceUpdate();
+					manif.status="ACTIVE";
+                })
+                .catch(function (error) {
+                    component.activateError = error.response.data;
+                });
+        },
 							
 		deleteManif: function(manif){
 			var confirmed = confirm("Are your sure that you want to remove the manifestation: " + manif.name);
