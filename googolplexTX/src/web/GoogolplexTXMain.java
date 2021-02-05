@@ -234,6 +234,7 @@ public class GoogolplexTXMain {
 			path("/tickets",()->{
 				get("",ticketController.findAllTickets); // TODO req admin
 				path("/:idt",()->{
+					delete("",ticketController.deleteOneTicket);
 					path("/cancel",()->{
 						patch("",ticketController.cancelOneTicket); // TODO req admin
 					});				
