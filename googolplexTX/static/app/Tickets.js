@@ -150,7 +150,7 @@ Vue.component("tickets", {
 						<img class="ticket-cover"  v-bind:src="'/uploads/' + t.poster" alt="">
 					</router-link>
 				</div>
-				<div class="col-sm-8 content">
+				<div class="col-sm-8 content d-flex flex-column">
 					<div>
 						<router-link class="card-image" :to="{ path: '/manifestations/' + t.manifestation}">
 							<h4>{{t.manifestationName}}</h4>
@@ -162,7 +162,6 @@ Vue.component("tickets", {
 
 
 						<button  v-if="isStarted(t.dateOfManifestation)" v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
-
 						<div class="row">
 							<div class="col-6">
 								<table>
@@ -196,9 +195,11 @@ Vue.component("tickets", {
 									</tr>
 								</table>
 							</div>
+
 						</div>
 						
 					</div>
+						<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteTicket(t)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
 				</div>
 			</div>
 		</div>
@@ -212,6 +213,17 @@ Vue.component("tickets", {
 		//null check in case the local storage was deleted
 		if (this.localUserData == null) {
 			this.localUserData = { username: "" };
+		}else{
+			axios
+				.get('api/users/' + this.localUserData.username)
+				.then(response => {
+					this.userData = response.data;
+					this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
+					this.userData.gender = response.data.gender;
+				})
+				.catch(error => {
+					console.log("User not logged in");
+				});
 		}
 
 		// load params from the address line
@@ -271,12 +283,35 @@ Vue.component("tickets", {
 
 	},
 	methods: {
+		deleteTicket: function(ticket){
+			var confirmed = confirm("Are your sure that you want to remove ticket: " + ticket.id);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
 
+			axios
+				.delete('api/tickets/' + ticket.id)
+				.then(response => {
+					// manif.deleted = true;
+					this.searchTickets();
+					// this.$forceUpdate();
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
+				
+			})
+			.catch(response=>{
+				console.log("Delete failed: " + response.data);
+			});
+		},
 		loadData: function (response) {
 			this.tickets = response.data;
 		},
 		searchTickets: function (event) {
-			event.preventDefault();
+			if(event){
+				event.preventDefault();
+			}
 
 			this.$router.push({ query: {} });
 			let sp = Object.assign({}, this.searchParams);
