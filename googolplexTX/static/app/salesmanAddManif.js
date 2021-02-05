@@ -175,6 +175,7 @@ Vue.component("salesman-add-manif", {
 					this.saveInfo.push("Manifestation added successfully");
 					console.log(response.data);
 					this.uploadPoster(response.data.id);
+					this.$router.push('/manifestations/' + response.data.id);
 				})
 				.catch(function (error) {
 					if (error.response) {
