@@ -17,25 +17,26 @@ public class TicketDAO implements GenericDAO<Ticket, String> {
 
 	private Map<String, Ticket> tickets = new ConcurrentHashMap<String, Ticket>();
 
-	
 	/**
 	 * Finds a 10 digit id
+	 * 
 	 * @return string representation of a 10 digit id
 	 */
 	public String findNextId() {
-		if (tickets != null && tickets.size() > 0) {		
-			Long highest = tickets.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
-			Long id = highest + 1 ;
+		if (tickets != null && tickets.size() > 0) {
+			Long highest = tickets.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst()
+					.get();
+			Long id = highest + 1;
 			String strId = id.toString();
-			while(strId.length() < 10) {
+			while (strId.length() < 10) {
 				strId = "0" + strId;
 			}
 			return strId;
-		}else {
+		} else {
 			return "1";
 		}
 	}
-	
+
 	public Map<String, Ticket> getTickets() {
 		return tickets;
 	}

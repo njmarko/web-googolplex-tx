@@ -62,7 +62,7 @@ public class ManifestationTypeDAO implements GenericDAO<ManifestationType, Strin
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
 	}
 
