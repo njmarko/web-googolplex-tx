@@ -80,7 +80,9 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public Ticket delete(String key) {
-		return this.ticketDAO.delete(key);
+		Ticket deleted = this.ticketDAO.delete(key);
+		ticketDAO.saveFile();
+		return deleted;
 	}
 
 	@Override
@@ -217,7 +219,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public Collection<Ticket> findAllByManifestation(String key) {
 		Manifestation manifestation = manifestationDAO.findOne(key);
-		return manifestation.tickets;
+		return manifestation.getTickets();
 	}
 
 	@Override

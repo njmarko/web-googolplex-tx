@@ -23,6 +23,11 @@ Vue.component("manifestation-view", {
 				ticketType: "REGULAR",
 				quantity: 1,
 			},
+			typeClasses: {
+				REGULAR: "regular",
+				VIP: "vip",
+				FAN_PIT: "fan-pit",
+			},
 
 			total: 0,
 		}
@@ -310,46 +315,70 @@ Vue.component("manifestation-view", {
 				</a>
 
 				<div class="collapse" id="collapseTickets">
-				
-					<div v-for="(t,i) in tickets">
-						<h5>{{i + 1}}</h5>
+					<div v-for="t in tickets">
+						<div class="row ticket" v-bind:class="getTicketClass(t.ticketType)" 
+							v-if="(t && userData && manifestation.salesman == userData.username && t.ticketStatus=='RESERVED') || (userData && userData.userRole == 'ADMIN')">
+							<h1 v-if="t.ticketStatus == 'CANCELED'" class="text-overlay">CANCELED</h1>
 
-						<table class="table table-hover table-bordered table-striped text-center">
-							<tbody >
-								<tr>
-									<td>Id</td>
-									<td>{{t.id }}</td>
-								</tr>
-								<tr>
-									<td>Date of Occurence</td>
-									<td>{{dateFromInt(t.dateOfManifestation)}}</td>
-								</tr>
-								<tr>
-									<td>Price</td>
-									<td>{{t.price}}</td>
-								</tr>
-								<tr>
-									<td>Status</td>
-									<td>{{t.ticketStatus}}</td>
-								</tr>
-								<tr>
-									<td>Manifestation</td>
-									<td>{{t.manifestationName}}</td>
-								</tr>
-								<tr>
-									<td>Customer</td>
-									<td>{{t.cutomerFullName}}</td>
-								</tr>
-								<tr>
-									<td>Ticket Type</td>
-									<td>{{t.ticketType}}</td>
-								</tr>
-							</tbody>
-						</table>		
-						<hr/>	
+							<div class="col-sm-4 margin-v-auto nopadding">
+								<router-link class="card-image" :to="{ path: '/manifestations/' + t.manifestation}">
+									<!-- <img class="ticket-cover" :src="'https://picsum.photos/300/200/'" alt=""> -->
+									<img class="ticket-cover"  v-bind:src="'/uploads/' + t.poster" alt="">
+								</router-link>
+							</div>
+							<div class="col-sm-8 content d-flex flex-column">
+								<div>
+									<router-link class="card-image" :to="{ path: '/manifestations/' + t.manifestation}">
+										<h4>{{t.manifestationName}}</h4>
+									</router-link>
+									<span v-bind:class="[t.ticketStatus == 'RESERVED' ? 'badge-success' : 'badge-danger']" class="badge">{{t.ticketStatus}}</span>
+									<span class="badge badge-warning">{{t.ticketType}}</span>
+									<span v-if="isOnGoing(t.dateOfManifestation)" class="badge badge-danger">On-going</span>
+									<span v-if="isFinished(t.dateOfManifestation)" class="badge badge-success">Finished</span>
+
+
+									<button  v-if="isStarted(t.dateOfManifestation) && userData.username == t.customer" v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
+									<div class="row">
+										<div class="col-6">
+											<table>
+												<tr>
+													<td>Price:</td>
+													<td><strong>{{t.price}}</strong></td>
+												</tr>
+												<tr>
+													<td>Starting at:</td>
+													<td><strong>{{ formatDate(t.dateOfManifestation) }}</strong></td>
+												</tr>
+												<!-- <tr>
+													<td>Starting at:</td>
+													<td><strong>{{ formatDate(t.dateOfManifestation) }}</strong></td>
+												</tr> -->
+											</table>								
+										</div>
+										<div class="col-6">
+											<table>
+												<tr>
+													<td>Id:</td>
+													<td><strong>{{t.id}}</strong></td>
+												</tr>
+												<!-- <tr>
+													<td>Seller:</td>
+													<td><router-link class="font-weight-bold" :to="{ path: '/profile/' + t.seller}">{{t.seller }}</router-link></td>
+												</tr> -->
+												<tr>
+													<td>Customer:</td>
+													<td><router-link class="font-weight-bold" :to="{ path: '/profile/' + t.customer}">{{ t.cutomerFullName }} ({{ t.customer }})</router-link></td>
+												</tr>
+											</table>
+										</div>
+
+									</div>
+
+								</div>
+									<button v-if="userData && userData.userRole == 'ADMIN'" v-on:click="deleteTicket(t)" class="btn btn-danger text-uppercase btn-block mt-auto">DELETE</button>
+							</div>
+						</div>
 					</div>
-					<div class="h2" v-if="tickets.length === 0">No tickets</div>
-
 				</div>
 				<br>
 			</div>
@@ -478,7 +507,27 @@ Vue.component("manifestation-view", {
 
 	},
 	methods: {
+		deleteTicket: function(ticket){
+			var confirmed = confirm("Are your sure that you want to remove ticket: " + ticket.id);
+			
+			if (confirmed == false){
+				console.log("aborted");
+				return;
+			}
 
+			axios
+				.delete('api/tickets/' + ticket.id)
+				.then(response => {
+					// manif.deleted = true;
+					this.getManifTickets();
+					//TODO: Consider if you want to update model
+					//this.users = this.users.filter(item => item !== obj);
+				
+			})
+			.catch(response=>{
+				console.log("Delete failed: " + response.data);
+			});
+		},
         activateManif: function (event, manif) {
 			if (event) {
 				event.preventDefault();
@@ -698,6 +747,38 @@ Vue.component("manifestation-view", {
 			}
 		},
 
+		getTicketClass: function (type) {
+			return this.typeClasses[type];
+		},
+		isOnGoing : function(time){
+			startedManif = new Date(time);
+			dayAfterManifestation = new Date(time);
+			dayAfterManifestation.setDate(dayAfterManifestation.getDate()+1);
+
+			today = new Date();
+			return today < dayAfterManifestation && today > startedManif;
+		},
+		isFinished : function(time){
+			dayAfterManifestation = new Date(time);
+			dayAfterManifestation.setDate(dayAfterManifestation.getDate()+1);
+
+			today = new Date();
+			return today > dayAfterManifestation;
+		},
+		isCancelable : function(time) {
+			weekAgoManif = new Date(time);
+			weekAgoManif.setDate(weekAgoManif.getDate()-7);
+
+			today = new Date();
+			return today < weekAgoManif;
+		},
+
+		isStarted : function(time) {
+			manifDate = new Date(time);
+			today = new Date();
+			console.log(manifDate);
+			return today < manifDate;
+		},
 	},
 
 });
