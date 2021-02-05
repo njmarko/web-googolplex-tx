@@ -33,7 +33,6 @@ public class JsonAdapter {
 
 //	private static Map<UserRole, Class<?>> userCastMap = new TreeMap<UserRole, Class<?>>();
 
-	
 //	private JsonToFileAdapter() {
 //		userCastMap.put(UserRole.ADMIN, User.class);
 //		userCastMap.put(UserRole.SALESMAN, Salesman.class);
@@ -41,9 +40,6 @@ public class JsonAdapter {
 //		System.out.println("Desava se JsonToFile");
 //	}
 
-
-
-	
 	public static final JsonSerializer<Collection<Salesman>> serializeSalesmanCollection = new JsonSerializer<Collection<Salesman>>() {
 		@Override
 		public JsonElement serialize(Collection<Salesman> src, Type typeOfSrc, JsonSerializationContext context) {
@@ -72,7 +68,7 @@ public class JsonAdapter {
 			return jsonElement;
 		}
 	};
-	public static final JsonSerializer<Collection<User>> adapterUsersTypeToUsernamess= new JsonSerializer<Collection<User>>() {
+	public static final JsonSerializer<Collection<User>> adapterUsersTypeToUsernamess = new JsonSerializer<Collection<User>>() {
 		@Override
 		public JsonElement serialize(Collection<User> src, Type typeOfSrc, JsonSerializationContext context) {
 
@@ -85,7 +81,6 @@ public class JsonAdapter {
 			return jsonUser;
 		}
 	};
-	
 
 	public static final JsonSerializer<ManifestationType> adapterManifestationTypeToName = new JsonSerializer<ManifestationType>() {
 
@@ -104,7 +99,7 @@ public class JsonAdapter {
 			JsonElement jsonElement = new JsonPrimitive(src.getName());
 			return jsonElement;
 		}
-		
+
 	};
 
 	public static final JsonSerializer<Manifestation> adapterManifestationToId = new JsonSerializer<Manifestation>() {
@@ -116,7 +111,7 @@ public class JsonAdapter {
 		}
 
 	};
-	public static final JsonSerializer<Collection<Manifestation>> adapterManifestationToIds= new JsonSerializer<Collection<Manifestation>>() {
+	public static final JsonSerializer<Collection<Manifestation>> adapterManifestationToIds = new JsonSerializer<Collection<Manifestation>>() {
 		@Override
 		public JsonElement serialize(Collection<Manifestation> src, Type typeOfSrc, JsonSerializationContext context) {
 
@@ -139,7 +134,7 @@ public class JsonAdapter {
 		}
 
 	};
-	public static final JsonSerializer<Collection<Ticket>> adapterTicketsTypeToIds= new JsonSerializer<Collection<Ticket>>() {
+	public static final JsonSerializer<Collection<Ticket>> adapterTicketsTypeToIds = new JsonSerializer<Collection<Ticket>>() {
 		@Override
 		public JsonElement serialize(Collection<Ticket> src, Type typeOfSrc, JsonSerializationContext context) {
 
@@ -162,7 +157,7 @@ public class JsonAdapter {
 		}
 
 	};
-	public static final JsonSerializer<Collection<Comment>> adapterCommentsTypeToIds= new JsonSerializer<Collection<Comment>>() {
+	public static final JsonSerializer<Collection<Comment>> adapterCommentsTypeToIds = new JsonSerializer<Collection<Comment>>() {
 		@Override
 		public JsonElement serialize(Collection<Comment> src, Type typeOfSrc, JsonSerializationContext context) {
 
@@ -176,8 +171,6 @@ public class JsonAdapter {
 		}
 	};
 
-	
-	
 //	public static final JsonSerializer<Map<String, User>> adapterFullUserCast= new JsonSerializer<Map<String, User>>() {
 //		
 //
@@ -201,29 +194,24 @@ public class JsonAdapter {
 //
 //		}
 //	};
-	
+
 	/**
-	 * LocalTime Adapter
-	 * Used to avoid warnings
+	 * LocalTime Adapter Used to avoid warnings
 	 */
 	public static final JsonDeserializer<LocalDate> adapterLocalDateFromJson = new JsonDeserializer<LocalDate>() {
 
 		@Override
 		public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        
-	        return LocalDate.of(
-	                jsonObject.get("year").getAsInt(),
-	                jsonObject.get("month").getAsInt(),
-	                jsonObject.get("day").getAsInt()
-	                );   
-	        
+			JsonObject jsonObject = json.getAsJsonObject();
+
+			return LocalDate.of(jsonObject.get("year").getAsInt(), jsonObject.get("month").getAsInt(),
+					jsonObject.get("day").getAsInt());
+
 		}
 
 	};
-	
+
 	public static final JsonSerializer<LocalDate> adapterLocalDateToJson = new JsonSerializer<LocalDate>() {
 		@Override
 		public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
@@ -232,30 +220,25 @@ public class JsonAdapter {
 			jsonObject.addProperty("year", src.getYear());
 			jsonObject.addProperty("month", src.getMonthValue());
 			jsonObject.addProperty("day", src.getDayOfMonth());
-			
+
 			return jsonObject;
 		}
 
 	};
-	
+
 	/**
-	 * LocalTime Adapter
-	 * Used to avoid warnings
+	 * LocalTime Adapter Used to avoid warnings
 	 */
 	public static final JsonDeserializer<LocalTime> adapterLocalTimeFromJson = new JsonDeserializer<LocalTime>() {
 
 		@Override
 		public LocalTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        
-	        return LocalTime.of(
-	                jsonObject.get("hour").getAsInt(),
-	                jsonObject.get("minute").getAsInt(),
-	                jsonObject.get("second").getAsInt()
-	                );   
-	        
+			JsonObject jsonObject = json.getAsJsonObject();
+
+			return LocalTime.of(jsonObject.get("hour").getAsInt(), jsonObject.get("minute").getAsInt(),
+					jsonObject.get("second").getAsInt());
+
 		}
 
 	};
@@ -267,33 +250,31 @@ public class JsonAdapter {
 			jsonObject.addProperty("hour", src.getHour());
 			jsonObject.addProperty("minute", src.getMinute());
 			jsonObject.addProperty("second", src.getSecond());
-			
+
 			return jsonObject;
 		}
 
 	};
-	
+
 	/**
-	 * LocalDateTime Adapter
-	 * Used to avoid warnings
+	 * LocalDateTime Adapter Used to avoid warnings
 	 */
 	public static final JsonDeserializer<LocalDateTime> adapterLocalDateTimeFromJson = new JsonDeserializer<LocalDateTime>() {
 
 		@Override
 		public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
-	        JsonObject jsonObject = json.getAsJsonObject();
-				
-	        LocalDate date = context.deserialize(jsonObject.get("date"), LocalDate.class);
-	        LocalTime time = context.deserialize(jsonObject.get("time"), LocalTime.class);
+			JsonObject jsonObject = json.getAsJsonObject();
 
-	        
-	        return LocalDateTime.of(date,time);   
-	        
+			LocalDate date = context.deserialize(jsonObject.get("date"), LocalDate.class);
+			LocalTime time = context.deserialize(jsonObject.get("time"), LocalTime.class);
+
+			return LocalDateTime.of(date, time);
+
 		}
 
 	};
-	
+
 	public static final JsonSerializer<LocalDateTime> adapterLocalDateTimeToJson = new JsonSerializer<LocalDateTime>() {
 		@Override
 		public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
@@ -301,27 +282,27 @@ public class JsonAdapter {
 
 			jsonObject.add("date", context.serialize(src.toLocalDate(), (Class<LocalDate>) LocalDate.class));
 			jsonObject.add("time", context.serialize(src.toLocalTime(), (Class<LocalTime>) LocalTime.class));
-			
+
 			return jsonObject;
 		}
 
 	};
-	
-	//////////// Builders ///////////
 
+	//////////// Builders ///////////
 
 	public static Gson manifestationSeraialization() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
-		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
-		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
+		Type ticketsType = new TypeToken<Collection<Ticket>>() {
+		}.getType();
+		Type commentsType = new TypeToken<Collection<Comment>>() {
+		}.getType();
 
-		
 		// TODO: FromJson datetime...
 		gsonBuilder.serializeNulls();
 		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketsTypeToIds);
-		gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);	
-		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);	
+		gsonBuilder.registerTypeAdapter(Salesman.class, adapterUserToUsername);
+		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);
 		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson);
 		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTimeToJson);
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTimeToJson);
@@ -340,7 +321,7 @@ public class JsonAdapter {
 		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson);
 		gsonBuilder.registerTypeAdapter(LocalTime.class, adapterLocalTimeToJson);
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, adapterLocalDateTimeToJson);
-		
+
 		Gson customGson = gsonBuilder.create();
 		return customGson;
 	}
@@ -348,19 +329,21 @@ public class JsonAdapter {
 	public static Gson userSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
-	//	Type usersType = new TypeToken<Map<String, User>>() {}.getType();
-		Type ticketsType = new TypeToken<Collection<Ticket>>() {}.getType();
-		Type manifestationsType = new TypeToken<Collection<Manifestation>>() {}.getType();
-		Type commentsType = new TypeToken<Collection<Comment>>() {}.getType();
-
+		// Type usersType = new TypeToken<Map<String, User>>() {}.getType();
+		Type ticketsType = new TypeToken<Collection<Ticket>>() {
+		}.getType();
+		Type manifestationsType = new TypeToken<Collection<Manifestation>>() {
+		}.getType();
+		Type commentsType = new TypeToken<Collection<Comment>>() {
+		}.getType();
 
 		gsonBuilder.serializeNulls();
-	//	gsonBuilder.registerTypeAdapter(usersType, adapterFullUserCast);
+		// gsonBuilder.registerTypeAdapter(usersType, adapterFullUserCast);
 		gsonBuilder.registerTypeAdapter(ticketsType, adapterTicketsTypeToIds);
 		gsonBuilder.registerTypeAdapter(manifestationsType, adapterManifestationToIds);
 		gsonBuilder.registerTypeAdapter(CustomerType.class, adapterCustomerTypeToName);
 		gsonBuilder.registerTypeAdapter(commentsType, adapterCommentsTypeToIds);
-		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson );
+		gsonBuilder.registerTypeAdapter(LocalDate.class, adapterLocalDateToJson);
 
 		Gson customGson = gsonBuilder.create();
 		return customGson;
@@ -377,7 +360,6 @@ public class JsonAdapter {
 		return customGson;
 	}
 
-
 	public static Gson customerTypeSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
@@ -385,7 +367,7 @@ public class JsonAdapter {
 		Gson customGson = gsonBuilder.create();
 		return customGson;
 	}
-	
+
 	public static Gson manifestationTypeSerializationToFile() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
