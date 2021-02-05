@@ -396,12 +396,23 @@ body {
 /* Tickets */
 
 .ticket {
-	margin: 20px 0;
+	/* margin: 20px 0;
     background: linear-gradient(45deg, #2282ff, #b5d5ff);
 	border: 0.1em solid #729bf2;
 	border-radius: 1.6em;
 	position: relative;
-	transition: 0.5s ease-in-out all;
+	transition: 0.5s ease-in-out all; */
+  transform:
+    perspective(950px)
+    translate3d(0px, 0px, -12px)
+    rotateX(8deg)
+    scale(0.9, 0.9);
+  /* border-radius: 20px; */
+	border: 0.1em solid #729bf2;
+	border-radius: 1.6em;
+  border: 5px solid #e6e6e6;
+  box-shadow: 0 40px 40px -20px rgba(0, 0, 0, 0.2);
+  transition: 0.3s ease-in-out transform;
 }
 
 .ticket.fan-pit {
@@ -419,7 +430,8 @@ body {
 }
 
 .ticket:hover {
-	box-shadow: #0000005e 0 0px 26px;
+	/* box-shadow: #0000005e 0 0px 26px; */
+	transform: translate3d(0px, 0px, -250px); 
 }
 
 

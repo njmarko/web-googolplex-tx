@@ -161,7 +161,7 @@ Vue.component("tickets", {
 						<span v-if="isFinished(t.dateOfManifestation)" class="badge badge-success">Finished</span>
 
 
-						<button  v-if="isStarted(t.dateOfManifestation)" v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
+						<button  v-if="isStarted(t.dateOfManifestation) && userData.username == t.customer" v-bind:disabled="t.ticketStatus == 'CANCELED' || !isCancelable(t.dateOfManifestation)" class="btn-danger btn" v-on:click="cancelTicket(t)">Cancel</button>
 						<div class="row">
 							<div class="col-6">
 								<table>
