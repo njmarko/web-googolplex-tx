@@ -11,6 +11,11 @@ public class SuspiciousSearchDTO {
 	}
 
 
+	/**
+	 * @param startDate
+	 * @param endDate
+	 * @param frequency
+	 */
 	public SuspiciousSearchDTO(Long startDate, Long endDate, Integer frequency) {
 		super();
 		this.startDate = startDate;
