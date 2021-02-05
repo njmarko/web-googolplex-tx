@@ -47,7 +47,7 @@ Vue.component("customer-types", {
                                 class="btn btn-danger text-uppercase">DELETE {{c.name}}</button>
 						</td>
 						<td>
-							<router-link :to="{ name: 'editCustType', params: {customerTypeId: c.name } }" class="btn btn-warning">Edit</router-link>
+							<router-link v-show="!c.deleted" :to="{ name: 'editCustType', params: {customerTypeId: c.name } }" class="btn btn-warning">Edit</router-link>
 						</td>
 					</tr>
 				</tbody>

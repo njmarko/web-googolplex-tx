@@ -27,8 +27,8 @@ Vue.component("change-password", {
 			<div class="row justify-content-center">
 				<div class="col-md-6 col-md-offset-3">
 					<div class="form-label-group">
-						<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="newPasswordData.oldPassword" required>
-						<label for="inputPassword">Password</label>
+						<input type="password" id="inputPassword" class="form-control" placeholder="Old Password" v-model="newPasswordData.oldPassword" required>
+						<label for="inputPassword">Old Password</label>
 						</div>
 				</div>
 			</div>
@@ -36,8 +36,8 @@ Vue.component("change-password", {
 			<div class="row justify-content-md-center">
 				<div class="col-md-6 col-md-offset-3">
 					<div class="form-label-group">
-						<input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="newPasswordData.password1" required>
-						<label for="inputPassword">Password</label>
+						<input type="password" id="inputPassword" class="form-control" placeholder="New Password" v-model="newPasswordData.password1" required>
+						<label for="inputPassword">New Password</label>
 					</div>
 				</div>
 			</div>

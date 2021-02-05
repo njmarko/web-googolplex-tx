@@ -42,12 +42,12 @@ Vue.component("add-customer-type", {
 					</div>
 
 					<div class="form-label-group">
-						<input type="number" min="0" id="inputDiscount" class="form-control" placeholder="Discount" v-model="customerTypeData.discount" required>
+						<input type="number" min="0"  max="100" v-on:keyup="evalQuantityDiscount($event)"  id="inputDiscount" class="form-control" placeholder="Discount" v-model="customerTypeData.discount" required>
 						<label for="inputDiscount">Discount</label>
 					</div>
 					
 					<div class="form-label-group">
-						<input type="number" min="0" id="inputDiscount" class="form-control" placeholder="Required Points" v-model="customerTypeData.requiredPoints" required>
+						<input type="number" min="0" v-on:keyup="evalQuantityRequiredPoints($event)" id="inputDiscount" class="form-control" placeholder="Required Points" v-model="customerTypeData.requiredPoints" required>
 						<label for="inputFirstName">Required Points</label>
 					</div>
 	
@@ -127,7 +127,23 @@ Vue.component("add-customer-type", {
 				console.log(error);
 				component.error = error.data;
 			});
-		}
+		},
+		evalQuantityDiscount: function(event){
+			if (this.customerTypeData.discount && this.customerTypeData.discount < 0) {
+				this.customerTypeData.discount = '';
+			}
+			if (this.customerTypeData.discount && this.customerTypeData.discount > 100) {
+				this.customerTypeData.discount = 100;
+			}
+            // To prevent numbers that start with 0 like 0003. decimal numbers are allowed like 0.3
+            this.manifData.customerTypeData.discount = Number(this.customerTypeData.discount);
+		},
+		evalQuantityRequiredPoints: function(event){
+			if (this.customerTypeData.requiredPoints && this.customerTypeData.requiredPoints < 0) {
+				this.manifData.availableSeats = '';
+			}
+            this.customerTypeData.requiredPoints = Number(this.customerTypeData.requiredPoints);
+		},
 
 	},
 });

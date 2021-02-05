@@ -23,7 +23,7 @@ Vue.component("manifestation-types", {
 		
 		<h1 class="text-center">Manifestation Types <span class="badge badge-danger">{{userData.userRole}}</span></h1>
 
-        <button class="btn-info btn mb-3">Add</button>
+		<router-link :to="{name: 'addManifType'}" class="btn-info btn mb-3">Add</router-link>
 
 		<div>
             <table class="table table-hover table-bordered table-striped text-center">
@@ -42,7 +42,7 @@ Vue.component("manifestation-types", {
                                 class="btn btn-danger text-uppercase">DELETE {{m.name}}</button>
                         </td>
 						<td>
-							<router-link :to="{ name: 'editManifType', params: {manifestationTypeId: m.name } }" class="btn btn-warning">Edit</router-link>
+							<router-link v-show="!m.deleted"  :to="{ name: 'editManifType', params: {manifestationTypeId: m.name } }" class="btn btn-warning">Edit</router-link>
 						</td>
 					</tr>
 				</tbody>

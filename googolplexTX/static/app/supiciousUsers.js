@@ -43,7 +43,7 @@ Vue.component("suspicious-users", {
 					<label for="findUsername">End Date</label>
 				</div>
 				<div class="form-label-group">
-					<input type="number" placeholder="Cancelation frequency" id="frequencyDateInput" class="form-control" ref="focusMe" v-model="searchParams.frequency"	>
+					<input type="number" min='0' v-on:keyup="evalQuantityFrequency($event)" step='1'  placeholder="Cancelation frequency" id="frequencyDateInput" class="form-control" ref="focusMe" v-model="searchParams.frequency"	>
 					<label for="findUsername">Cancelation Frequency</label>
 				</div>
 				<div class="form-label-group">
@@ -203,7 +203,12 @@ Vue.component("suspicious-users", {
 		formatDate: function (value) {
 			return moment(value).format('DD/MM/YYYY');
 		},
-
+		evalQuantityFrequency: function(event){
+			if (this.searchParams.frequency && this.searchParams.frequency < 0) {
+				this.searchParams.frequency = '';
+			}
+            this.searchParams.frequency = Number(this.searchParams.frequency);
+		},
 
 	},
 
