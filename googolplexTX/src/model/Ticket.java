@@ -30,8 +30,8 @@ public class Ticket {
 	 * @param cancelationDate
 	 * @param deleted
 	 */
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
-			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted) {
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, TicketType ticketType,
+			TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted) {
 		super();
 		this.id = id;
 		this.dateOfManifestation = dateOfManifestation;
@@ -53,9 +53,9 @@ public class Ticket {
 	 * @param customer
 	 * @param manifestation
 	 */
-	public Ticket(String id, LocalDateTime dateOfManifestation, Double price,
-			TicketType ticketType, TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted,
-			Customer customer, Manifestation manifestation) {
+	public Ticket(String id, LocalDateTime dateOfManifestation, Double price, TicketType ticketType,
+			TicketStatus ticketStatus, LocalDateTime cancelationDate, Boolean deleted, Customer customer,
+			Manifestation manifestation) {
 		this(id, dateOfManifestation, price, ticketType, ticketStatus, cancelationDate, deleted);
 		this.customer = customer;
 		this.manifestation = manifestation;
@@ -73,8 +73,8 @@ public class Ticket {
 	 * @param manifestation
 	 */
 	public Ticket(String id, Double price, TicketType ticketType, Customer customer, Manifestation manifestation) {
-		this(id, manifestation.getDateOfOccurence(), price,
-				ticketType, TicketStatus.RESERVED, null, false, customer, manifestation);
+		this(id, manifestation.getDateOfOccurence(), price, ticketType, TicketStatus.RESERVED, null, false, customer,
+				manifestation);
 	}
 
 	public String getId() {
@@ -100,7 +100,6 @@ public class Ticket {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-
 
 	public TicketType getTicketType() {
 		return ticketType;
@@ -153,9 +152,9 @@ public class Ticket {
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", dateOfManifestation=" + dateOfManifestation + ", price=" + price
-				+ ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
-				+ ", cancelationDate=" + cancelationDate + ", deleted=" + deleted + ", customer="
-				+ customer.getUsername() + ", manifestation=" + manifestation.getId() + "]";
+				+ ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus + ", cancelationDate="
+				+ cancelationDate + ", deleted=" + deleted + ", customer=" + customer.getUsername() + ", manifestation="
+				+ manifestation.getId() + "]";
 	}
 
 }

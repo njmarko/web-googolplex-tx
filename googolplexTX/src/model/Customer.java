@@ -60,7 +60,6 @@ public class Customer extends User {
 		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false, points, customerType);
 	}
 
-	
 	/**
 	 * @param username
 	 * @param password
