@@ -1,0 +1,1 @@
+{"Bronze":{"name":"Bronze","discount":3.0,"requiredPoints":1000.0,"deleted":false},"Silver":{"name":"Silver","discount":5.0,"requiredPoints":2000.0,"deleted":false},"Gold":{"name":"Gold","discount":8.0,"requiredPoints":3000.0,"deleted":false},"Default":{"name":"Default","discount":0.0,"requiredPoints":0.0,"deleted":false}}
