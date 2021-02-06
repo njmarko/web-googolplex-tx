@@ -3,6 +3,7 @@ Vue.component("suspicious-users", {
 		var date1 = new Date();
 		var date2 = new Date();
 		date1.setDate(date2.getDate() - 30);
+		date2.setDate(date2.getDate() + 1);
 
 		return {
 			error: {},
