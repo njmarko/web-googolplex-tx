@@ -235,7 +235,7 @@ Vue.component("manifestation-view", {
 				</tbody>
 			</table>
 
-			<h2>Manifestation is finished</h2>
+			<h2 v-if="isFinished(manifestation.dateOfOccurence)">Manifestation is finished</h2>
 			<form v-on:submit.prevent="" v-if="manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType">
 
 				<div class="buy-section row">

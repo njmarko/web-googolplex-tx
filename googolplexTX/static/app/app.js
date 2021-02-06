@@ -1,23 +1,23 @@
-const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp><particles></particles></div>' }
-const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp><particles></particles></div>' }
-const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp><particles></particles></div>' }
-const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp><particles></particles></div>' }
-const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp><particles></particles></div>' }
-const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp><particles></particles></div>' }
-const DisplayUsers = { template: '<div><navbar></navbar><display-users></display-users><footer-comp></footer-comp><particles></particles></div>' }
-const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-add-user><footer-comp></footer-comp><particles></particles></div>' }
-const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp><particles></particles></div>' }
-const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp><particles></particles></div>' }
-const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp><particles></particles></div>' }
-const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp><particles></particles></div>' }
-const ManifestationView = { template: '<div><navbar></navbar><manifestation-view></manifestation-view><footer-comp></footer-comp><particles></particles></div>' }
-const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><footer-comp></footer-comp><particles></particles></div>' }
-const CustomerTickets = { template: '<div><navbar></navbar><tickets></tickets><footer-comp></footer-comp><particles></particles></div>' }
-const SuspiciousUsers = { template: '<div><navbar></navbar><suspicious-users></suspicious-users><footer-comp></footer-comp><particles></particles></div>' }
-const ManifTypes = { template: '<div><navbar></navbar><manifestation-types></manifestation-types><footer-comp></footer-comp><particles></particles></div>' }
-const AddManifTypes = { template: '<div><navbar></navbar><add-manifestation-type></add-manifestation-type><footer-comp></footer-comp><particles></particles></div>' }
-const CustTypes = { template: '<div><navbar></navbar><customer-types></customer-types><footer-comp></footer-comp><particles></particles></div>' }
-const AddCustType = { template: '<div><navbar></navbar><add-customer-type></add-customer-type><footer-comp></footer-comp><particles></particles></div>' }
+const WebShop = { template: '<div><navbar></navbar><web-shop></web-shop><footer-comp></footer-comp></div>' }
+const Login = { template: '<div><navbar></navbar><login-form></login-form><footer-comp></footer-comp></div>' }
+const Register = { template: '<div><navbar></navbar><register-form></register-form><footer-comp></footer-comp></div>' }
+const Logout = { template: '<div><navbar></navbar><logout></logout><footer-comp></footer-comp></div>' }
+const UserProfile = { template: '<div><navbar></navbar><user-profile></user-profile><footer-comp></footer-comp></div>' }
+const ChangePassword = { template: '<div><navbar></navbar><change-password></change-password><footer-comp></footer-comp></div>' }
+const DisplayUsers = { template: '<div><navbar></navbar><display-users></display-users><footer-comp></footer-comp></div>' }
+const AdminAddUser = { template: '<div><navbar></navbar><admin-add-user></admin-add-user><footer-comp></footer-comp></div>' }
+const SalesmanManifestations = { template: '<div><navbar></navbar><salesman-manifestations></salesman-manifestations><footer-comp></footer-comp></div>' }
+const SalesmanTickets = { template: '<div><navbar></navbar><salesman-tickets></salesman-tickets><footer-comp></footer-comp></div>' }
+const SalesmanUsers = { template: '<div><navbar></navbar><salesman-users></salesman-users><footer-comp></footer-comp></div>' }
+const SalesmanAddManif = { template: '<div><navbar></navbar><salesman-add-manif></salesman-add-manif><footer-comp></footer-comp></div>' }
+const ManifestationView = { template: '<div><navbar></navbar><manifestation-view></manifestation-view><footer-comp></footer-comp></div>' }
+const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><footer-comp></footer-comp></div>' }
+const CustomerTickets = { template: '<div><navbar></navbar><tickets></tickets><footer-comp></footer-comp></div>' }
+const SuspiciousUsers = { template: '<div><navbar></navbar><suspicious-users></suspicious-users><footer-comp></footer-comp></div>' }
+const ManifTypes = { template: '<div><navbar></navbar><manifestation-types></manifestation-types><footer-comp></footer-comp></div>' }
+const AddManifTypes = { template: '<div><navbar></navbar><add-manifestation-type></add-manifestation-type><footer-comp></footer-comp></div>' }
+const CustTypes = { template: '<div><navbar></navbar><customer-types></customer-types><footer-comp></footer-comp></div>' }
+const AddCustType = { template: '<div><navbar></navbar><add-customer-type></add-customer-type><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
   mode: 'hash',
@@ -83,9 +83,6 @@ var app = new Vue({
   },
   mounted() {
 
-    this.$nextTick(() => {
-      this.initParticleJS()	
-    })
 
   },
   methods: {
