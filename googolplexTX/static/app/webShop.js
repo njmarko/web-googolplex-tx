@@ -16,7 +16,6 @@ Vue.component("web-shop", {
 	},
 	template: `
 <div class="d-flex">
-	<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 	<div id="top" class="container">
 		<br>
 
