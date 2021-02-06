@@ -161,11 +161,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}).collect(Collectors.toList());
 		}
 
-		// Location in searchParams is just a string for City name OR Country name
-		// TODO Add check for Country name if it is implemented in the model
+
 		if (searchParams.getLocation() != null) {
 			entities = entities.stream().filter((ent) -> {
-				return ent.getLocation().getCity().equalsIgnoreCase(searchParams.getLocation());
+				return ent.getLocation().getCity().toLowerCase().contains(searchParams.getLocation().toLowerCase());
 			}).collect(Collectors.toList());
 		}
 
