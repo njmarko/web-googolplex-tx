@@ -25,6 +25,7 @@ import repository.CustomerTypeDAO;
 import repository.UserDAO;
 import service.UserService;
 import support.DateConverter;
+import web.dto.CustomerTypeDTO;
 import web.dto.LoginDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
 				if (ent.getUserRole() != null && ent.getUserRole() == UserRole.CUSTOMER && (ent instanceof Customer)) {
 					return ((Customer) ent).getCustomerType().getName().equals(searchParams.getCustomerType());
 				} else {
-					return true;
+					return false;
 				}
 			}).collect(Collectors.toList());
 		}
@@ -154,7 +155,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User entity) {
-		return this.userDAO.save(entity);
+		User saved = this.userDAO.save(entity);
+		this.userDAO.saveFile();
+		return saved;
 	}
 
 	@Override
@@ -177,7 +180,9 @@ public class UserServiceImpl implements UserService {
 	public User update(User entity) {
 		User user = findOne(entity.getUsername());
 		entity.setPassword(user.getPassword());
-		return this.userDAO.save(entity);
+		User saved = this.userDAO.save(entity);
+		this.userDAO.saveFile();
+		return saved;
 	}
 	
 	
@@ -273,7 +278,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User login(LoginDTO loginData) {
-		User found = userDAO.findOne(loginData.getUsername());
+		User found = findOne(loginData.getUsername());
 		if (found == null || !found.getPassword().equals(loginData.getPassword())) {
 			return null;
 		}
@@ -366,10 +371,70 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public CustomerType findOneCustomerType(String key) {
-		return this.custTypeDAO.findOne(key);
+		CustomerType found = this.custTypeDAO.findOne(key);
+		if (found == null || found.getDeleted())
+			return null;
+		return found;
 	}
 
+	@Override
+	public CustomerType deleteOneCustomerType(String key) {
+		CustomerType deleted = custTypeDAO.delete(key);
+		custTypeDAO.saveFile();
+		return deleted;
+	}
 
+	@Override
+	public CustomerType putOneCustomerType(String key, CustomerTypeDTO dto) {
+		CustomerType foundEntity = this.findOneCustomerType(dto.getName());
+		if (!dto.getName().equalsIgnoreCase(key) && foundEntity != null)	// Already exists
+			return null;
+		
+		CustomerType customerType = null;
+		if (key != null) {
+			customerType = this.findOneCustomerType(key);
+			if(customerType == null)
+				return null;
+			
+		}
+		
+		if (customerType == null) {
+			customerType = new CustomerType();
+			customerType.setDeleted(false);
+		} else if (!dto.getName().equalsIgnoreCase(key)) {
+			
+			custTypeDAO.delete(key);
+			customerType = new CustomerType();
+			customerType.setDeleted(false);
+			
+		}
+		
+		customerType.setName(dto.getName());
+		customerType.setDiscount(dto.getDiscount());
+		customerType.setRequiredPoints(dto.getRequiredPoints());
+		custTypeDAO.save(customerType);
+		custTypeDAO.saveFile();
+		
+		return customerType;
+	}
+	
+	@Override
+	public CustomerType postOneCustomerType(CustomerTypeDTO dto) {
+		CustomerType customerType = this.findOneCustomerType(dto.getName());
+		if (customerType != null)	// Already exists
+			return null;
+		
+		customerType = new CustomerType();
+		customerType.setDeleted(false);	
+		customerType.setName(dto.getName());
+		customerType.setDiscount(dto.getDiscount());
+		customerType.setRequiredPoints(dto.getRequiredPoints());
+		custTypeDAO.save(customerType);
+		custTypeDAO.saveFile();
+		
+		return customerType;
+	}
+	
 	private int countCancelations (Customer customer,  LocalDateTime begin, LocalDateTime end) {
 		Collection<Ticket> tickets = customer.getTickets();
 		int count = 0;
@@ -420,9 +485,11 @@ public class UserServiceImpl implements UserService {
 		if (user == null)
 			return null;
 		
-		if (user.getUserRole() != UserRole.ADMIN)
+		if (user.getUserRole() != UserRole.ADMIN) {
 			user.setBlocked(true);
-		
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+		}
 		return user;
 	}
 
@@ -432,16 +499,14 @@ public class UserServiceImpl implements UserService {
 		if (user == null || user.getUserRole() == UserRole.ADMIN)
 			return null;
 		
-		if (user.getUserRole() != UserRole.ADMIN)
+		if (user.getUserRole() != UserRole.ADMIN) {
 			user.setBlocked(false);
-		
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+		}
+			
 		return user;
 	}
 
-	@Override
-	public CustomerType deleteOneCustomerType(String key) {
-		// TODO: save to file
-		return custTypeDAO.delete(key);
-	}
 	
 }

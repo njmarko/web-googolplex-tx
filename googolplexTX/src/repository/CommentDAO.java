@@ -21,17 +21,17 @@ public class CommentDAO implements GenericDAO<Comment, String> {
 		return comments;
 	}
 
-	
 	public String findNextId() {
-		if (comments != null && comments.size() > 0) {		
-			Long highest = comments.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
-			Long id = highest + 1 ;
+		if (comments != null && comments.size() > 0) {
+			Long highest = comments.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst()
+					.get();
+			Long id = highest + 1;
 			return id.toString();
-		}else {
+		} else {
 			return "1";
 		}
 	}
-	
+
 	public void setComments(Map<String, Comment> comments) {
 		this.comments = comments;
 	}

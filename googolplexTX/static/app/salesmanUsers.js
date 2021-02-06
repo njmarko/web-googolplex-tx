@@ -43,7 +43,7 @@ Vue.component("salesman-users", {
 					</tr>
 					<tr>
 						<td>Birthday</td>
-						<td>{{u.birthDate.month + "/" + u.birthDate.day + "/" + u.birthDate.year + "." }}</td>
+						<td>{{formatDate(u.birthDate) }}</td>
 					</tr>
 					<tr>
 						<td>gender</td>
@@ -102,8 +102,11 @@ Vue.component("salesman-users", {
 							console.log("error.config");
 							console.log(error.config);
 						});
-				}
+				},
 				*/
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 	},
 
 

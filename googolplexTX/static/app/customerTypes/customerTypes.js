@@ -23,7 +23,7 @@ Vue.component("customer-types", {
 		
 		<h1 class="text-center">Customer Types <span class="badge badge-danger">{{userData.userRole}}</span></h1>
 
-        <button class="btn-info btn">Add</button>
+		<router-link :to="{name: 'addCustType'}" class="btn-info btn mb-3">Add</router-link>
 
 		<div>
             <table class="table table-hover table-bordered table-striped text-center">
@@ -33,7 +33,8 @@ Vue.component("customer-types", {
 						<th>Name</th>
 						<th>Discount</th>
 						<th>Required Points</th>
-                        <th></th>
+						<th></th>
+						<th></th>
                     </tr>
 					<tr v-for="c in custTypes">
 						<td>{{c.name }} <span v-if="c.deleted == true" class="badge badge-danger">DELETED</span></td>
@@ -44,7 +45,10 @@ Vue.component("customer-types", {
                                 v-bind:disabled="c.deleted" 
                                 v-on:click="deleteCustType(c)" 
                                 class="btn btn-danger text-uppercase">DELETE {{c.name}}</button>
-                        </td>
+						</td>
+						<td>
+							<router-link v-show="!c.deleted" :to="{ name: 'editCustType', params: {customerTypeId: c.name } }" class="btn btn-warning">Edit</router-link>
+						</td>
 					</tr>
 				</tbody>
 			</table>

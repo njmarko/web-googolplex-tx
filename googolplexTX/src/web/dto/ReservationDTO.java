@@ -13,6 +13,12 @@ public class ReservationDTO {
 		super();
 	}
 
+	/**
+	 * @param customer
+	 * @param manifestation
+	 * @param ticketType
+	 * @param quantity
+	 */
 	public ReservationDTO(String customer, String manifestation, TicketType ticketType, Integer quantity) {
 		super();
 		this.customer = customer;

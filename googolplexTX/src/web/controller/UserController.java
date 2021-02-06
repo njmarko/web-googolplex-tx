@@ -12,7 +12,9 @@ import support.DateConverter;
 import support.JsonAdapter;
 import support.UserToUserDTO;
 import spark.Filter;
+import web.dto.CustomerTypeDTO;
 import web.dto.LoginDTO;
+import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
 import web.dto.PasswordDTO;
 import web.dto.RegisterDTO;
@@ -88,12 +90,15 @@ public class UserController {
 
 			String err = null;
 
-			authenticateUser.handle(req, res);
 			User loggedInUser = getAuthedUser(req);
 
 			if (loggedInUser == null) {
 				err = registerData.validate(null);
 			} else {
+				// only admin can register new salesman. Logged in customer can register another
+				// account
+				// but it can only be a customer account
+				authenticateUser.handle(req, res);
 				err = registerData.validate(loggedInUser.getUserRole());
 			}
 			if (!StringUtils.isEmpty(err)) {
@@ -104,9 +109,8 @@ public class UserController {
 			if (registered == null) {
 				halt(HttpStatus.BAD_REQUEST_400, "The username is already taken or you data is invalid");
 			}
-			// TODO Consider if you want to return UserDTO after registering right away
 
-			return "User was sucessfully registered";
+			return g.toJson(UserToUserDTO.convert(registered));
 		}
 	};
 
@@ -116,10 +120,8 @@ public class UserController {
 		public Object handle(Request req, Response res) throws Exception {
 			res.type("application/json");
 			String body = req.body();
-			System.out.println(body);
-			LoginDTO loginData = g.fromJson(body, LoginDTO.class);
 
-			// check if user is logged in
+			LoginDTO loginData = g.fromJson(body, LoginDTO.class);
 
 			User loggedIn = getAuthedUser(req);
 			if (loggedIn != null) {
@@ -166,6 +168,11 @@ public class UserController {
 
 			String body = req.body();
 			PasswordDTO passwordData = g.fromJson(body, PasswordDTO.class);
+			try {
+				passwordData = g.fromJson(body, PasswordDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
 			passwordData.setUsername(idu); // Set username manually from the path
 
 			String err = passwordData.validate();
@@ -174,8 +181,7 @@ public class UserController {
 				halt(HttpStatus.BAD_REQUEST_400, err);
 			}
 
-			if (authUser.getUsername().compareTo(idu) != 0) {
-				// TODO: check if admin
+			if (authUser.getUsername().compareTo(idu) != 0 && authUser.getUserRole() != UserRole.ADMIN) {
 				halt(HttpStatus.FORBIDDEN_403, "You can only change your own password");
 			}
 
@@ -195,8 +201,6 @@ public class UserController {
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
 
-			// if registerData userRole is null, service will create a customer by default
-			// admin can create only customer and salesman, but not other admins
 			res.type("application/json");
 			Session session = req.session(true);
 
@@ -214,23 +218,25 @@ public class UserController {
 		public Object handle(Request req, Response res) throws Exception {
 			res.type("application/json");
 			authenticateAdmin.handle(req, res);
-			
+
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}
 			});
-			System.out.println(g.toJson(queryParams));
-			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
 
-			// TODO remove debug print message
-			System.out.println("[DBG] searchParamsDTO" + searchParams);
+			UserSearchDTO searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
+			try {
+				searchParams = g.fromJson(g.toJson(queryParams), UserSearchDTO.class);
+			} catch (Exception e) {
+				searchParams = new UserSearchDTO();
+			}
 
 			Collection<User> users = userService.search(searchParams);
 			if (users == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No users found");
 			}
-
-			Collection<UserDTO> usersDTO = UserToUserDTO.convert(users);
 
 			return g.toJson(UserToUserDTO.convert(users));
 		}
@@ -246,6 +252,11 @@ public class UserController {
 			res.type("application/json");
 			String body = req.body();
 			UserDTO user = new Gson().fromJson(body, UserDTO.class);
+			try {
+				user = new Gson().fromJson(body, UserDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid Data");
+			}
 
 			String err = user.validate();
 			;
@@ -289,11 +300,11 @@ public class UserController {
 			if (deletedEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404);
 			}
-			
+
 			if (deletedEntity.getUserRole() == UserRole.ADMIN) {
 				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
 			}
-			
+
 			return HttpStatus.NO_CONTENT_204;
 		}
 	};
@@ -331,13 +342,10 @@ public class UserController {
 				foundEntities = new ArrayList<CustomerType>();
 			}
 
-			// TODO consider using an adapter
-			// TODO use DTO objects
 			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
 		}
 	};
-	
-	
+
 	public final Route findOneCustomerType = new Route() {
 
 		@Override
@@ -353,6 +361,77 @@ public class UserController {
 			}
 
 			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route addOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+
+			res.type("application/json");
+
+			String body = req.body();
+
+			CustomerTypeDTO newEntity = g.fromJson(body, CustomerTypeDTO.class);
+			try {
+				newEntity = g.fromJson(body, CustomerTypeDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
+
+			CustomerType foundEntities = userService.postOneCustomerType(newEntity);
+
+			if (foundEntities == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Name Already exists.");
+			}
+
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route putOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+
+			res.type("application/json");
+
+			String id = req.params("idct");
+			String body = req.body();
+
+			CustomerTypeDTO newEntity = g.fromJson(body, CustomerTypeDTO.class);
+			try {
+				newEntity = g.fromJson(body, CustomerTypeDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
+
+			CustomerType foundEntities = userService.putOneCustomerType(id, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Name already exists or old-Name is invalid.");
+			}
+
+			return g.toJson(CustTypeToCustTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route deleteOneCustomerType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idct");
+			CustomerType deletedEntity = userService.deleteOneCustomerType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
 		}
 	};
 
@@ -459,35 +538,38 @@ public class UserController {
 		return null;
 
 	}
-	
-	
+
 	public final Route findAllSuspiciousCustomers = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
 			res.type("application/json");
-			
+
 			authenticateAdmin.handle(req, res);
-			
+
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}
 			});
-			
-			System.out.println(queryParams.get("frequiency"));
-			
-			SuspiciousSearchDTO suspiciousDTO = g.fromJson(new  Gson().toJson(queryParams), SuspiciousSearchDTO.class);
-		
+
+			SuspiciousSearchDTO suspiciousDTO = g.fromJson(new Gson().toJson(queryParams), SuspiciousSearchDTO.class);
+			try {
+				suspiciousDTO = g.fromJson(new Gson().toJson(queryParams), SuspiciousSearchDTO.class);
+			} catch (Exception e) {
+				suspiciousDTO = new SuspiciousSearchDTO();
+			}
+
 			Collection<User> users = userService.findAllSuspiciousCustomers(suspiciousDTO);
 			if (users == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No users found");
 			}
 
-
 			return g.toJson(UserToUserDTO.convert(users));
 		}
 	};
-	
+
 	public final Route blockUser = new Route() {
 
 		@Override
@@ -495,7 +577,6 @@ public class UserController {
 
 			authenticateAdmin.handle(req, res);
 
-			
 			res.type("application/json");
 			String idu = req.params("idu");
 			User foundEntity = userService.blockUser(idu);
@@ -505,14 +586,11 @@ public class UserController {
 			if (foundEntity.getUserRole() == UserRole.ADMIN) {
 				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
 			}
-			
 
-			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
+			return g.toJson(UserToUserDTO.convert(foundEntity));
 		}
 	};
-	
 
-	
 	public final Route unblockUser = new Route() {
 
 		@Override
@@ -520,7 +598,6 @@ public class UserController {
 
 			authenticateAdmin.handle(req, res);
 
-			
 			res.type("application/json");
 			String idu = req.params("idu");
 			User foundEntity = userService.unblockUser(idu);
@@ -531,25 +608,8 @@ public class UserController {
 				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
 			}
 
-			return new Gson().toJson(UserToUserDTO.convert(foundEntity));
+			return g.toJson(UserToUserDTO.convert(foundEntity));
 		}
 	};
 
-	public final Route deleteOneCustomerType = new Route() {
-
-		@Override
-		public Object handle(Request req, Response res) throws Exception {
-			authenticateAdmin.handle(req, res);
-
-			// res.type("application/json");
-			String id = req.params("idct");
-			CustomerType deletedEntity = userService.deleteOneCustomerType(id);
-			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
-			}
-
-			return HttpStatus.NO_CONTENT_204;
-		}
-	};
-	
 }

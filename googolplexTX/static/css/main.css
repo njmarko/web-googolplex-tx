@@ -1,7 +1,6 @@
 #top,
 #navbar {
 	background-color: white;
-	z-index: 100;
 }
 
 :root {
@@ -13,6 +12,17 @@ body {
 	background: #007bff;
 	background: linear-gradient(to right, #0062E6, #33AEFF);
 }
+
+h1, h2, h3, h4, h5, h6 {
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+
+.nopadding {
+	padding: 0 !important;
+	margin: 0 !important;
+ }
 
 .card-signin {
 	border: 0;
@@ -52,6 +62,27 @@ body {
 	position: relative;
 	display: flex;
 	margin-bottom: 1rem;
+	height: 50px;
+}
+
+.form-label-group.checkbox {
+	border: 1px solid #ced4da;
+	border-radius: 2rem;
+	padding-left: 10px;
+
+}
+
+.form-label-group.checkbox input {
+	width: 30px;
+	height: 30px;
+	margin: 9px;
+}
+
+.form-label-group.checkbox label {
+	position: inherit;
+	width: 100%;
+	padding: 10px 0;
+	font-size: 16px;
 }
 
 .form-label-group input,
@@ -88,6 +119,13 @@ body {
 	border-radius: .25rem;
 	transition: all .1s ease-in-out;
 }
+
+.dropdown-menu-dark {
+	color: #dee2e6;
+    background-color: #343a40;
+    border-color: rgba(0,0,0,.15);
+}
+
 
 .form-label-group input::-webkit-input-placeholder,
 .form-label-group select::-webkit-select-placeholder {
@@ -217,6 +255,18 @@ textarea{
 }
 
 
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover 
+{
+    color: inherit;
+     text-decoration:none; 
+     cursor:pointer;  
+}
+
 /* Footer */
 
 html {
@@ -258,16 +308,20 @@ body {
 .map-point {
 	width: 200px;
 	margin-left: -100px;
+	text-align: center;
 }
 
 .map-point a {
 	background: #eee;
 	padding: 10px;
+	position: absolute;
+    top: -20px;
+    right: 0px;
 }
 
 .map-icon {
 	width: 50px;
-	margin-left: 75px;
+	/* margin-left: 75px; */
 	margin-top: -70px;
 }
 
@@ -282,4 +336,143 @@ body {
 
 .hidden {
 	display: none;
+}
+
+
+/* Maanif page */
+.manif-card {
+	transition: 0.5s ease all;
+	border-radius: 1.5em;
+	background: #eee;
+	height: 100%;
+}
+
+.manif-card a:hover {
+	color:#333;
+}
+
+.manif-card:hover {
+    box-shadow: #0000005e 0 12px 26px;
+    transform: translate(0px,-10px);
+}
+
+.vertical-centered {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	transform: translate(0%, -50%);
+}
+
+.manif-card .card-image {
+	border-radius: 1.5em;
+	position: relative;
+	overflow: hidden;
+	min-height: 150px;
+}
+
+
+.row-spacing {
+	margin-top: 30px;
+	margin-bottom: 30px
+}
+
+.manif-card .image-dim {
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.7);
+	border-radius: 1.5em;
+
+	position: absolute;
+	transform: translate(0, -105%);
+	transition: all 0.5s ease-in-out;
+	text-align: center;
+	color:white;
+}
+
+.manif-card:hover .image-dim {
+	transform: translate(0, 0);
+}
+
+/* Tickets */
+
+.ticket {
+	/* margin: 20px 0;
+    background: linear-gradient(45deg, #2282ff, #b5d5ff);
+	border: 0.1em solid #729bf2;
+	border-radius: 1.6em;
+	position: relative;
+	transition: 0.5s ease-in-out all; */
+  transform:
+    perspective(950px)
+    translate3d(0px, 0px, -12px)
+    rotateX(8deg)
+    scale(0.9, 0.9);
+  /* border-radius: 20px; */
+	border: 0.1em solid #729bf2;
+	border-radius: 1.6em;
+  border: 5px solid #e6e6e6;
+  box-shadow: 0 40px 40px -20px rgba(0, 0, 0, 0.2);
+  transition: 0.3s ease-in-out transform;
+}
+
+.ticket.fan-pit {
+	background: linear-gradient(45deg, #f21dc7, #ff7cfb);
+	border: 0.1em solid #da00d3;
+}
+
+.ticket.vip {
+	background: linear-gradient(45deg, #d58a00, #8eff1e);
+	border: 0.1em solid #ff8529;
+}
+
+.ticket a:hover {
+	color:#333;
+}
+
+.ticket:hover {
+	/* box-shadow: #0000005e 0 0px 26px; */
+	transform: translate3d(0px, 0px, -250px); 
+}
+
+
+.ticket .ticket-cover {
+	border-radius: 1.5em;
+	width:100%;
+	max-height: 300px;}
+
+.ticket .content {
+	padding: 15px;
+	z-index: 10;
+}
+
+.ticket-content {
+	padding-right: 15px;
+}
+
+.margin-v-auto {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.ticket .text-overlay {
+	position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    font-size: 4rem;
+    transform: translate(-50%, -50%) rotate(-7deg);
+    color: #ff1919;
+}
+
+@media (min-width: 576px) {  
+	.ticket .text-overlay {font-size:6rem;} /*1rem = 16px*/
+}
+
+@media (min-width: 768px) {  
+	.ticket .text-overlay {font-size:8rem;} /*1rem = 16px*/
+}
+
+.overflow-table {
+	display: block;
+	overflow-x: auto;
 }

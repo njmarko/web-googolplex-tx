@@ -60,7 +60,6 @@ public class Customer extends User {
 		this(username, password, firstName, lastName, gender, birthDate, userRole, false, false, points, customerType);
 	}
 
-	
 	/**
 	 * @param username
 	 * @param password
@@ -131,10 +130,10 @@ public class Customer extends User {
 		if (comments.isEmpty()) {
 			return comments;
 		}
-		Collection<Comment> retVal = comments.stream().filter((Comment ent) -> {
+		comments = comments.stream().filter((Comment ent) -> {
 			return !ent.getDeleted();
 		}).collect(Collectors.toList());
-		return retVal;
+		return comments;
 	}
 
 	public void setComments(Collection<Comment> comments) {

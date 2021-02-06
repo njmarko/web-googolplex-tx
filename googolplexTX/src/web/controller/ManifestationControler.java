@@ -28,6 +28,7 @@ import model.Comment;
 import model.CustomerType;
 import model.Manifestation;
 import model.ManifestationType;
+import model.Ticket;
 import model.User;
 import model.enumerations.CommentStatus;
 import model.enumerations.ManifestationStatus;
@@ -40,12 +41,15 @@ import spark.Route;
 import spark.RouteImpl;
 import spark.utils.IOUtils;
 import support.CommentToCommentDTO;
+import support.CustTypeToCustTypeDTO;
 import support.JsonAdapter;
 import support.ManifToManifDTO;
 import support.ManifTypeToManifTypeDTO;
 import web.dto.CommentDTO;
+import web.dto.CustomerTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.ManifestationTypeDTO;
 
 public class ManifestationControler {
 
@@ -94,15 +98,17 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}
 			});
 
-			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
-
-			// TODO remove debug print message
-			System.out.println("[DBG] searchParamsDTO" + searchParams);
-
-			// TODO if admin return tickets of all statuses
+			ManifestationSearchDTO searchParams = null;
+			try {
+				searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+			} catch (Exception e) {
+				searchParams = new ManifestationSearchDTO();
+			}
 
 			User loggedInUser = userController.getAuthedUser(req);
 			System.out.println(loggedInUser);
@@ -132,7 +138,7 @@ public class ManifestationControler {
 			if (foundEntity == null) {
 				halt(HttpStatus.NOT_FOUND_404, "No manifestation found");
 			}
-
+			System.out.println(foundEntity.getDateOfOccurence());
 			return g.toJson(ManifToManifDTO.convert(foundEntity));
 		}
 	};
@@ -144,10 +150,14 @@ public class ManifestationControler {
 			userController.authenticateSalesmanOrAdmin.handle(req, res);
 			res.type("application/json");
 
-			
 			String body = req.body();
 
-			ManifestationDTO manifestationData = g.fromJson(body, ManifestationDTO.class);
+			ManifestationDTO manifestationData = null;
+			try {
+				manifestationData = g.fromJson(body, ManifestationDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
 
 			User loggedInUser = userController.getAuthedUser(req);
 			if (loggedInUser.getUserRole() == UserRole.SALESMAN) {
@@ -165,7 +175,7 @@ public class ManifestationControler {
 
 			Manifestation savedEntity = manifService.save(manifestationData);
 			if (savedEntity == null) {
-				halt(HttpStatus.BAD_REQUEST_400);
+				halt(HttpStatus.BAD_REQUEST_400, "Manifestation like that already exists");
 			}
 			return g.toJson(ManifToManifDTO.convert(savedEntity));
 
@@ -209,7 +219,12 @@ public class ManifestationControler {
 
 			userController.authenticateSalesmanOrAdmin.handle(req, res);
 
-			ManifestationDTO newEntity = g.fromJson(body, ManifestationDTO.class);
+			ManifestationDTO newEntity = null;
+			try {
+				newEntity = g.fromJson(body, ManifestationDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
 
 			User loggedIn = userController.getAuthedUser(req);
 
@@ -234,6 +249,13 @@ public class ManifestationControler {
 			} else if (loggedIn.getUserRole() == UserRole.SALESMAN && !loggedIn.equals(existingManif.getSalesman())) {
 				halt(HttpStatus.BAD_REQUEST_400, "Salesman can only edit his own manifestations");
 			}
+			if (loggedIn.getUserRole() == UserRole.SALESMAN) {
+				// When salesman edits his own manifestation, manif status will change to
+				// INACTIVE
+				// because admin has to approve the changes because a lot of critical details
+				// can be changed
+				newEntity.setStatus(ManifestationStatus.INACTIVE.name());
+			}
 			Manifestation savedEntity = manifService.save(newEntity);
 
 			return g.toJson(ManifToManifDTO.convert(savedEntity));
@@ -244,7 +266,6 @@ public class ManifestationControler {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// No login needed for this request.
 			// TODO add pagination
 			res.type("application/json");
 
@@ -254,10 +275,17 @@ public class ManifestationControler {
 
 			final Map<String, String> queryParams = new HashMap<>();
 			req.queryMap().toMap().forEach((k, v) -> {
-				queryParams.put(k, v[0]);
+				if (!v[0].trim().isBlank()) {
+					queryParams.put(k, v[0]);
+				}
 			});
 
-			ManifestationSearchDTO searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+			ManifestationSearchDTO searchParams = null;
+			try {
+				searchParams = g.fromJson(g.toJson(queryParams), ManifestationSearchDTO.class);
+			} catch (Exception e) {
+				searchParams = new ManifestationSearchDTO();
+			}
 
 			Collection<Manifestation> foundEntities = manifService.findBySalesman(idu, searchParams);
 			if (foundEntities == null) {
@@ -286,6 +314,94 @@ public class ManifestationControler {
 		}
 	};
 
+	public final Route findOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");
+
+			String id = req.params("idmt");
+
+			ManifestationType foundEntities = manifService.findOneManifestationType(id);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Not found manifestation type.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route addOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+
+			res.type("application/json");
+
+			String body = req.body();
+
+			ManifestationTypeDTO newEntity = null;
+			try {
+				newEntity = g.fromJson(body, ManifestationTypeDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
+
+			ManifestationType foundEntities = manifService.putOneManifestationType(null, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Name Already exists.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route putOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+
+			res.type("application/json");
+
+			String id = req.params("idmt");
+			String body = req.body();
+
+			ManifestationTypeDTO newEntity = null;
+			try {
+				newEntity = g.fromJson(body, ManifestationTypeDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid data");
+			}
+
+			ManifestationType foundEntities = manifService.putOneManifestationType(id, newEntity);
+			if (foundEntities == null) {
+				halt(HttpStatus.NOT_FOUND_404, "Name already exists or old-Name is invalid.");
+			}
+
+			return g.toJson(ManifTypeToManifTypeDTO.convert(foundEntities));
+		}
+	};
+
+	public final Route deleteOneManifestationType = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+			userController.authenticateAdmin.handle(req, res);
+
+			// res.type("application/json");
+			String id = req.params("idmt");
+			ManifestationType deletedEntity = manifService.deleteOneManifestationType(id);
+			if (deletedEntity == null) {
+				halt(HttpStatus.NOT_FOUND_404);
+			}
+
+			return HttpStatus.NO_CONTENT_204;
+		}
+	};
+
 	public final Route findAllCommentsFromManifestation = new Route() {
 
 		@Override
@@ -310,8 +426,8 @@ public class ManifestationControler {
 			if (loggedIn != null && (loggedIn.getUserRole() == UserRole.ADMIN
 					|| (loggedIn.getUserRole() == UserRole.SALESMAN && manif.getSalesman().equals(loggedIn)))) {
 				foundEntities = manifService.findAllCommentsFromManifestation(idm);
-			}else {
-					foundEntities = manifService.findAllApprovedCommentsForManif(idm);
+			} else {
+				foundEntities = manifService.findAllApprovedCommentsForManif(idm);
 			}
 
 			if (foundEntities == null) {
@@ -321,13 +437,11 @@ public class ManifestationControler {
 			return g.toJson(CommentToCommentDTO.convert(foundEntities));
 		}
 	};
-	
-	
-	public final Route saveOneComment = new Route() {
+
+	public final Route addOneComment = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// TODO add pagination
 
 			res.type("application/json");
 			String idm = req.params("idm");
@@ -340,45 +454,95 @@ public class ManifestationControler {
 
 			String body = req.body();
 
-
 			CommentDTO newEntity = g.fromJson(body, CommentDTO.class);
-			
-			userController.authenticateUser.handle(req,res);
+			try {
+				newEntity = g.fromJson(body, CommentDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid Data");
+			}
+
+			userController.authenticateUser.handle(req, res);
 			User loggedIn = userController.getAuthedUser(req);
 
 			Comment comment = null;
-			
+
 			if (loggedIn == null) {
 				halt(HttpStatus.FORBIDDEN_403, "You are not logged in");
-			}
-			else if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
+			} else if (loggedIn.getUserRole() == UserRole.CUSTOMER) {
 				newEntity.setApproved(CommentStatus.PENDING.name());
 				comment = manifService.addUniqueComment(newEntity);
-			}else if (loggedIn.getUserRole() == UserRole.ADMIN || loggedIn.getUserRole() == UserRole.CUSTOMER) {
+			} else if (loggedIn.getUserRole() == UserRole.ADMIN || loggedIn.getUserRole() == UserRole.SALESMAN) {
 				comment = manifService.addUniqueComment(newEntity);
 			}
-			
+
 			if (comment == null) {
-				halt(HttpStatus.BAD_REQUEST_400, "Your comment is not valid");
+				halt(HttpStatus.BAD_REQUEST_400, "Your comment was not added");
 			}
 
 			return g.toJson(CommentToCommentDTO.convert(comment));
 		}
 	};
-	
+
+	public final Route editOneComment = new Route() {
+
+		@Override
+		public Object handle(Request req, Response res) throws Exception {
+
+			res.type("application/json");
+			String idc = req.params("idc");
+
+			Comment foundEntity = manifService.findOneComment(idc);
+
+			if (foundEntity == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Comments doesn't exist");
+			}
+
+			String body = req.body();
+
+			CommentDTO newEntity = g.fromJson(body, CommentDTO.class);
+			try {
+				newEntity = g.fromJson(body, CommentDTO.class);
+			} catch (Exception e) {
+				halt(HttpStatus.BAD_REQUEST_400, "Invalid Data");
+			}
+
+			userController.authenticateSalesmanOrAdmin.handle(req, res);
+			User loggedIn = userController.getAuthedUser(req);
+
+			Comment comment = null;
+
+			if (loggedIn == null) {
+				halt(HttpStatus.UNAUTHORIZED_401, "You are not logged in");
+			} else if (loggedIn.getUserRole() == UserRole.CUSTOMER
+					&& loggedIn.getUsername() == newEntity.getCustomer()) {
+				newEntity.setApproved(CommentStatus.PENDING.name());
+				comment = manifService.updateComment(newEntity);
+			} else if (loggedIn.getUserRole() == UserRole.ADMIN || (loggedIn.getUserRole() == UserRole.SALESMAN
+					&& foundEntity.getManifestation().getSalesman().equals(loggedIn))) {
+				comment = manifService.updateComment(newEntity);
+			} else {
+				halt(HttpStatus.FORBIDDEN_403, "You can only edit your own comment");
+			}
+
+			if (comment == null) {
+				halt(HttpStatus.BAD_REQUEST_400, "Your comment was not updated");
+			}
+
+			return g.toJson(CommentToCommentDTO.convert(comment));
+		}
+	};
+
 	public final Route deleteManifestationComment = new Route() {
 
 		@Override
 		public Object handle(Request req, Response res) throws Exception {
-			// TODO: Consider if user can delete comment
-			// userController.authenticateAdmin.handle(req, res);
+			userController.authenticateAdmin.handle(req, res);
 
-		//	String manifId = req.params("idm");
-			String ticketId = req.params("idc");
-			
-			Comment deletedEntity = manifService.deleteComment(ticketId);
+			String commentId = req.params("idc");
+
+			Comment deletedEntity = manifService.deleteComment(commentId);
 			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
+				halt(HttpStatus.NOT_FOUND_404, "Comment was not deleted!");
 			}
 
 			return HttpStatus.NO_CONTENT_204;
@@ -450,7 +614,7 @@ public class ManifestationControler {
 			return null;
 		}
 	}
-	
+
 	public final Route findOneComment = new Route() {
 
 		@Override
@@ -467,23 +631,4 @@ public class ManifestationControler {
 		}
 	};
 
-	public final Route deleteOneManifestationType = new Route() {
-
-		@Override
-		public Object handle(Request req, Response res) throws Exception {
-			userController.authenticateAdmin.handle(req, res);
-
-			// res.type("application/json");
-			String id = req.params("idmt");
-			ManifestationType deletedEntity = manifService.deleteOneManifestationType(id);
-			if (deletedEntity == null) {
-				halt(HttpStatus.NOT_FOUND_404);
-			}
-
-			return HttpStatus.NO_CONTENT_204;
-		}
-	};
-	
-	
 }
-

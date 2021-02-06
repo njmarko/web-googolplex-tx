@@ -75,17 +75,23 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public Ticket save(Ticket entity) {
-		return this.ticketDAO.save(entity);
+		Ticket saved = this.ticketDAO.save(entity);
+		this.ticketDAO.saveFile();
+		return saved;
 	}
 
 	@Override
 	public Ticket delete(String key) {
-		return this.ticketDAO.delete(key);
+		Ticket deleted = this.ticketDAO.delete(key);
+		ticketDAO.saveFile();
+		return deleted;
 	}
 
 	@Override
 	public Ticket update(Ticket entity) {
-		return this.ticketDAO.save(entity);
+		Ticket saved = this.ticketDAO.save(entity);
+		this.ticketDAO.saveFile();
+		return saved;
 	}
 
 	@Override
@@ -217,7 +223,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public Collection<Ticket> findAllByManifestation(String key) {
 		Manifestation manifestation = manifestationDAO.findOne(key);
-		return manifestation.tickets;
+		return manifestation.getTickets();
 	}
 
 	@Override
@@ -246,7 +252,7 @@ public class TicketServiceImpl implements TicketService {
 		
 		
 		
-		Double total = calculatePrice(reservation.getTicketType(), reservation.getQuantity(), manifestation.getRegularPrice());
+		Double total = calculatePrice(reservation.getTicketType(), reservation.getQuantity(), manifestation.getRegularPrice(), customer.getCustomerType());
 		Double points = calculatePoints(total);
 		
 		double customerPoints = customer.getPoints() + points;
@@ -256,8 +262,9 @@ public class TicketServiceImpl implements TicketService {
 		
 		Collection<Ticket> tickets = new ArrayList<Ticket>();
 		
+		Double individualTicketPrice = ((double) Math.round(total/reservation.getQuantity() * 10)) / 10;
 		for (int i = 0; i < reservation.getQuantity() ; ++i) {
-			Ticket ticket = new Ticket(ticketDAO.findNextId(), manifestation.getDateOfOccurence(), total, reservation.getTicketType(), TicketStatus.RESERVED, null, false, customer, manifestation);
+			Ticket ticket = new Ticket(ticketDAO.findNextId(), manifestation.getDateOfOccurence(),individualTicketPrice , reservation.getTicketType(), TicketStatus.RESERVED, null, false, customer, manifestation);
 			customer.getTickets().add(ticket);
 			manifestation.getTickets().add(ticket);
 			
@@ -266,7 +273,6 @@ public class TicketServiceImpl implements TicketService {
 		}
 
 		
-		// TODO: should I save
 		ticketDAO.saveFile();
 		userDAO.saveFile();
 		manifestationDAO.saveFile();
@@ -276,7 +282,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public CustomerType determineCustomerType(Double points) {
 
-		Collection<CustomerType> custTypes = custTypeDAO.findAll();
+		Collection<CustomerType> custTypes = this.findallCustomerTypes();
 
 		if (custTypes == null) {
 			return null;
@@ -300,9 +306,11 @@ public class TicketServiceImpl implements TicketService {
 		return adequateType;
 	}
 	
-	public static double calculatePrice(TicketType ticketType, int quantity, double regularPrice) {
+	public static double calculatePrice(TicketType ticketType, int quantity, double regularPrice, CustomerType custType) {
 		double multiplier = typePrices.get(ticketType);
-		double total = regularPrice * multiplier * quantity;
+		// if discount is 5% i will multiply total price with 0.95
+		double discount = 1d -custType.getDiscount() /100d; 
+		double total = regularPrice * multiplier * quantity * discount;
 		return ((double) Math.round(total * 10)) / 10;
 
 	}
@@ -312,6 +320,11 @@ public class TicketServiceImpl implements TicketService {
 		return ((double) Math.round(points * 10)) / 10;
 	}
 
+	public static double calculateLosedPoints(double total) {
+		double points = total / 1000 * 133 * 4;
+		return ((double) Math.round(points * 10)) / 10;
+	}
+	
 	@Override
 	public Ticket cancelTicket(String key) {
 		Ticket ticket = findOne(key);
@@ -323,10 +336,33 @@ public class TicketServiceImpl implements TicketService {
 			throw new IllegalArgumentException("You cannot cancel manifestation in 7 days before beginning");
 		}
 		
+		double losedPoints = calculateLosedPoints(ticket.getPrice());
+		
+		Manifestation manifestation = ticket.getManifestation();
+		Customer customer = ticket.getCustomer();
+		
+		manifestation.setAvailableSeats(manifestation.getAvailableSeats() + 1);
+		customer.setPoints(customer.getPoints() - losedPoints);
+		
 		ticket.setCancelationDate(LocalDateTime.now());
 		ticket.setTicketStatus(TicketStatus.CANCELED);
+		
+		CustomerType newType = determineCustomerType(customer.getPoints());
+		if (newType != null) {
+			customer.setCustomerType(newType);
+		}
+		
 		ticketDAO.saveFile();
+		userDAO.saveFile();
+		manifestationDAO.saveFile();
 		return ticket;
+	}
+
+	@Override
+	public Collection<CustomerType> findallCustomerTypes() {
+		return this.custTypeDAO.findAll().stream().filter((ent) -> {
+			return !ent.getDeleted();
+		}).collect(Collectors.toList());
 	}
 
 }

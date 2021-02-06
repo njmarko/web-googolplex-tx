@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import model.Comment;
 import model.Customer;
+import model.CustomerType;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationType;
@@ -33,8 +34,10 @@ import repository.ManifestationTypeDAO;
 import repository.UserDAO;
 import service.ManifestationService;
 import web.dto.CommentDTO;
+import web.dto.CustomerTypeDTO;
 import web.dto.ManifestationDTO;
 import web.dto.ManifestationSearchDTO;
+import web.dto.ManifestationTypeDTO;
 import web.dto.TicketSearchDTO;
 
 public class ManifestationServiceImpl implements ManifestationService {
@@ -80,7 +83,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation findOne(String key) {
 		Manifestation found = this.manifestationDAO.findOne(key);
-		if (found != null && found.getDeleted()) {
+		if (found == null || found.getDeleted()) {
 			return null;
 		}
 		return found;
@@ -95,12 +98,16 @@ public class ManifestationServiceImpl implements ManifestationService {
 
 	@Override
 	public Manifestation delete(String key) {
-		return this.manifestationDAO.delete(key);
+		Manifestation deleted = this.manifestationDAO.delete(key);
+		this.manifestationDAO.saveFile();
+		return deleted;
 	}
 
 	@Override
 	public Manifestation update(Manifestation entity) {
-		return this.manifestationDAO.save(entity);
+		Manifestation updated = this.manifestationDAO.save(entity);
+		this.manifestationDAO.saveFile();
+		return updated;
 	}
 
 	@Override
@@ -266,7 +273,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}
 		if (found == null) {
 			found = new Manifestation();
+			found.setComments(new ArrayList<Comment>());
+			found.setTickets(new ArrayList<Ticket>());
 			found.setId(manifestationDAO.findNextId());
+			
 			found.setDeleted(false);	
 		}
 		
@@ -283,6 +293,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 		}
 		for (Manifestation m : manifs) {
 			if (m.getStatus() == ManifestationStatus.ACTIVE
+					&& !m.equals(found)
 					&& m.getDateOfOccurence().toLocalDate().isEqual(dateOfOccurence.toLocalDate())
 					&& m.getLocation().getCity().equals(dto.getLocation().getCity())
 					&& m.getLocation().getStreet().equals(dto.getLocation().getStreet())
@@ -358,7 +369,9 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Comment deleteComment(String key) {
 		// TODO: save to file
-		return commentDAO.delete(key);
+		Comment deleted = commentDAO.delete(key);
+		commentDAO.saveFile();
+		return deleted;
 	}
 	
 	@Override
@@ -370,17 +383,76 @@ public class ManifestationServiceImpl implements ManifestationService {
 		return found;
 	}
 
+	
+	@Override
+	public ManifestationType findOneManifestationType(String key) {
+		ManifestationType found = this.manifestationTypeDAO.findOne(key);
+		if (found == null || found.getDeleted())
+			return null;
+		return found;
+	}
+
+	@Override
+	public ManifestationType putOneManifestationType(String key, ManifestationTypeDTO dto) {
+		ManifestationType foundEntity = this.findOneManifestationType(dto.getName());
+		if (!dto.getName().equalsIgnoreCase(key) && foundEntity != null)	// Already exists
+			return null;
+		
+		ManifestationType manifestationType = null;
+		if (key != null) {
+			manifestationType = this.findOneManifestationType(key);
+			if (manifestationType == null)	// Not found old
+				return null;
+			
+		}
+		
+		if (manifestationType == null) {
+			manifestationType = new ManifestationType();
+			manifestationType.setDeleted(false);
+		} else if (!dto.getName().equalsIgnoreCase(key)) {
+			
+			manifestationTypeDAO.delete(key);
+			manifestationType = new ManifestationType();
+			manifestationType.setDeleted(false);
+			
+		}
+		manifestationType.setName(dto.getName());
+		manifestationTypeDAO.save(manifestationType);
+		manifestationTypeDAO.saveFile();
+		
+		return manifestationType;	
+	}
+	
+	@Override
+	public ManifestationType postOneManifestationType(ManifestationTypeDTO dto) {
+		ManifestationType manifestationType = this.findOneManifestationType(dto.getName());
+		if (manifestationType != null)	// Already exists
+			return null;
+		
+		manifestationType = new ManifestationType();
+		manifestationType.setDeleted(false);	
+		manifestationType.setName(dto.getName());
+		manifestationTypeDAO.save(manifestationType);
+		manifestationTypeDAO.saveFile();
+		
+		return manifestationType;
+	}
+	
 	@Override
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
-		return manifestationTypeDAO.delete(key);
+		ManifestationType deleted = manifestationTypeDAO.delete(key);
+		manifestationTypeDAO.saveFile();
+		return deleted;
 	}
 
 	@Override
 	public Comment save(CommentDTO dto) {
 		Comment comment = null;
+		Boolean alreadyExists = false;
 		if (dto.getId() != null) {
 			comment = commentDAO.findOne(dto.getId());
+			alreadyExists = true;
 		}else {
 			comment = new Comment();
 			comment.setId(commentDAO.findNextId());
@@ -440,17 +512,21 @@ public class ManifestationServiceImpl implements ManifestationService {
 		
 		
 		
+		if (alreadyExists == false) {
+			cust.getComments().add(comment);
+			manif.getComments().add(comment);
+			
+			manifestationDAO.save(manif);
+			manifestationDAO.saveFile();
+			
+
+			userDAO.save(cust);
+			userDAO.saveFile();
+		}
+
 		commentDAO.save(comment);
 		commentDAO.saveFile();
 		
-		manif.getComments().add(comment);
-		manifestationDAO.save(manif);
-		manifestationDAO.saveFile();
-		
-		cust.getComments().add(comment);
-		userDAO.save(cust);
-		userDAO.saveFile();
-
 		return comment;
 	}
 
@@ -475,7 +551,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 				}
 				// user must not already have an accepted comment. If accepted comment exists, new one will not be added
 				for (Comment com : cust.getComments()) {
-					if (com.getManifestation().getId().equals(dto.getManifestation()) && com.getApproved() == CommentStatus.ACCEPTED) {
+					if (com.getManifestation().getId().equals(dto.getManifestation()) && (com.getApproved() == CommentStatus.ACCEPTED || com.getApproved() == CommentStatus.PENDING)) {
 						return null;
 					}
 				}
@@ -513,6 +589,56 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}
 		}	
 		return null;
+	}
+
+	@Override
+	public Comment updateComment(CommentDTO dto) {
+		
+		if (dto.getCustomer() != null && dto.getManifestation()!= null) {
+			User tempUser = userDAO.findOne(dto.getCustomer());
+			if (tempUser.getUserRole() == UserRole.CUSTOMER) {
+				Customer cust = (Customer) tempUser;
+				Boolean hasTicket = false;
+				
+				// Comment with the forwarded ID must exist in order to be updated
+				if (dto.getId() == null || commentDAO.findOne(dto.getId()) == null) {
+					return null;
+				}
+				
+				// User has to have a ticket for this manifestation
+				for (Ticket t : cust.getTickets()) {
+					if (t.getManifestation().getId().equals(dto.getManifestation()) && t.getTicketStatus() == TicketStatus.RESERVED) {
+						hasTicket = true;
+						break;
+					}
+				}
+				if (hasTicket == false) {
+					return null;
+				}
+				
+				// Comment can only be added to the manifestation that is finished and is active
+				Manifestation manif = manifestationDAO.findOne(dto.getManifestation());
+				
+				// manif must be active
+				if (manif == null || manif.getStatus() == ManifestationStatus.INACTIVE) {
+					return null;
+				}
+				
+				LocalDate manifDate = manif.getDateOfOccurence().toLocalDate();
+				LocalDate currentDate = LocalDate.now();
+				
+				if (currentDate.isAfter(manifDate)) {
+					// rest of the checks are in the save method
+					return this.save(dto);	
+				}
+				else {
+					return null;
+				}
+
+			}
+		}	
+		return null;
+		
 	}
 
 

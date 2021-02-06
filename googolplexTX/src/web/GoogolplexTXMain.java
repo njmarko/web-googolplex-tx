@@ -50,18 +50,18 @@ public class GoogolplexTXMain {
 		
 		UserController userController = new UserController(userServiceImpl);
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
-		TicketController ticketController = new TicketController(ticketServiceImpl,userController);
+		TicketController ticketController = new TicketController(ticketServiceImpl,userController, manifestationServiceImpl);
 			
-		//DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
-		//daoFileParser.loadData();
-		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
-		
-		userDAO.saveFile();
-		manifestationDAO.saveFile();
-		ticketDAO.saveFile();
-		commentDAO.saveFile();
-		manifestationTypeDAO.saveFile();
-		customerTypeDAO.saveFile();
+		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
+		daoFileParser.loadData();
+//		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
+//		
+//		userDAO.saveFile();
+//		manifestationDAO.saveFile();
+//		ticketDAO.saveFile();
+//		commentDAO.saveFile();
+//		manifestationTypeDAO.saveFile();
+//		customerTypeDAO.saveFile();
 		
 		
 		/**
@@ -149,7 +149,7 @@ public class GoogolplexTXMain {
 //						before("*",UserController.authenticateUser); // all ticket paths require login
 
 						get("", manifestationControler.findAllCommentsFromManifestation); // req salesman	
-						post("", manifestationControler.saveOneComment);
+						post("", manifestationControler.addOneComment);
 						path("/:idc", ()->{
 							get("", manifestationControler.findOneComment); // req salesman	
 							delete("", manifestationControler.deleteManifestationComment);
@@ -212,16 +212,21 @@ public class GoogolplexTXMain {
 			
 			path("/manifestation-type",()->{
 				get("",manifestationControler.findAllManifestationTypes);
+				post("", manifestationControler.addOneManifestationType);
+	
 				path("/:idmt", ()->{
-				//	get("", );
+					get("", manifestationControler.findOneManifestationType);
+					put("", manifestationControler.putOneManifestationType);
 					delete("", manifestationControler.deleteOneManifestationType);
 				});
 			});
 			
 			path("/customer-type",()->{
 				get("",userController.findAllCustomerTypes);
+				post("", userController.addOneCustomerType);
 				path("/:idct", ()->{
 					get("", userController.findOneCustomerType);
+					put("", userController.putOneCustomerType);
 					delete("", userController.deleteOneCustomerType);
 				});
 			});
@@ -229,6 +234,7 @@ public class GoogolplexTXMain {
 			path("/tickets",()->{
 				get("",ticketController.findAllTickets); // TODO req admin
 				path("/:idt",()->{
+					delete("",ticketController.deleteOneTicket);
 					path("/cancel",()->{
 						patch("",ticketController.cancelOneTicket); // TODO req admin
 					});				
@@ -237,7 +243,8 @@ public class GoogolplexTXMain {
 			
 			path("/comments",()->{
 				path("/:idc",()->{
-					patch("", manifestationControler.saveOneComment);
+					patch("", manifestationControler.editOneComment);
+					delete("", manifestationControler.deleteManifestationComment);
 				});
 			});
 		});

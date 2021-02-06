@@ -8,8 +8,6 @@ public class LoginDTO {
 	private String password;
 
 	public String validate() {
-		// TODO check for aditional things about password maybe 8 characters etc
-		// Empty is null or "". blank is just "" or white spaces
 		String err = null;
 		if (StringUtils.isEmpty(this.username)) {
 			err = "Username must not be empty";
@@ -24,6 +22,10 @@ public class LoginDTO {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param password
+	 */
 	public LoginDTO(String username, String password) {
 		super();
 		this.username = username;

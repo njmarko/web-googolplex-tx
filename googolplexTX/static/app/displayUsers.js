@@ -103,53 +103,41 @@ Vue.component("display-users", {
 
 
 		<h1 class="text-center">Registered users</h1>
-		<div  v-for="p in users" >
-			<table v-bind:style="{ background: p.deleted ? '#aaa' : ''}" class="table table-hover table-bordered table-striped text-center">
+		<div>
+			<table class="table table-hover table-bordered table-striped text-center overflow-table">
 				<tbody >
-					<tr>
-						<td>Username {{p.deleted ? 'deleted' : 'ziv'}}</td>
-						<td>{{p.username}} <span v-if="p.blocked" class="badge badge-danger">Blocked</span></td>
-					</tr>
-					<tr>
-						<td>First name</td>
-						<td>{{p.firstName }}</td>
-					</tr>
-					<tr>
-						<td>Last name</td>
-						<td>{{p.lastName }}</td>
-					</tr>
-					<tr>
-						<td>Gender</td>
-						<td>{{p.gender}}</td>
-					</tr>
-					<tr>
-						<td>Birthdate</td>
-						<td>{{p.birthDate}}</td>
-					</tr>
-					<tr>
-						<td>User role</td>
-						<td>{{p.userRole}}</td>
-					</tr>
-					<tr>
-						<td>Blocked</td>
-						<td>{{p.blocked}}</td>
-					</tr>
-					<tr v-if="p.userRole == 'CUSTOMER'">
-						<td>Points</td>
-						<td>{{p.points}}</td>
-					</tr>
-					<tr v-if="p.userRole == 'CUSTOMER'">
-						<td>Customer type</td>
-						<td>{{p.customerType}}</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2">
-							<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="blockUser(p, p.blocked)" v-bind:class="[p.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{p.blocked ? 'UNBLOCK' : 'BLOCK' }} {{p.username}}</button>
-							<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="deleteUser(p)" class="btn btn-danger text-uppercase">DELETE {{p.username}}</button>
-						</td>
-					</tr>
-				</tbody>
+				<tr>
+					<th>Username</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Gender</th>
+					<th>Birthdate</th>
+					<th>UserRole</th>
+					<th>CustomerType</th>
+					<th>Points</th>
+					<th>Blocked</th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr v-bind:style="{ background: p.deleted ? '#aaa' : ''}" v-for="p in users">
+					<td>{{ p.username }} <span v-if="p.deleted == true" class="badge badge-danger">DELETED</span></td>
+					<td>{{ p.firstName }}</td>
+					<td>{{ p.lastName }}</td>
+					<td>{{ p.gender }}</td>
+					<td>{{ formatDate(p.birthDate) }}</td>
+					<td>{{ p.userRole }}</td>
+					<td>{{ p.customerType }}</td>
+					<td>{{ p.points }}</td>
+					<td>{{ p.blocked }}</td>
+
+					<td>
+						<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="blockUser(p, p.blocked)" v-bind:class="[p.blocked ? 'btn-info' : 'btn-danger', 'btn', 'btn-block']">{{p.blocked ? 'UNBLOCK' : 'BLOCK' }} {{p.username}}</button>
+					</td>
+					<td>
+						<button v-bind:disabled="p.userRole == 'ADMIN' || p.deleted" v-on:click="deleteUser(p)" class="btn btn-danger text-uppercase btn-block">DELETE {{p.username}}</button>
+					</td>
+				</tr>
+			 	</tbody>
 			</table>
 			<br>
 		</div>
@@ -170,9 +158,6 @@ Vue.component("display-users", {
 				.get('api/users', { params: this.searchParams })
 				.then(response => {
 					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-					});
 				})
 			this.$refs.focusMe.focus();
 			axios
@@ -190,14 +175,15 @@ Vue.component("display-users", {
 			event.preventDefault();
 			this.$router.push({ query: {} });
 			let sp = this.searchParams;
+			if(sp.userRole != 'CUSTOMER') {
+				// Don't allow for customer type to be sent if there Customer is not selected
+				delete sp.customerType;	
+			}
 			this.$router.push({ query: sp });
 			axios
 				.get('api/users', { params: sp })
 				.then(response => {
 					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-					});
 				})
 		},
 		clearParameters: function (event) {
@@ -209,9 +195,6 @@ Vue.component("display-users", {
 				.get('api/users', { params: sp })
 				.then(response => {
 					this.users = response.data;
-					this.users.forEach(element => {
-						element.birthDate = new Date(element.birthDate).toISOString().substring(0, 10);
-					});
 				})
 		},
 		blockUser : function(obj, block) {
@@ -243,11 +226,15 @@ Vue.component("display-users", {
 				.delete('api/users/' + obj.username)
 				.then(response => {
 					obj.deleted = true;
+					this.$forceUpdate();
 
 					//TODO: Consider if you want to update model
 					//this.users = this.users.filter(item => item !== obj);
 			});
-		}
+		},
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 
 
 	},

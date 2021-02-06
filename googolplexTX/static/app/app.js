@@ -15,7 +15,9 @@ const EditManif = { template: '<div><navbar></navbar><edit-manif></edit-manif><f
 const CustomerTickets = { template: '<div><navbar></navbar><tickets></tickets><footer-comp></footer-comp></div>' }
 const SuspiciousUsers = { template: '<div><navbar></navbar><suspicious-users></suspicious-users><footer-comp></footer-comp></div>' }
 const ManifTypes = { template: '<div><navbar></navbar><manifestation-types></manifestation-types><footer-comp></footer-comp></div>' }
+const AddManifTypes = { template: '<div><navbar></navbar><add-manifestation-type></add-manifestation-type><footer-comp></footer-comp></div>' }
 const CustTypes = { template: '<div><navbar></navbar><customer-types></customer-types><footer-comp></footer-comp></div>' }
+const AddCustType = { template: '<div><navbar></navbar><add-customer-type></add-customer-type><footer-comp></footer-comp></div>' }
 
 const router = new VueRouter({
   mode: 'hash',
@@ -40,7 +42,11 @@ const router = new VueRouter({
     { path: '/tickets', component: CustomerTickets },
     { path: '/suspicious-users', component: SuspiciousUsers },
     { path: '/manifestation-types', component: ManifTypes },
+    { path: '/manifestation-types/add', name: 'addManifType', component: AddManifTypes },
+    { path: '/manifestation-types/edit/:manifestationTypeId', name: 'editManifType', component: AddManifTypes },
     { path: '/customer-types', component: CustTypes },
+    { path: '/customer-types/add', name: 'addCustType', component: AddCustType },
+    { path: '/customer-types/edit/:customerTypeId', name: 'editCustType', component: AddCustType },
 
   ]
 });
