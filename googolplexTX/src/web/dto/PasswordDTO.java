@@ -18,6 +18,11 @@ public class PasswordDTO {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param oldPassword
+	 * @param newPassword
+	 */
 	public PasswordDTO(String username, String oldPassword, String newPassword) {
 		super();
 		this.username = username;

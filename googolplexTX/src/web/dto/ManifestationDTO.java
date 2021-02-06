@@ -5,7 +5,6 @@ import java.util.Collection;
 import model.Location;
 import model.Manifestation;
 import model.User;
-import model.enumerations.ManifestationStatus;
 import model.enumerations.UserRole;
 import spark.utils.StringUtils;
 

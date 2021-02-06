@@ -123,9 +123,10 @@ public class TicketSearchDTO {
 
 	@Override
 	public String toString() {
-		return "TicketSearchDTO [manifestationName=" + manifestationName + ", minPrice=" + minPrice + ", maxPrice=" + maxPrice
-				+ ", beginDate=" + beginDate + ", endDate=" + endDate + ", ascending=" + ascending + ", sortCriteria="
-				+ sortCriteria + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus + "]";
+		return "TicketSearchDTO [manifestationName=" + manifestationName + ", minPrice=" + minPrice + ", maxPrice="
+				+ maxPrice + ", beginDate=" + beginDate + ", endDate=" + endDate + ", ascending=" + ascending
+				+ ", sortCriteria=" + sortCriteria + ", ticketType=" + ticketType + ", ticketStatus=" + ticketStatus
+				+ "]";
 	}
 
 }

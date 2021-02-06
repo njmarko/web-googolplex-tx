@@ -7,6 +7,9 @@ public class ManifestationTypeDTO {
 		super();
 	}
 
+	/**
+	 * @param name
+	 */
 	public ManifestationTypeDTO(String name) {
 		super();
 		this.name = name;

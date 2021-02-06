@@ -16,7 +16,6 @@ public class User {
 	private Boolean blocked;
 	private Boolean deleted;
 
-
 	public User() {
 		super();
 	}

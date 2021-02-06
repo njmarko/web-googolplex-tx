@@ -1,7 +1,6 @@
 package web.dto;
 
 import model.enumerations.UserRole;
-import spark.utils.SparkUtils;
 import spark.utils.StringUtils;
 
 public class RegisterDTO {
@@ -52,8 +51,7 @@ public class RegisterDTO {
 				if (!userRole.equals("CUSTOMER")) {
 					err = "You are not allowed to register that user type!";
 				}
-			}
-			else if (loggedInUserRole == UserRole.ADMIN && userRole.equals("ADMIN")) {
+			} else if (loggedInUserRole == UserRole.ADMIN && userRole.equals("ADMIN")) {
 				err = " You are not allowed to register that user type!";
 			}
 		}
@@ -64,6 +62,16 @@ public class RegisterDTO {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param password1
+	 * @param password2
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 */
 	public RegisterDTO(String username, String password1, String password2, String firstName, String lastName,
 			String gender, Long birthDate, String userRole) {
 		super();

@@ -17,7 +17,7 @@ public interface GenericDAO<T, KEY> {
 	T findOne(KEY key);
 
 	T save(T object);
-	
+
 	T delete(KEY key);
 
 	Boolean saveFile();

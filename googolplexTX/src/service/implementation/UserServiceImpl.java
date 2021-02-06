@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import model.Customer;
 import model.CustomerType;
 import model.Manifestation;
-import model.ManifestationType;
 import model.Salesman;
 import model.Ticket;
 import model.User;
@@ -156,7 +155,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User entity) {
-		return this.userDAO.save(entity);
+		User saved = this.userDAO.save(entity);
+		this.userDAO.saveFile();
+		return saved;
 	}
 
 	@Override
@@ -179,7 +180,9 @@ public class UserServiceImpl implements UserService {
 	public User update(User entity) {
 		User user = findOne(entity.getUsername());
 		entity.setPassword(user.getPassword());
-		return this.userDAO.save(entity);
+		User saved = this.userDAO.save(entity);
+		this.userDAO.saveFile();
+		return saved;
 	}
 	
 	
@@ -376,8 +379,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public CustomerType deleteOneCustomerType(String key) {
-		// TODO: save to file
-		return custTypeDAO.delete(key);
+		CustomerType deleted = custTypeDAO.delete(key);
+		custTypeDAO.saveFile();
+		return deleted;
 	}
 
 	@Override
@@ -481,9 +485,11 @@ public class UserServiceImpl implements UserService {
 		if (user == null)
 			return null;
 		
-		if (user.getUserRole() != UserRole.ADMIN)
+		if (user.getUserRole() != UserRole.ADMIN) {
 			user.setBlocked(true);
-		
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+		}
 		return user;
 	}
 
@@ -493,9 +499,12 @@ public class UserServiceImpl implements UserService {
 		if (user == null || user.getUserRole() == UserRole.ADMIN)
 			return null;
 		
-		if (user.getUserRole() != UserRole.ADMIN)
+		if (user.getUserRole() != UserRole.ADMIN) {
 			user.setBlocked(false);
-		
+			this.userDAO.save(user);
+			this.userDAO.saveFile();
+		}
+			
 		return user;
 	}
 

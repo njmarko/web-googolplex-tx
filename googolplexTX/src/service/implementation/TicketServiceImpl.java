@@ -75,7 +75,9 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public Ticket save(Ticket entity) {
-		return this.ticketDAO.save(entity);
+		Ticket saved = this.ticketDAO.save(entity);
+		this.ticketDAO.saveFile();
+		return saved;
 	}
 
 	@Override
@@ -87,7 +89,9 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public Ticket update(Ticket entity) {
-		return this.ticketDAO.save(entity);
+		Ticket saved = this.ticketDAO.save(entity);
+		this.ticketDAO.saveFile();
+		return saved;
 	}
 
 	@Override
@@ -269,7 +273,6 @@ public class TicketServiceImpl implements TicketService {
 		}
 
 		
-		// TODO: should I save
 		ticketDAO.saveFile();
 		userDAO.saveFile();
 		manifestationDAO.saveFile();

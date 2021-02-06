@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -17,14 +16,14 @@ import support.JsonAdapter;
 public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 
 	private Map<String, Manifestation> manifestations = new ConcurrentHashMap<String, Manifestation>();
-	
-	
+
 	public String findNextId() {
-		if (manifestations != null && manifestations.size() > 0) {		
-			Long highest = manifestations.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).findFirst().get();
-			Long id = highest + 1 ;
+		if (manifestations != null && manifestations.size() > 0) {
+			Long highest = manifestations.keySet().stream().map(Long::valueOf).sorted(Comparator.reverseOrder())
+					.findFirst().get();
+			Long id = highest + 1;
 			return id.toString();
-		}else {
+		} else {
 			return "1";
 		}
 	}
@@ -58,7 +57,7 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 		if (manifestation != null) {
 			manifestation.setDeleted(true);
 		}
-		return manifestation;	
+		return manifestation;
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class ManifestationDAO implements GenericDAO<Manifestation, String> {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
 	}
 

@@ -38,16 +38,29 @@ public class UserDTO {
 			err = "You have to enter the gender";
 		} else if (birthDate == null) {
 			err = "You have to enter the birth date";
-		} 
+		}
 		return err;
 	}
-	
-	
-	
+
 	public UserDTO() {
 		super();
 	}
 
+	/**
+	 * @param username
+	 * @param firstName
+	 * @param lastName
+	 * @param gender
+	 * @param birthDate
+	 * @param userRole
+	 * @param blocked
+	 * @param jwt
+	 * @param manifestations
+	 * @param points
+	 * @param customerType
+	 * @param comments
+	 * @param tickets
+	 */
 	public UserDTO(String username, String firstName, String lastName, String gender, Long birthDate, String userRole,
 			Boolean blocked, String jwt, Collection<String> manifestations, Double points, String customerType,
 			Collection<String> comments, Collection<String> tickets) {

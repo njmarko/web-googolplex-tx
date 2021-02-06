@@ -66,6 +66,18 @@ Vue.component("change-password", {
 </div>		  
 `
 	,
+	mounted() {
+		/*axios
+			.get('api/users/admin')
+			.then(response => {
+				
+				this.userData = response.data;
+				console.log((new Date(response.data.birthDate)).toISOString().substring(-1, 10));
+				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(-1, 10);
+				this.userData.gender = response.data.gender;
+			});
+		*/
+	},
 	methods: {
 		changePassword: function () {
 			let localUserData = JSON.parse(window.localStorage.getItem('user'));
@@ -77,7 +89,9 @@ Vue.component("change-password", {
 			}
 			axios
 				.patch('api/users/' + localUserData.username + '/change-password', userData)
-				.then(response => (alert(response.data)))
+				.then(response => {
+					this.$router.push('/profile');
+				})
 				.catch(function (error) {
 					if (error.response) {
 						component.formError = error.response.data;
@@ -93,19 +107,11 @@ Vue.component("change-password", {
 					console.log("error.config");
 					console.log(error.config);
 				});
-		}
+		},
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 	},
-	mounted() {
-		/*axios
-			.get('api/users/admin')
-			.then(response => {
-				
-				this.userData = response.data;
-				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-				this.userData.gender = response.data.gender;
-			});
-		*/
-	},
+
 
 });
