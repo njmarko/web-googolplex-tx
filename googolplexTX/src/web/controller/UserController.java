@@ -302,7 +302,7 @@ public class UserController {
 			}
 
 			if (deletedEntity.getUserRole() == UserRole.ADMIN) {
-				halt(HttpStatus.FORBIDDEN_403, "You cannot block ADMIN");
+				halt(HttpStatus.FORBIDDEN_403, "You cannot delete ADMIN");
 			}
 
 			return HttpStatus.NO_CONTENT_204;

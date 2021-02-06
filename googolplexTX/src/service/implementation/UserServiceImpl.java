@@ -170,6 +170,8 @@ public class UserServiceImpl implements UserService {
 			return user;
 		
 		user.setDeleted(true);
+		userDAO.save(user);
+		userDAO.saveFile();
 		return user;
 	}
 
@@ -254,7 +256,7 @@ public class UserServiceImpl implements UserService {
 
 		Collection<CustomerType> custTypes = custTypeDAO.findAll();
 
-		if (custTypes == null) {
+		if (custTypes == null || custTypes.isEmpty()) {
 			return null;
 		}
 
@@ -380,6 +382,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public CustomerType deleteOneCustomerType(String key) {
 		CustomerType deleted = custTypeDAO.delete(key);
+		custTypeDAO.save(deleted);
 		custTypeDAO.saveFile();
 		return deleted;
 	}

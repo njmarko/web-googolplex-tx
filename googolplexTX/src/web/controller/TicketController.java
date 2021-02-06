@@ -57,16 +57,16 @@ public class TicketController {
 			String idm = req.params("idm");
 //			userController.authenticateUser.handle(req, res);
 
-			User loggedIn = userController.getAuthedUser(req);
+//			User loggedIn = userController.getAuthedUser(req);
 
 			Manifestation manif = manifService.findOne(idm);
 			if (manif == null) {
 				halt(HttpStatus.BAD_REQUEST_400, "Manifestation doesn't exist");
 			}
 
-			if (loggedIn.getUserRole() != UserRole.ADMIN && !loggedIn.equals(manif.getSalesman())) {
-				halt(HttpStatus.FORBIDDEN_403, "You are not allowed to view tickets for this manifestation");
-			}
+//			if (loggedIn.getUserRole() != UserRole.ADMIN && !loggedIn.equals(manif.getSalesman())) {
+//				halt(HttpStatus.FORBIDDEN_403, "You are not allowed to view tickets for this manifestation");
+//			}
 
 			// ManifestationSearchDTO searchParams = gson.fromJson(gson.toJson(queryParams),
 			// ManifestationSearchDTO.class);

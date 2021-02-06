@@ -99,6 +99,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation delete(String key) {
 		Manifestation deleted = this.manifestationDAO.delete(key);
+		this.manifestationDAO.save(deleted);
 		this.manifestationDAO.saveFile();
 		return deleted;
 	}
@@ -160,11 +161,10 @@ public class ManifestationServiceImpl implements ManifestationService {
 			}).collect(Collectors.toList());
 		}
 
-		// Location in searchParams is just a string for City name OR Country name
-		// TODO Add check for Country name if it is implemented in the model
+
 		if (searchParams.getLocation() != null) {
 			entities = entities.stream().filter((ent) -> {
-				return ent.getLocation().getCity().equalsIgnoreCase(searchParams.getLocation());
+				return ent.getLocation().getCity().toLowerCase().contains(searchParams.getLocation().toLowerCase());
 			}).collect(Collectors.toList());
 		}
 
@@ -370,6 +370,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public Comment deleteComment(String key) {
 		// TODO: save to file
 		Comment deleted = commentDAO.delete(key);
+		commentDAO.save(deleted);
 		commentDAO.saveFile();
 		return deleted;
 	}
@@ -442,6 +443,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
 		ManifestationType deleted = manifestationTypeDAO.delete(key);
+		manifestationTypeDAO.save(deleted);
 		manifestationTypeDAO.saveFile();
 		return deleted;
 	}

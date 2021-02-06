@@ -7,7 +7,6 @@ Vue.component("register-form", {
 	},
 	template: ` 
 	<div class="container">
-				<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 		
 		<div v-if="registerError" class="alert alert-danger alert-dismissible">
 			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->

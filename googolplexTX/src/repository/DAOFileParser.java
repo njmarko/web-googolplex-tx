@@ -1,9 +1,13 @@
 package repository;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,15 +124,135 @@ public class DAOFileParser {
 
 	public void loadData() {
 		try {
+			this.createInitalFiles();
+			
 			this.loadCustomerTypes();
 			this.loadManifestationTypes();
 			this.loadUsers();
 			this.loadManifestations();
 			this.loadTickets();
 			this.loadComments();
+			
+			
+
+
+			for (Ticket ticket : ticketDAO.getTickets().values()) {
+				
+				Manifestation manifestation = ticket.getManifestation();
+				manifestation.getTickets().add(ticket);
+				
+			}
+
+			for (Comment comment : commentDAO.getComments().values()) {
+				Manifestation manifestation = comment.getManifestation();
+				manifestation.getComments().add(comment);
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void createInitalFiles() throws IOException {
+		String directoryName = "data/";
+	    String custTypesName = "data/customerTypes.json";
+	    String manTpeName = "data/manifestationTypes.json";
+	    String usersName = "data/users.json";
+	    String manifestationName = "data/manifestations.json";
+	    String ticketsName = "data/tickets.json";
+	    String commentsName = "data/comments.json";
+	    
+		File directory = new File(directoryName);
+	    File customerTypesFile = new File(custTypesName);
+	    File manTpeFile = new File(manTpeName);
+	    File usersFile = new File(usersName);
+	    File manifestationFile = new File(manifestationName);
+	    File ticketsFile = new File(ticketsName);
+	    File commentsFile = new File(commentsName);
+		
+		if (! directory.exists()){
+	        directory.mkdir();
+	    }
+		
+		if (! customerTypesFile.exists()) {
+			customerTypesFile.createNewFile();
+			for (CustomerType c : this.createInitCustomerTypes()) {
+				customerTypeDAO.save(c);
+			}
+			
+			customerTypeDAO.saveFile();
+		}
+		
+		if (! manTpeFile.exists()) {
+			manTpeFile.createNewFile();
+			for (ManifestationType mt : this.createInitManifestationTypes()) {
+				manifestationTypeDAO.save(mt);
+			}
+			
+			manifestationTypeDAO.saveFile();
+		}
+		
+		if (! usersFile.exists()) {
+			usersFile.createNewFile();
+			
+			for (User admin : this.createInitAdmins()) {
+				userDAO.save(admin);
+			}			
+			userDAO.saveFile();
+		}
+		
+		if (! manifestationFile.exists()) {
+			manifestationFile.createNewFile();
+			FileWriter writer = new FileWriter(manifestationFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! ticketsFile.exists()) {
+			ticketsFile.createNewFile();
+			FileWriter writer = new FileWriter(ticketsFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! commentsFile.exists()) {
+			commentsFile.createNewFile();
+			FileWriter writer = new FileWriter(commentsFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		
+	}
+	
+	
+	private Collection<User> createInitAdmins() {
+		ArrayList<User> admins = new ArrayList<User>(); 
+		admins.add( new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+				UserRole.ADMIN) );
+		admins.add( new User("root", "root", "rootFirst", "rootLast", Gender.FEMALE, LocalDate.now(),
+				UserRole.ADMIN));
+		return admins;
+	}
+	
+	private Collection<CustomerType> createInitCustomerTypes() {
+		ArrayList<CustomerType> customerTypes = new ArrayList<CustomerType>(); 
+		customerTypes.add( new CustomerType("Default", 0.0, 0.0, false) );
+		customerTypes.add( new CustomerType("Bronze", 3.0, 1000.0, false));
+		customerTypes.add( new CustomerType("Silver", 5.0, 2000.0, false));
+		customerTypes.add( new CustomerType("Gold", 8.0, 3000.0, false));
+		return customerTypes;
+	}
+	
+	private Collection<ManifestationType> createInitManifestationTypes() {
+		ArrayList<ManifestationType> manifestationTypes = new ArrayList<ManifestationType>(); 
+		manifestationTypes.add( new ManifestationType("Threatre") );
+		manifestationTypes.add( new ManifestationType("Cinema") );
+		manifestationTypes.add( new ManifestationType("Festival") );
+		return manifestationTypes;
 	}
 
 	private void loadCustomerTypes() throws IOException {

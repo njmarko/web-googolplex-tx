@@ -3,6 +3,7 @@ Vue.component("suspicious-users", {
 		var date1 = new Date();
 		var date2 = new Date();
 		date1.setDate(date2.getDate() - 30);
+		date2.setDate(date2.getDate() + 1);
 
 		return {
 			error: {},
@@ -12,7 +13,7 @@ Vue.component("suspicious-users", {
 			searchParams: {
 				startDate: date1.toDateInputValue(),
 				endDate: date2.toDateInputValue(),
-				frequency: 1,
+				frequency: 5,
 
 			},
 			formatedSearchParams: {}
@@ -20,7 +21,6 @@ Vue.component("suspicious-users", {
 	},
 	template: ` 
 <div  class="d-flex" >
-		<div id="particleJS-container" style="position:fixed; top:0; left:0;width:100%;z-index:0"></div>
 	<div id="top" class="container" >
 		<br>
 		
@@ -77,7 +77,7 @@ Vue.component("suspicious-users", {
 						<td>{{u.firstName }}</td>
 						<td>{{u.lastName }}</td>
 						<td>{{u.points}}</td>
-						<td>{{u.birthDate}}</td>
+						<td>{{formatDate(u.birthDate)}}</td>
 						<td>{{u.gender}}</td>
 						<td>
 							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" v-bind:class="[u.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>

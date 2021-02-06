@@ -83,6 +83,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public Ticket delete(String key) {
 		Ticket deleted = this.ticketDAO.delete(key);
+		ticketDAO.save(deleted);
 		ticketDAO.saveFile();
 		return deleted;
 	}
