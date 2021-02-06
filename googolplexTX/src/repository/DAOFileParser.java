@@ -160,24 +160,28 @@ public class DAOFileParser {
 		
 		if (! customerTypesFile.exists()) {
 			customerTypesFile.createNewFile();
-			FileWriter writer = new FileWriter(customerTypesFile);
-			writer.append("{}");
-			writer.flush();
-			writer.close();
+			for (CustomerType c : this.createInitCustomerTypes()) {
+				customerTypeDAO.save(c);
+			}
+			
+			customerTypeDAO.saveFile();
 		}
 		
 		if (! manTpeFile.exists()) {
 			manTpeFile.createNewFile();
-			FileWriter writer = new FileWriter(manTpeFile);
-			writer.append("{}");
-			writer.flush();
-			writer.close();
+			for (ManifestationType mt : this.createInitManifestationTypes()) {
+				manifestationTypeDAO.save(mt);
+			}
+			
+			manifestationTypeDAO.saveFile();
 		}
 		
 		if (! usersFile.exists()) {
 			usersFile.createNewFile();
 			
-			userDAO.save(createInitAdmin());
+			for (User admin : this.createInitAdmins()) {
+				userDAO.save(admin);
+			}			
 			userDAO.saveFile();
 		}
 		
@@ -212,6 +216,32 @@ public class DAOFileParser {
 		User admin1 = new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
 				UserRole.ADMIN);
 		return admin1;
+	}
+	
+	private Collection<User> createInitAdmins() {
+		ArrayList<User> admins = new ArrayList<User>(); 
+		admins.add( new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+				UserRole.ADMIN) );
+		admins.add( new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+				UserRole.ADMIN));
+		return admins;
+	}
+	
+	private Collection<CustomerType> createInitCustomerTypes() {
+		ArrayList<CustomerType> customerTypes = new ArrayList<CustomerType>(); 
+		customerTypes.add( new CustomerType("Default", 0.0, 0.0, false) );
+		customerTypes.add( new CustomerType("Bronze", 3.0, 1000.0, false));
+		customerTypes.add( new CustomerType("Silver", 5.0, 2000.0, false));
+		customerTypes.add( new CustomerType("Gold", 8.0, 3000.0, false));
+		return customerTypes;
+	}
+	
+	private Collection<ManifestationType> createInitManifestationTypes() {
+		ArrayList<ManifestationType> manifestationTypes = new ArrayList<ManifestationType>(); 
+		manifestationTypes.add( new ManifestationType("Threatre") );
+		manifestationTypes.add( new ManifestationType("Cinema") );
+		manifestationTypes.add( new ManifestationType("Festival") );
+		return manifestationTypes;
 	}
 
 	private void loadCustomerTypes() throws IOException {

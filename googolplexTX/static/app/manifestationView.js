@@ -155,7 +155,10 @@ Vue.component("manifestation-view", {
 
 		
 		<div  v-if="manifestation">
-			<h1 class="text-center">{{manifestation.name}}</h1>
+			<h1 class="text-center">{{manifestation.name}}
+				<span v-if="isOnGoing(manifestation.dateOfOccurence)" class="badge badge-danger">On-going</span>
+				<span v-if="isFinished(manifestation.dateOfOccurence)" class="badge badge-success">Finished</span>
+			</h1>
 
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
@@ -232,12 +235,14 @@ Vue.component("manifestation-view", {
 
 				</tbody>
 			</table>
+
+			<h2>Manifestation is finished</h2>
 			<form v-on:submit.prevent="" v-if="manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType">
 
 				<div class="buy-section row">
 					<div class="col-lg-2 col-sm-6">
 						<div class="form-label-group">
-							<select name="inputTicketType" id="inputTicketType" v-model="reservation.ticketType" required>
+							<select name="inputTicketType" id="inputTicketType" v-model="reservation.ticketType"  v-bind:disabled="isFinished(manifestation.dateOfOccurence)" required>
 								<option value="REGULAR">Regular</option>
 								<option value="FAN_PIT">Fan Pit</option>
 								<option value="VIP">Vip</option>
@@ -247,7 +252,7 @@ Vue.component("manifestation-view", {
 					</div>
 					<div class="col-lg-2 col-sm-6">
 						<div class="form-label-group">
-							<input type="number" v-on:keyup="evalQuantityRange($event)" min="1" step="1" v-bind:max="manifestation.availableSeats" v-bind:disabled="manifestation.availableSeats <= 0" id="inputQuantity" class="form-control" placeholder="Quantity" required ref='focusMe' v-model="reservation.quantity">
+							<input type="number" v-on:keyup="evalQuantityRange($event)" min="1" step="1" v-bind:max="manifestation.availableSeats" v-bind:disabled="manifestation.availableSeats <= 0 || isFinished(manifestation.dateOfOccurence)" id="inputQuantity" class="form-control" placeholder="Quantity" required ref='focusMe' v-model="reservation.quantity">
 							<label for="inputQuantity">Quantity</label>
 						</div>
 					</div>
@@ -264,7 +269,7 @@ Vue.component("manifestation-view", {
 					</div>
 					<div class="col-lg-2">
 						<button type="button" class="btn btn-lg btn-primary btn-block text-uppercase" data-toggle="modal" data-target="#paymentConfirmationModal"
-						v-bind:disabled="manifestation.availableSeats <= 0">
+						v-bind:disabled="manifestation.availableSeats <= 0 || isFinished(manifestation.dateOfOccurence) ">
 						Reserve
 						</button>
 					</div>
