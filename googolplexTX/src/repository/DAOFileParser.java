@@ -1,9 +1,13 @@
 package repository;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,6 +124,8 @@ public class DAOFileParser {
 
 	public void loadData() {
 		try {
+			this.createInitalFiles();
+			
 			this.loadCustomerTypes();
 			this.loadManifestationTypes();
 			this.loadUsers();
@@ -129,6 +135,83 @@ public class DAOFileParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void createInitalFiles() throws IOException {
+		String directoryName = "data/";
+	    String custTypesName = "data/customerTypes.json";
+	    String manTpeName = "data/manifestationTypes.json";
+	    String usersName = "data/users.json";
+	    String manifestationName = "data/manifestations.json";
+	    String ticketsName = "data/tickets.json";
+	    String commentsName = "data/comments.json";
+	    
+		File directory = new File(directoryName);
+	    File customerTypesFile = new File(custTypesName);
+	    File manTpeFile = new File(manTpeName);
+	    File usersFile = new File(usersName);
+	    File manifestationFile = new File(manifestationName);
+	    File ticketsFile = new File(ticketsName);
+	    File commentsFile = new File(commentsName);
+		
+		if (! directory.exists()){
+	        directory.mkdir();
+	    }
+		
+		if (! customerTypesFile.exists()) {
+			customerTypesFile.createNewFile();
+			FileWriter writer = new FileWriter(customerTypesFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! manTpeFile.exists()) {
+			manTpeFile.createNewFile();
+			FileWriter writer = new FileWriter(manTpeFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! usersFile.exists()) {
+			usersFile.createNewFile();
+			
+			userDAO.save(createInitAdmin());
+			userDAO.saveFile();
+		}
+		
+		if (! manifestationFile.exists()) {
+			manifestationFile.createNewFile();
+			FileWriter writer = new FileWriter(manifestationFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! ticketsFile.exists()) {
+			ticketsFile.createNewFile();
+			FileWriter writer = new FileWriter(ticketsFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		if (! commentsFile.exists()) {
+			commentsFile.createNewFile();
+			FileWriter writer = new FileWriter(commentsFile);
+			writer.append("{}");
+			writer.flush();
+			writer.close();
+		}
+		
+		
+	}
+	
+	private User createInitAdmin() {
+		User admin1 = new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+				UserRole.ADMIN);
+		return admin1;
 	}
 
 	private void loadCustomerTypes() throws IOException {

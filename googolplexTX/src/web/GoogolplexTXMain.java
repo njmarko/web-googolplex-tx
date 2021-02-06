@@ -52,16 +52,16 @@ public class GoogolplexTXMain {
 		ManifestationControler manifestationControler = new ManifestationControler(manifestationServiceImpl,userController);
 		TicketController ticketController = new TicketController(ticketServiceImpl,userController, manifestationServiceImpl);
 			
-//		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
-//		daoFileParser.loadData();
-		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
-		
-		userDAO.saveFile();
-		manifestationDAO.saveFile();
-		ticketDAO.saveFile();
-		commentDAO.saveFile();
-		manifestationTypeDAO.saveFile();
-		customerTypeDAO.saveFile();
+		DAOFileParser daoFileParser = new DAOFileParser(userDAO, manifestationDAO, ticketDAO, commentDAO, customerTypeDAO, manifestationTypeDAO);
+		daoFileParser.loadData();
+//		TestData.createTestData(userDAO, manifestationDAO, ticketDAO, commentDAO, manifestationTypeDAO, customerTypeDAO);
+//		
+//		userDAO.saveFile();
+//		manifestationDAO.saveFile();
+//		ticketDAO.saveFile();
+//		commentDAO.saveFile();
+//		manifestationTypeDAO.saveFile();
+//		customerTypeDAO.saveFile();
 		
 		
 		/**
