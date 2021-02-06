@@ -162,6 +162,11 @@ Vue.component("manifestation-view", {
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
+						<td colspan="2">
+							<img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt="">
+						</td>
+					</tr>
+					<tr>
 						<td>Id</td>
 						<td>{{manifestation.id }}</td>
 					</tr>
