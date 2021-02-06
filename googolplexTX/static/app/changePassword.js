@@ -66,6 +66,18 @@ Vue.component("change-password", {
 </div>		  
 `
 	,
+	mounted() {
+		/*axios
+			.get('api/users/admin')
+			.then(response => {
+				
+				this.userData = response.data;
+				console.log((new Date(response.data.birthDate)).toISOString().substring(-1, 10));
+				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(-1, 10);
+				this.userData.gender = response.data.gender;
+			});
+		*/
+	},
 	methods: {
 		changePassword: function () {
 			let localUserData = JSON.parse(window.localStorage.getItem('user'));
@@ -95,19 +107,11 @@ Vue.component("change-password", {
 					console.log("error.config");
 					console.log(error.config);
 				});
-		}
+		},
+		formatDate: function (value) {
+			return moment(value).format('DD/MM/YYYY');
+		},
 	},
-	mounted() {
-		/*axios
-			.get('api/users/admin')
-			.then(response => {
-				
-				this.userData = response.data;
-				console.log((new Date(response.data.birthDate)).toISOString().substring(0, 10));
-				this.userData.birthDate = new Date(response.data.birthDate).toISOString().substring(0, 10);
-				this.userData.gender = response.data.gender;
-			});
-		*/
-	},
+
 
 });
