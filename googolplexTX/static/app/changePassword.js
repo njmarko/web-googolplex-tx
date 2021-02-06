@@ -77,7 +77,9 @@ Vue.component("change-password", {
 			}
 			axios
 				.patch('api/users/' + localUserData.username + '/change-password', userData)
-				.then(response => (alert(response.data)))
+				.then(response => {
+					this.$router.push('/profile');
+				})
 				.catch(function (error) {
 					if (error.response) {
 						component.formError = error.response.data;
