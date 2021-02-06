@@ -99,6 +99,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	@Override
 	public Manifestation delete(String key) {
 		Manifestation deleted = this.manifestationDAO.delete(key);
+		this.manifestationDAO.save(deleted);
 		this.manifestationDAO.saveFile();
 		return deleted;
 	}
@@ -370,6 +371,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public Comment deleteComment(String key) {
 		// TODO: save to file
 		Comment deleted = commentDAO.delete(key);
+		commentDAO.save(deleted);
 		commentDAO.saveFile();
 		return deleted;
 	}
@@ -442,6 +444,7 @@ public class ManifestationServiceImpl implements ManifestationService {
 	public ManifestationType deleteOneManifestationType(String key) {
 		// TODO: save to file
 		ManifestationType deleted = manifestationTypeDAO.delete(key);
+		manifestationTypeDAO.save(deleted);
 		manifestationTypeDAO.saveFile();
 		return deleted;
 	}

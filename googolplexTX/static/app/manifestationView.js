@@ -302,10 +302,6 @@ Vue.component("manifestation-view", {
 				</form>
 			</div>
 
-			<div v-if="userData && manifestation && this.canComment">
-				<h1> Prosla provera za komentar</h1>
-
-			</div>
 
 			<div  v-if="tickets && (userData && (userData.userRole == 'ADMIN' || (userData.userRole == 'SALESMAN' && manifestation.salesman == userData.username)))">
 				<h2>Tickets</h2>
@@ -645,6 +641,7 @@ Vue.component("manifestation-view", {
 					this.getManifComments();
 				})
 				.catch(error=>{
+					this.checkIfUserHasManifTicket(this.tickets);
 					this.getManifComments();
 				});
 		},
