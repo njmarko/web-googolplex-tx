@@ -13,7 +13,7 @@ Vue.component("suspicious-users", {
 			searchParams: {
 				startDate: date1.toDateInputValue(),
 				endDate: date2.toDateInputValue(),
-				frequency: 1,
+				frequency: 5,
 
 			},
 			formatedSearchParams: {}
