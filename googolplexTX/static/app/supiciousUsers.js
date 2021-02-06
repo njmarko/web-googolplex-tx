@@ -77,7 +77,7 @@ Vue.component("suspicious-users", {
 						<td>{{u.firstName }}</td>
 						<td>{{u.lastName }}</td>
 						<td>{{u.points}}</td>
-						<td>{{u.birthDate}}</td>
+						<td>{{formatDate(u.birthDate)}}</td>
 						<td>{{u.gender}}</td>
 						<td>
 							<button v-bind:disabled="u.userRole == 'ADMIN' || u.deleted" v-on:click="blockUser(u, u.blocked)" v-bind:class="[u.blocked ? 'btn-info' : 'btn-danger', 'btn']">{{u.blocked ? 'UNBLOCK' : 'BLOCK' }} {{u.username}}</button>
