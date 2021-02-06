@@ -132,6 +132,22 @@ public class DAOFileParser {
 			this.loadManifestations();
 			this.loadTickets();
 			this.loadComments();
+			
+			
+
+
+			for (Ticket ticket : ticketDAO.getTickets().values()) {
+				
+				Manifestation manifestation = ticket.getManifestation();
+				manifestation.getTickets().add(ticket);
+				
+			}
+
+			for (Comment comment : commentDAO.getComments().values()) {
+				Manifestation manifestation = comment.getManifestation();
+				manifestation.getComments().add(comment);
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
