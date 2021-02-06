@@ -212,17 +212,12 @@ public class DAOFileParser {
 		
 	}
 	
-	private User createInitAdmin() {
-		User admin1 = new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
-				UserRole.ADMIN);
-		return admin1;
-	}
 	
 	private Collection<User> createInitAdmins() {
 		ArrayList<User> admins = new ArrayList<User>(); 
 		admins.add( new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
 				UserRole.ADMIN) );
-		admins.add( new User("admin", "admin", "adminFirst", "adminLast", Gender.MALE, LocalDate.now(),
+		admins.add( new User("root", "root", "rootFirst", "rootLast", Gender.FEMALE, LocalDate.now(),
 				UserRole.ADMIN));
 		return admins;
 	}
