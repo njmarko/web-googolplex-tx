@@ -256,7 +256,7 @@ public class UserServiceImpl implements UserService {
 
 		Collection<CustomerType> custTypes = custTypeDAO.findAll();
 
-		if (custTypes == null) {
+		if (custTypes == null || custTypes.isEmpty()) {
 			return null;
 		}
 
