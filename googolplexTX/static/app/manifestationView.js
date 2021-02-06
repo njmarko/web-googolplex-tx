@@ -162,6 +162,11 @@ Vue.component("manifestation-view", {
 			<table class="table table-hover table-bordered table-striped text-center">
 				<tbody >
 					<tr>
+						<td colspan="2">
+							<img class="card-img-top" v-bind:src="'/uploads/' + manifestation.poster" alt="">
+						</td>
+					</tr>
+					<tr>
 						<td>Id</td>
 						<td>{{manifestation.id }}</td>
 					</tr>
@@ -235,7 +240,7 @@ Vue.component("manifestation-view", {
 				</tbody>
 			</table>
 
-			<h2>Manifestation is finished</h2>
+			<h2 v-if="isFinished(manifestation.dateOfOccurence)">Manifestation is finished</h2>
 			<form v-on:submit.prevent="" v-if="manifestation.status == 'ACTIVE' && userData && (userData.userRole == 'CUSTOMER') && this.customerType">
 
 				<div class="buy-section row">

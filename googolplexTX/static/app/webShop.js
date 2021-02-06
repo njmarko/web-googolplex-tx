@@ -146,8 +146,10 @@ Vue.component("web-shop", {
 
 
 		<h1 class="text-center">Manifestations</h1>
+		<h1 v-if="manifestations && !notEmptyObject(manifestations)" >Nema manifestacija</h1>
 
 		<div class="row row-spacing" v-for="(row, rowI) in rowCount" :key="manifestations.id">
+
 			<div class="col-md-4" v-for="(manifestation, index) in manifestations.slice(rowI * numberOfColumns, rowI * numberOfColumns + numberOfColumns)" :key="manifestations.id">
 				<div class="card manif-card">
 					<router-link class="card-image" :to="{ path: '/manifestations/' + manifestation.id}">
@@ -331,6 +333,10 @@ Vue.component("web-shop", {
 
 		formatDateTime: function (value) {
 			return moment(value).format('DD/MM/YYYY hh:mm');
+		},
+
+		notEmptyObject(someObject){
+			return Object.keys(someObject).length
 		},
 
 	},
