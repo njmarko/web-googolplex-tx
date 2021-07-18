@@ -1,5 +1,14 @@
 # web-googolplex-tx
-Web application for ticket reservation.
+Web application for ticket reservation with Java Spark on backend and Vue.js frontend.
+
+## Running the application
+
+* Run as Java Application ```GoogolplexTXMain.java``` (located in web package)
+* Go to http://localhost:4567/#/ in the browser of your choice
+* ????????????????????????????????????????????????????????????
+* Profit!
+
+## Preview screens
 
 <p align="center">
   <img src="/resources/homepage.jpg">
@@ -11,6 +20,7 @@ Web application for ticket reservation.
   <p align="center">Illustration 2 - Tickets page.</p>
 </p>
 
+## Project details
 <p align="center">
   <img src="/resources/progress-vis.webp">
   <p align="center">Illustration 3 - Progress visualization (only the first few weeks).</p>
